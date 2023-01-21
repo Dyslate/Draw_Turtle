@@ -10,8 +10,7 @@ global orientation
 
 # Fonction qui efface toute les traces à l'écrans
 def clear_widgets():
-    for widget in root.winfo_children():
-        widget.destroy()
+    canvas.delete("all")
 
 
 class Tortue:
@@ -65,14 +64,16 @@ class Tortue:
         self.penActivated = True
 
     def origine(self, agent):
-        self.x, self.y = 50, 50
+        self.x, self.y, self.orientation = self.xBase, self.yBase, 0
+
 
     def restaurer(self, agent):
         self.x = self.xBase
         self.y = self.yBase
 
     def nettoyer(self, agent):
-        clear_widgets()
+        canvas.delete("all")
+        tortue.origine(self)
 
     # def changerCouleur(self,r,v,b):
     # code pour changer la couleur du crayon à partir des composantes r v b
@@ -116,7 +117,7 @@ IvyBindMsg(tortue.leverCrayon, "^LEVECRAYON$")
 IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
 IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
-# IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
+IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 # IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 # Boucle principale de tkinter pour afficher l'application
 root.mainloop()
