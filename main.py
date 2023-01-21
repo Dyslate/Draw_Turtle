@@ -75,8 +75,9 @@ class Tortue:
         canvas.delete("all")
         tortue.origine(self)
 
-    # def changerCouleur(self,r,v,b):
-    # code pour changer la couleur du crayon à partir des composantes r v b
+     def changerCouleur(self,r,v,b):
+     #code pour changer la couleur du crayon à partir des composantes r v b
+        print("changer couleur")
     # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
     def fixerPosition(self, agent, x, y):
@@ -118,6 +119,6 @@ IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
 IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
-# IvyBindMsg(tortue.changerCouleur, "^FCC\s")
+IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 # Boucle principale de tkinter pour afficher l'application
 root.mainloop()
