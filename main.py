@@ -1,14 +1,11 @@
-import math
 import tkinter as tk
-from turtle import Turtle
-import ivy
-import tkinter as tk
-from ivy import *
+
 from ivy.std_api import *
 
 global x
 global y
 global penActivated
+global orientation
 
 
 # Fonction qui efface toute les traces à l'écrans
@@ -17,64 +14,62 @@ def clear_widgets():
         widget.destroy()
 
 
-def move_turtle(agent, args):
-    global x
-    global y
-    global penActivated
-    label.place(x=x+0.5*turtleSize, y=y-0.5*turtleSize)
+class Tortue:
+    def __init__(self):
+        self.x = 50
+        self.y = 50
+        self.xBase = 50
+        self.yBase = 50
+        self.orientation = 'N'
+        self.penActivated = True
+        self.orientation = 0
 
-    if str(args).__contains__(" "):
-        command, value = args.split(" ")
-        command = str(command).strip()
-        value = str(value).strip()
-        print("value:", value)
-        print("commande:", command)
+    def avancer(self, agent, value):
         value = int(value)
+        if self.penActivated:
+            canvas.create_line(self.x, self.y, self.x + value, self.y)
+        self.x += value
 
-    else:
-        print("pas d'espace")
-        command = args
-        command = str(command).strip()
-        print("commande:", command)
+    def reculer(self, agent,value):
+        value = int(value)
+        if self.penActivated:
+            canvas.create_line(self.x, self.y, self.x - value, self.y)
+        self.x -= value
 
-    if command == "AVANCE":
-        if penActivated:
-            canvas.create_line(x, y, x + value, y)
-        x += value
-    elif command == "RECULE":
-        if penActivated:
-            canvas.create_line(x, y, x - value, y)
-        x -= value
-    elif command == "TOURNEDROITE":
-        if penActivated:
-            canvas.create_line(x, y, x, y + value)
-        y += value
-    elif command == "TOURNEGAUCHE":
-        if penActivated:
-            canvas.create_line(x, y, x, y - value)
-        y -= value
-    elif command == "LEVECRAYON":
-        # code pour lever le crayon
-        penActivated = False
-    elif command == "BAISSECRAYON":
-        # code pour baisser le crayon
-        penActivated = True
-    elif command == "ORIGINE":
-        x, y = 50, 50
-    elif command == "RESTAURE":
-        # code pour restaurer l'état initial
-        x = xBase
-        y = yBase
-    elif command == "NETTOIE":
-        # code pour effacer toutes les traces de l'écran
+    def tournerDroite(self, agent, value):
+        value = int(value)
+        if self.penActivated:
+            canvas.create_line(self.x, self.y, self.x, self.y + value)
+        self.y += value
+
+    def tournerGauche(self,agent, value):
+        value = int(value)
+        if self.penActivated:
+            canvas.create_line(self.x, self.y, self.x, self.y - value)
+        self.y -= value
+
+    def leverCrayon(self,agent):
+        self.penActivated = False
+
+    def baisserCrayon(self,agent):
+        self.penActivated = True
+
+    def origine(self,agent):
+        self.x, self.y = 50, 50
+
+    def restaurer(self,agent):
+        self.x = self.xBase
+        self.y = self.yBase
+
+    def nettoyer(self,agent):
         clear_widgets()
-    elif command == "FCC":
-        r, v, b = value.split()
-        # code pour changer la couleur du crayon à partir des composantes r v b
-    # elif command == "FCAP":
+
+    # def changerCouleur(self,r,v,b):
+    # code pour changer la couleur du crayon à partir des composantes r v b
+    # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
-    elif command == "FPOS":
-        x, y = value.split()
+    def fixerPosition(self,agent, x, y):
+        self.x, self.y = x, y
 
 
 root = tk.Tk()
@@ -87,7 +82,7 @@ xBase = 50
 yBase = 50
 # Initialise le tracé de la tortue
 penActivated = True
-#Taille de la tortue
+# Taille de la tortue
 turtleSize = 72
 
 # Crée un canvas pour dessiner sur
@@ -100,7 +95,18 @@ label = tk.Label(root, text=">", font=("Courier", turtleSize))
 IvyInit("test")
 IvyStart()
 # Enregistre une fonction pour intercepter les commandes de la tortue
-IvyBindMsg(move_turtle, "^tortue command=(.*)$")
+# IvyBindMsg(move_turtle, "^tortue command=(.*)$")
 
+tortue = Tortue()
+IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
+IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
+IvyBindMsg(tortue.tournerDroite, "^TOURNEDROITE\s(.*)$")
+IvyBindMsg(tortue.tournerGauche, "^TOURNEGAUCHE\s(.*)$")
+IvyBindMsg(tortue.leverCrayon, "^LEVECRAYON$")
+IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
+IvyBindMsg(tortue.origine, "^ORIGINE$")
+IvyBindMsg(tortue.restaurer, "^RESTAURE$")
+# IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
+# IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 # Boucle principale de tkinter pour afficher l'application
 root.mainloop()
