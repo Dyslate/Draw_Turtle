@@ -20,55 +20,65 @@ class Tortue:
         self.y = 50
         self.xBase = 50
         self.yBase = 50
-        self.orientation = 'N'
         self.penActivated = True
-        self.orientation = 0
+        self.orientation = 0  # 0 pour le nord, 1 pour l'est, 2 pour le sud, 3 pour l'ouest
 
     def avancer(self, agent, value):
         value = int(value)
-        if self.penActivated:
-            canvas.create_line(self.x, self.y, self.x + value, self.y)
-        self.x += value
+        if self.orientation == 0:
+            if self.penActivated:
+                canvas.create_line(self.x, self.y, self.x, self.y - value)
+            self.y -= value
+        elif self.orientation == 1:
+            if self.penActivated:
+                canvas.create_line(self.x, self.y, self.x + value, self.y)
+            self.x += value
+        elif self.orientation == 2:
+            if self.penActivated:
+                canvas.create_line(self.x, self.y, self.x, self.y + value)
+            self.y += value
+        elif self.orientation == 3:
+            if self.penActivated:
+                canvas.create_line(self.x, self.y, self.x - value, self.y)
+            self.x -= value
 
-    def reculer(self, agent,value):
+    def reculer(self, agent, value):
         value = int(value)
-        if self.penActivated:
-            canvas.create_line(self.x, self.y, self.x - value, self.y)
-        self.x -= value
+        self.avancer(self,-value)
 
     def tournerDroite(self, agent, value):
-        value = int(value)
-        if self.penActivated:
-            canvas.create_line(self.x, self.y, self.x, self.y + value)
-        self.y += value
+        self.orientation += 1
+        if self.orientation > 3:
+            self.orientation = 0
+        self.avancer(self,value)
 
-    def tournerGauche(self,agent, value):
-        value = int(value)
-        if self.penActivated:
-            canvas.create_line(self.x, self.y, self.x, self.y - value)
-        self.y -= value
+    def tournerGauche(self, agent, value):
+        self.orientation -= 1
+        if self.orientation < 0:
+            self.orientation = 3
+        self.avancer(self,value)
 
-    def leverCrayon(self,agent):
+    def leverCrayon(self, agent):
         self.penActivated = False
 
-    def baisserCrayon(self,agent):
+    def baisserCrayon(self, agent):
         self.penActivated = True
 
-    def origine(self,agent):
+    def origine(self, agent):
         self.x, self.y = 50, 50
 
-    def restaurer(self,agent):
+    def restaurer(self, agent):
         self.x = self.xBase
         self.y = self.yBase
 
-    def nettoyer(self,agent):
+    def nettoyer(self, agent):
         clear_widgets()
 
     # def changerCouleur(self,r,v,b):
     # code pour changer la couleur du crayon à partir des composantes r v b
     # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
-    def fixerPosition(self,agent, x, y):
+    def fixerPosition(self, agent, x, y):
         self.x, self.y = x, y
 
 
