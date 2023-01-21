@@ -43,19 +43,19 @@ class Tortue:
 
     def reculer(self, agent, value):
         value = int(value)
-        self.avancer(self,-value)
+        self.avancer(self, -value)
 
     def tournerDroite(self, agent, value):
         self.orientation += 1
         if self.orientation > 3:
             self.orientation = 0
-        self.avancer(self,value)
+        self.avancer(self, value)
 
     def tournerGauche(self, agent, value):
         self.orientation -= 1
         if self.orientation < 0:
             self.orientation = 3
-        self.avancer(self,value)
+        self.avancer(self, value)
 
     def leverCrayon(self, agent):
         self.penActivated = False
@@ -66,7 +66,6 @@ class Tortue:
     def origine(self, agent):
         self.x, self.y, self.orientation = self.xBase, self.yBase, 0
 
-
     def restaurer(self, agent):
         self.x = self.xBase
         self.y = self.yBase
@@ -75,9 +74,10 @@ class Tortue:
         canvas.delete("all")
         tortue.origine(self)
 
-     def changerCouleur(self,r,v,b):
-     #code pour changer la couleur du crayon à partir des composantes r v b
+    def changerCouleur(self, r, v, b):
+        # code pour changer la couleur du crayon à partir des composantes r v b
         print("changer couleur")
+
     # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
     def fixerPosition(self, agent, x, y):
@@ -87,22 +87,9 @@ class Tortue:
 root = tk.Tk()
 root.title("Application de dessin à la tortue-logo")
 
-# Initialise les variables de position de la tortue
-x = 50
-y = 50
-xBase = 50
-yBase = 50
-# Initialise le tracé de la tortue
-penActivated = True
-# Taille de la tortue
-turtleSize = 72
-
 # Crée un canvas pour dessiner sur
 canvas = tk.Canvas(root, width=600, height=400)
 canvas.pack()
-
-# Créé l'objet qui se déplace
-label = tk.Label(root, text=">", font=("Courier", turtleSize))
 
 IvyInit("test")
 IvyStart()
