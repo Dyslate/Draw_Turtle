@@ -1,10 +1,9 @@
 import tkinter as tk
 import xml.etree.ElementTree as ET
-from typing import Tuple
+import os
 
 from ivy.std_api import *
 from pathlib import Path
-import os
 
 
 def get_project_root() -> str:
