@@ -1,9 +1,11 @@
 import tkinter as tk
 import xml.etree.ElementTree as ET
 import os
+import xml
 
 from ivy.std_api import *
 from pathlib import Path
+
 
 
 def get_project_root() -> str:
@@ -25,7 +27,7 @@ class Tortue:
         self.orientation = 0  # 0 pour le nord, 1 pour l'est, 2 pour le sud, 3 pour l'ouest
         self.commands = []  # pour save le dessin en xml.
 
-    def avancer(self, agent, value):
+    def avancer(self, agent, value, ajouterCommande):
         value = int(value)
         if self.orientation == 0:
             if self.penActivated:
@@ -43,34 +45,35 @@ class Tortue:
             if self.penActivated:
                 canvas.create_line(self.x, self.y, self.x - value, self.y)
             self.x -= value
-        self.commands.append(("AVANCE", value))
+        if ajouterCommande:
+            self.commands.append(("AVANCE", value))
 
     def reculer(self, agent, value):
         value = int(value)
-        self.avancer(self, -value)
+        self.avancer(self, -value,False)
         self.commands.append(("RECULE", value))
 
     def tournerDroite(self, agent, value):
         self.orientation += 1
         if self.orientation > 3:
             self.orientation = 0
-        self.avancer(self, value)
-        self.commands.append(("TOURNERDROITE", value))
+        self.avancer(self, value, False)
+        self.commands.append(("TOURNEDROITE", value))
 
     def tournerGauche(self, agent, value):
         self.orientation -= 1
         if self.orientation < 0:
             self.orientation = 3
-        self.avancer(self, value)
-        self.commands.append(("TOURNERGAUCHE", value))
+        self.avancer(self, value, False)
+        self.commands.append(("TOURNEGAUCHE", value))
 
     def leverCrayon(self, agent):
         self.penActivated = False
-        self.commands.append("LEVERCRAYON")
+        self.commands.append("LEVECRAYON")
 
     def baisserCrayon(self, agent):
         self.penActivated = True
-        self.commands.append("BAISSERCRAYON")
+        self.commands.append("BAISSECRAYON")
 
     def origine(self, agent):
         self.x, self.y, self.orientation = self.xBase, self.yBase, 0
@@ -83,7 +86,7 @@ class Tortue:
 
     def nettoyer(self, agent):
         canvas.delete("all")
-        tortue.origine(self)
+      #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
     def changerCouleur(self, r, v, b):
@@ -112,7 +115,7 @@ class Tortue:
             self.penActivated = True
         elif command.startswith("AVANCE"):
             value = int(command.split(" ")[1])
-            self.avancer(self, value)
+            self.avancer(self, value, True)
         elif command.startswith("TOURNEDROITE"):
             value = int(command.split(" ")[1])
             self.tournerDroite(self, value)
@@ -124,27 +127,33 @@ class Tortue:
             self.reculer(self, value)
         elif command.startswith("ORIGINE"):
             self.origine(self)
-        elif command.startswith("NETTOYER"):
+        elif command.startswith("NETTOIE"):
             self.nettoyer(self)
 
     def sauver(self):
         print("sauver")
         root = ET.Element("dessin")
+       # print(self.commands)
         for cmd in self.commands:
+            print("CECI EST LA COMMANDE: ",cmd)
             if cmd[0] == "AVANCE":
-                ET.SubElement(root, "avancer", dist=str(cmd[1]))
+                ET.SubElement(root, "avance", dist=str(cmd[1]))
             elif cmd[0] == "TOURNEDROITE":
-                ET.SubElement(root, "droite", angle=str(cmd[1]))
+                ET.SubElement(root, "droite", dist=str(cmd[1]))
             elif cmd[0] == "TOURNEGAUCHE":
-                ET.SubElement(root, "gauche", angle=str(cmd[1]))
-            elif cmd[0] == "LEVECRAYON":
+                ET.SubElement(root, "gauche", dist=str(cmd[1]))
+            elif cmd == "LEVECRAYON":
                 ET.SubElement(root, "lever")
-            elif cmd[0] == "BAISSECRAYON":
+            elif cmd == "BAISSECRAYON":
                 ET.SubElement(root, "baisser")
-
+            elif cmd[0] == "RECULE":
+                ET.SubElement(root, "recule", dist=str(cmd[1]))
+            elif cmd == "ORIGINE":
+                ET.SubElement(root, "origine")
+            elif cmd == "NETTOIE":
+                ET.SubElement(root, "nettoie\n")
         tree = ET.ElementTree(root)
-        print(tree)
-        print(get_project_root())
+
         tree.write(get_project_root())
 
 
@@ -157,8 +166,6 @@ canvas.pack()
 
 IvyInit("test")
 IvyStart()
-# Enregistre une fonction pour intercepter les commandes de la tortue
-# IvyBindMsg(move_turtle, "^tortue command=(.*)$")
 
 # Création d'un bouton "play"
 play_button = tk.Button(root, text="Jouer", command=lambda: tortue.lancerCommandes(command_text.get("1.0", "end-1c")))
