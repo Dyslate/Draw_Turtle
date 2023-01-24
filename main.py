@@ -1,11 +1,10 @@
 import tkinter as tk
 import xml.etree.ElementTree as ET
 import os
-import xml
+import re
 
 from ivy.std_api import *
 from pathlib import Path
-
 
 
 def get_project_root() -> str:
@@ -50,7 +49,7 @@ class Tortue:
 
     def reculer(self, agent, value):
         value = int(value)
-        self.avancer(self, -value,False)
+        self.avancer(self, -value, False)
         self.commands.append(("RECULE", value))
 
     def tournerDroite(self, agent, value):
@@ -86,7 +85,7 @@ class Tortue:
 
     def nettoyer(self, agent):
         canvas.delete("all")
-      #  tortue.origine(self)
+        #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
     def changerCouleur(self, r, v, b):
@@ -98,14 +97,23 @@ class Tortue:
     def fixerPosition(self, agent, x, y):
         self.x, self.y = x, y
 
-    def lancerCommandes(self, commandes):
-        print("Jouer")
-        # Splitter les commandes par lignes
-        commands = commandes.split("\n")
-        for command in commands:
-            print(command)
-            # Traiter chaque commande séparément
-            self.traiterCommande(command)
+    def lancerCommandes(self, commands):
+        commands = commands.split("\n")
+        for cmd in commands:
+            match = re.match(r'^REPETE (\d+) \[(\n*.*\n*.*\n*.*\n*.*)\]$', cmd)
+            if match:
+                print("HIT")
+                n = int(match.group(1))
+                print(n)
+                actions = match.group(2)
+                actions = actions.split("\n")
+                print("Actions : ",actions)
+                for i in range(n):
+                    for j in range(len(actions)):
+                        self.lancerCommandes(actions[j])
+                        print(actions[j].split(" "))
+            else:
+                self.traiterCommande(cmd)
 
     def traiterCommande(self, command):
         # Vérifier la validité de la commande et exécuter la fonction appropriée
@@ -133,9 +141,9 @@ class Tortue:
     def sauver(self):
         print("sauver")
         root = ET.Element("dessin")
-       # print(self.commands)
+        # print(self.commands)
         for cmd in self.commands:
-            print("CECI EST LA COMMANDE: ",cmd)
+            print("CECI EST LA COMMANDE: ", cmd)
             if cmd[0] == "AVANCE":
                 ET.SubElement(root, "avance", dist=str(cmd[1]))
             elif cmd[0] == "TOURNEDROITE":
