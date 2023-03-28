@@ -18,15 +18,15 @@ def clear_widgets():
 
 class Tortue:
     def __init__(self):
-        self.x = 50
-        self.y = 50
-        self.xBase = 50
-        self.yBase = 50
+        self.x = 300
+        self.y = 300
+        self.xBase = 300
+        self.yBase = 300
         self.penActivated = True
         self.orientation = 0  # 0 pour le nord, 1 pour l'est, 2 pour le sud, 3 pour l'ouest
         self.commands = []  # pour save le dessin en xml.
 
-    def avancer(self, agent, value, ajouterCommande):
+    def avancer(self, agent, value, ajouterCommande=True):
         value = int(value)
         if self.orientation == 0:
             if self.penActivated:
@@ -98,21 +98,27 @@ class Tortue:
         self.x, self.y = x, y
 
     def lancerCommandes(self, commands):
+        #  print(commands)
         commands = commands.split("\n")
         for cmd in commands:
-            match = re.match(r'^REPETE (\d+) \[(\n*.*\n*.*\n*.*\n*.*)\]$', cmd)
+            """Créé une regex qui récupère ce qu'il y a après REPETE dans un premier groupe, exemple: REPETE3
+            Recupère dans un groupe deux l'interieur de []"""
+
+            match = re.match(r'^REPETE (\d+) \[(.+)+]', cmd)
+            print(match)
             if match:
                 print("HIT")
                 n = int(match.group(1))
                 print(n)
                 actions = match.group(2)
                 actions = actions.split("\n")
-                print("Actions : ",actions)
+                print("Actions : ", actions)
                 for i in range(n):
                     for j in range(len(actions)):
                         self.lancerCommandes(actions[j])
-                        print(actions[j].split(" "))
+                    #  print(actions[j])
             else:
+                print("Commande à traiter: ", cmd)
                 self.traiterCommande(cmd)
 
     def traiterCommande(self, command):
@@ -166,7 +172,7 @@ class Tortue:
 
 
 root = tk.Tk()
-root.title("Application de dessin à la tortue-logo")
+root.title("Visualiseur")
 
 # Crée un canvas pour dessiner sur
 canvas = tk.Canvas(root, width=600, height=400)
@@ -187,6 +193,8 @@ save_button.pack()
 command_text = tk.Text(root)
 command_text.pack()
 
+
+
 tortue = Tortue()
 IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
 IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
@@ -198,5 +206,130 @@ IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.changerCouleur, "^FCC\s")
-# Boucle principale de tkinter pour afficher l'application
+
+
+
+
+
+
+###################################################
+# PARTIE 2: AUTRE FENETRE POUR L'EDITEUR DE TEXTE #
+###################################################
+
+#######################
+# PARTIE 2: FONCTIONS #
+#######################
+
+def importerCommande():
+    print("test import")
+
+
+def exporterCommande():
+    print("test export")
+
+def avancerCommande():
+    print("test avancer")
+
+def reculerCommande():
+    print("test reculer")
+
+def tournerDroiteCommande():
+    print("test tournerDroite")
+
+def tournerGaucheCommande():
+    print("test tournerGauche")
+
+def leverCrayonCommande():
+    print("test leverCrayon")
+def baisserCrayonCommande():
+    print("test baisserCrayon")
+def origineCommande():
+    print("test origine")
+def restaurerCommande():
+    print("test restaurer")
+def nettoyerCommande():
+    print("test nettoyer")
+def fccCommande():
+    print("test fcc")
+def fCapCommande():
+    print("test fCap")
+
+def fPosCommande():
+    print("test fPOS")
+
+
+
+root2 = tk.Tk()
+root2.title("Editeur de texte")
+root2.geometry("400x400")
+
+frameBouton = tk.Frame(root2)
+frameBouton.pack(fill="both", expand=True)
+
+frameLabel = tk.Frame(root2)
+frameLabel.pack(fill="both", expand=True)
+
+
+# Création d'un bouton "Avancer"
+avancerBouton = tk.Button(frameBouton, text="Avancer", command=lambda: avancerCommande())
+avancerBouton.pack()
+
+
+# Création d'un bouton "reculer"
+reculerBouton = tk.Button(frameBouton, text="Reculer", command=lambda: reculerCommande())
+reculerBouton.pack()
+
+
+# Création d'un bouton "Tourner à droite"
+tournerDroiteBouton = tk.Button(frameBouton, text="Tourner à Droite", command=lambda: tournerDroiteCommande())
+tournerDroiteBouton.pack()
+
+# Création d'un bouton "Tourner à gauche"
+tournerGaucheBouton = tk.Button(frameBouton, text="Tourner à Gauche", command=lambda: tournerGaucheCommande())
+tournerGaucheBouton.pack()
+
+# Création d'un bouton "Lever Crayon"
+leverCrayonBouton = tk.Button(frameBouton, text="Lever le crayon", command=lambda: leverCrayonCommande())
+leverCrayonBouton.pack()
+
+# Création d'un bouton "Baisser Crayon"
+baisserCrayonBouton = tk.Button(frameBouton, text="Baisser le crayon", command=lambda: baisserCrayonCommande())
+baisserCrayonBouton.pack()
+
+# Création d'un bouton "Origine"
+origineBouton = tk.Button(frameBouton, text="Origine", command=lambda: origineCommande())
+origineBouton.pack()
+
+# Création d'un bouton "Restaurer"
+restaurerBouton = tk.Button(frameBouton, text="Restaurer", command=lambda: restaurerCommande())
+restaurerBouton.pack()
+
+# Création d'un bouton "Nettoyer"
+nettoyerBouton = tk.Button(frameBouton, text="Nettoyer", command=lambda: nettoyerCommande())
+nettoyerBouton.pack()
+
+# Création d'un bouton "FCC r v b"
+fccBouton = tk.Button(frameBouton, text="FCC", command=lambda: fccCommande())
+fccBouton.pack()
+
+# Création d'un bouton "Avancer"
+fCapBouton = tk.Button(frameBouton, text="FCAP", command=lambda: fCapCommande())
+fCapBouton.pack()
+
+# Création d'un bouton "Avancer"
+fPosBouton = tk.Button(frameBouton, text="FPOS", command=lambda: fPosCommande())
+fPosBouton.pack()
+
+# Création d'un bouton "Import"
+importBouton = tk.Button(frameLabel, text="Import", command=lambda: importerCommande())
+importBouton.pack()
+
+# Création d'un bouton "Export"
+exportBouton = tk.Button(frameLabel, text="Export", command=lambda: exporterCommande())
+exportBouton.pack()
+
+
+# Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
+# Bucle secondaire de tkinter pour afficher l'éditeur de texte
+root2.mainloop()
