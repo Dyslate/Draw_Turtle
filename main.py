@@ -2,6 +2,7 @@ import tkinter as tk
 import xml.etree.ElementTree as ET
 import os
 import re
+from tkinter import messagebox
 
 from ivy.std_api import *
 from pathlib import Path
@@ -193,8 +194,6 @@ save_button.pack()
 command_text = tk.Text(root)
 command_text.pack()
 
-
-
 tortue = Tortue()
 IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
 IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
@@ -207,19 +206,55 @@ IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 
-
-
-
-
-
 ###################################################
 # PARTIE 2: AUTRE FENETRE POUR L'EDITEUR DE TEXTE #
 ###################################################
+
+
+root2 = tk.Tk()
+root2.title("Editeur de texte")
+root2.geometry("400x800")
+
+frameBouton = tk.Frame(root2)
+frameBouton.pack(fill="both", expand=True)
+
+frameLabel = tk.Frame(root2)
+frameLabel.pack(fill="x", expand=True)
 
 #######################
 # PARTIE 2: FONCTIONS #
 #######################
 
+
+# création des cadres de la grille
+cadres = []
+for i in range(8):
+    for j in range(4):
+        cadre = tk.Frame(frameLabel, width=50, height=50, bg="white", borderwidth=1, relief="solid")
+        cadre.grid(row=i, column=j)
+        cadres.append(cadre)
+
+
+# création des labels sur les cadres
+def creerLabel(text):
+    for cadre in cadres:
+        if not cadre.winfo_children():
+            label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid")
+            label.grid(row=0, column=0, sticky="nsew")
+            # Ajout des bindings pour le drag and drop
+            label.bind("<Button-3>", deleteLabel)
+            break
+
+
+# Fonction pour supprimer un label
+def deleteLabel(event):
+    """Fonction appelée lorsqu'un label est cliqué."""
+    if messagebox.askyesno("Supprimer", "Voulez-vous supprimer ce label ?"):
+        event.widget.destroy()
+
+
+
+# Fonctions pour les commandes des boutons
 def importerCommande():
     print("test import")
 
@@ -227,58 +262,62 @@ def importerCommande():
 def exporterCommande():
     print("test export")
 
+
 def avancerCommande():
-    print("test avancer")
+    creerLabel("avancer")
+
 
 def reculerCommande():
-    print("test reculer")
+    creerLabel("reculer")
+
 
 def tournerDroiteCommande():
-    print("test tournerDroite")
+    creerLabel("tournerDroite")
+
 
 def tournerGaucheCommande():
-    print("test tournerGauche")
+    creerLabel("tournerGauche")
+
 
 def leverCrayonCommande():
-    print("test leverCrayon")
+    creerLabel("leverCrayon")
+
+
 def baisserCrayonCommande():
-    print("test baisserCrayon")
+    creerLabel("baisserCrayon")
+
+
 def origineCommande():
-    print("test origine")
+    creerLabel("origine")
+
+
 def restaurerCommande():
-    print("test restaurer")
+    creerLabel("restaurer")
+
+
 def nettoyerCommande():
-    print("test nettoyer")
+    creerLabel("nettoyer")
+
+
 def fccCommande():
-    print("test fcc")
+    creerLabel("fcc")
+
+
 def fCapCommande():
-    print("test fCap")
+    creerLabel("fcap")
+
 
 def fPosCommande():
-    print("test fPOS")
-
-
-
-root2 = tk.Tk()
-root2.title("Editeur de texte")
-root2.geometry("400x400")
-
-frameBouton = tk.Frame(root2)
-frameBouton.pack(fill="both", expand=True)
-
-frameLabel = tk.Frame(root2)
-frameLabel.pack(fill="both", expand=True)
+    creerLabel("fpos")
 
 
 # Création d'un bouton "Avancer"
 avancerBouton = tk.Button(frameBouton, text="Avancer", command=lambda: avancerCommande())
 avancerBouton.pack()
 
-
 # Création d'un bouton "reculer"
 reculerBouton = tk.Button(frameBouton, text="Reculer", command=lambda: reculerCommande())
 reculerBouton.pack()
-
 
 # Création d'un bouton "Tourner à droite"
 tournerDroiteBouton = tk.Button(frameBouton, text="Tourner à Droite", command=lambda: tournerDroiteCommande())
@@ -321,13 +360,12 @@ fPosBouton = tk.Button(frameBouton, text="FPOS", command=lambda: fPosCommande())
 fPosBouton.pack()
 
 # Création d'un bouton "Import"
-importBouton = tk.Button(frameLabel, text="Import", command=lambda: importerCommande())
-importBouton.pack()
+importerBouton = tk.Button(frameLabel, text="Import", command=lambda: importerCommande())
+importerBouton.grid()
 
 # Création d'un bouton "Export"
 exportBouton = tk.Button(frameLabel, text="Export", command=lambda: exporterCommande())
-exportBouton.pack()
-
+exportBouton.grid()
 
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
