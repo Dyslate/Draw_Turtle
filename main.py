@@ -343,21 +343,21 @@ def repeatCommande(param):
 
 
     label_repeat = tk.Label(cadre, text="repeat " + param, bg="white", borderwidth=1, relief="solid", width=15)
-    label_repeat.grid(row=0, column=0, sticky="nsew")
+    label_repeat.grid(row=2, column=0, sticky="nsew")
 
-    label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=2)
-    label_debut.grid(row=1, column=0, sticky="nsew")
+    label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=15)
+    label_debut.grid(row=3, column=0, sticky="nsew")
 
 
     global taille_espace
     taille_espace = 3
     for i in range(taille_espace):
         label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
-        label_espace.grid(row=i+2, column=0, sticky="nsew")
+        label_espace.grid(row=i+4, column=0, sticky="nsew")
         label_espace.bind("<Button-1>", highlight)
 
-    label_fin = tk.Label(cadre, text="}    ", bg="white", borderwidth=1, relief="solid", width=2)
-    label_fin.grid(row=taille_espace+2, column=0, sticky="nsew")
+    label_fin = tk.Label(cadre, text="}    ", bg="white", borderwidth=1, relief="solid", width=15)
+    label_fin.grid(row=taille_espace+5, column=0, sticky="nsew")
 
     def augmenter_espace():
         print("augmenter taille")
@@ -366,10 +366,10 @@ def repeatCommande(param):
         print("diminue taille")
 
     bouton_plus = tk.Button(cadre, text="+", command=augmenter_espace, width=2)
-    bouton_plus.grid(row=0, column=4, sticky="nsew")
+    bouton_plus.grid(row=0, column=0, sticky="nsew")
 
     bouton_moins = tk.Button(cadre, text="-", command=diminuer_espace, width=2)
-    bouton_moins.grid(row=0, column=5, sticky="nsew")
+    bouton_moins.grid(row=1, column=0, sticky="nsew")
 
     # Ajout des bindings pour delete un label
     label_debut.bind("<Button-3>", deleteLabel)
@@ -382,7 +382,7 @@ def repeatCommande(param):
     tailleCadre += 1
 def fccCommande(valeur1, valeur2, valeur3):
     if valeur1 != "" and valeur2 != "" and valeur3 != "":
-        res = "reculer " + valeur1 + " " + valeur2 + " " + valeur3
+        res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
         creerLabel(res)
 
 
