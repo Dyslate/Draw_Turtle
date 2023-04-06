@@ -216,42 +216,60 @@ root2.title("Editeur de texte")
 root2.geometry("400x800")
 
 frameBouton = tk.Frame(root2)
-frameBouton.pack(fill="both", expand=True)
+frameBouton.pack(side="left", fill="y")
+
+
+
+
+# Création d'un canvas contenant les labels
+canvas = tk.Canvas(root2, highlightthickness=0)
+canvas.pack(side="left", fill="both", expand=True)
+
+# Ajout d'une scrollbar pour le canvas
+scrollbar = tk.Scrollbar(root2, orient="vertical", command=canvas.yview)
+scrollbar.pack(side="right", fill="y")
+canvas.configure(yscrollcommand=scrollbar.set)
 
 frameLabel = tk.Frame(root2)
-frameLabel.pack(fill="x", expand=True)
+frameLabel.pack(side="right", expand=True)
+canvas.create_window((0,0), window=frameLabel, anchor="w")
+
+# Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
+def on_frame_configure(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+frameLabel.bind("<Configure>", on_frame_configure)
+
 
 #######################
 # PARTIE 2: FONCTIONS #
 #######################
 
-
-# création des cadres de la grille
-cadres = []
-for i in range(8):
-    for j in range(4):
-        cadre = tk.Frame(frameLabel, width=50, height=50, bg="white", borderwidth=1, relief="solid")
-        cadre.grid(row=i, column=j)
-        cadres.append(cadre)
-
-
-# création des labels sur les cadres
-def creerLabel(text):
-    for cadre in cadres:
-        if not cadre.winfo_children():
-            label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid")
-            label.grid(row=0, column=0, sticky="nsew")
-            # Ajout des bindings pour le drag and drop
-            label.bind("<Button-3>", deleteLabel)
-            break
-
-
-# Fonction pour supprimer un label
 def deleteLabel(event):
     """Fonction appelée lorsqu'un label est cliqué."""
     if messagebox.askyesno("Supprimer", "Voulez-vous supprimer ce label ?"):
         event.widget.destroy()
 
+
+# création des cadres de la grille
+cadres = []
+
+tailleCadre = 0
+
+
+def creerLabel(text):
+    global tailleCadre
+    cadre = tk.Frame(frameLabel, highlightthickness=0)
+    cadre.grid(row=tailleCadre, column=1)
+    cadres.append(cadre)
+    for cadre in cadres:
+        if not cadre.winfo_children():
+            label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
+            label.grid(row=0, column=0, sticky="nsew")
+            # Ajout des bindings pour delete un label
+            label.bind("<Button-3>", deleteLabel)
+            break
+    tailleCadre += 1
 
 
 # Fonctions pour les commandes des boutons
@@ -263,20 +281,27 @@ def exporterCommande():
     print("test export")
 
 
-def avancerCommande():
-    creerLabel("avancer")
+def avancerCommande(valeur):
+    if valeur != "":
+        res = "avancer " + valeur
+        creerLabel(res)
 
 
-def reculerCommande():
-    creerLabel("reculer")
+def reculerCommande(valeur):
+    if valeur != "":
+        res = "reculer " + valeur
+        creerLabel(res)
 
 
-def tournerDroiteCommande():
-    creerLabel("tournerDroite")
+def tournerDroiteCommande(valeur):
+    if valeur != "":
+        res = "tournerDroite " + valeur
+        creerLabel(res)
 
-
-def tournerGaucheCommande():
-    creerLabel("tournerGauche")
+def tournerGaucheCommande(valeur):
+    if valeur != "":
+        res = "tournerGauche " + valeur
+        creerLabel(res)
 
 
 def leverCrayonCommande():
@@ -299,73 +324,151 @@ def nettoyerCommande():
     creerLabel("nettoyer")
 
 
-def fccCommande():
-    creerLabel("fcc")
+def fccCommande(valeur1, valeur2, valeur3):
+    if valeur1 != "" and valeur2 != "" and valeur3 != "":
+        res = "reculer " + valeur1 + " " + valeur2 + " " + valeur3
+        creerLabel(res)
+
+def fCapCommande(valeur):
+    if valeur != "":
+        res = "fCap " + valeur
+        creerLabel(res)
 
 
-def fCapCommande():
-    creerLabel("fcap")
+def fPosCommande(valeur1, valeur2):
+    if valeur1 != "" and valeur2 != "":
+        res = "fPos " + valeur1+ " " + valeur2
+        creerLabel(res)
 
 
-def fPosCommande():
-    creerLabel("fpos")
 
-
+#Avancer
+# Création d'un cadre pour le bouton et le champ de texte "Avancer"
+avancerFrame = tk.Frame(frameBouton)
+avancerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Avancer"
-avancerBouton = tk.Button(frameBouton, text="Avancer", command=lambda: avancerCommande())
-avancerBouton.pack()
+avancerBouton = tk.Button(avancerFrame, text="Avancer", command=lambda: avancerCommande(avancerTexte.get()), width=20)
+avancerBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour avancer
+avancerTexte = tk.Entry(avancerFrame, width=10)
+avancerTexte.pack(side="left", fill="x")
 
+#Reculer
+# Création d'un cadre pour le bouton et le champ de texte "Reculer"
+reculerFrame = tk.Frame(frameBouton)
+reculerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "reculer"
-reculerBouton = tk.Button(frameBouton, text="Reculer", command=lambda: reculerCommande())
-reculerBouton.pack()
+reculerBouton = tk.Button(reculerFrame, text="Reculer", command=lambda: reculerCommande(reculerTexte.get()), width=20)
+reculerBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour reculer
+reculerTexte = tk.Entry(reculerFrame, width=10)
+reculerTexte.pack(side="left", fill="x")
 
+#Tourner à droite
+# Création d'un cadre pour le bouton et le champ de texte "Tourner à droite"
+tournerDroiteFrame = tk.Frame(frameBouton)
+tournerDroiteFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Tourner à droite"
-tournerDroiteBouton = tk.Button(frameBouton, text="Tourner à Droite", command=lambda: tournerDroiteCommande())
-tournerDroiteBouton.pack()
+tournerDroiteBouton = tk.Button(tournerDroiteFrame, text="Tourner à Droite", command=lambda: tournerDroiteCommande(tournerDroiteTexte.get()), width=20)
+tournerDroiteBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte
+tournerDroiteTexte = tk.Entry(tournerDroiteFrame, width=10)
+tournerDroiteTexte.pack(side="left", fill="x")
 
-# Création d'un bouton "Tourner à gauche"
-tournerGaucheBouton = tk.Button(frameBouton, text="Tourner à Gauche", command=lambda: tournerGaucheCommande())
-tournerGaucheBouton.pack()
 
-# Création d'un bouton "Lever Crayon"
-leverCrayonBouton = tk.Button(frameBouton, text="Lever le crayon", command=lambda: leverCrayonCommande())
-leverCrayonBouton.pack()
+#Tourner à gauche
+# Création d'un cadre pour le bouton et le champ de texte "Tourner à droite"
+tournerGaucheFrame = tk.Frame(frameBouton)
+tournerGaucheFrame.pack(side="top", anchor="w")
+# Création d'un bouton "Tourner à droite"
+tournerGaucheBouton = tk.Button(tournerGaucheFrame, text="Tourner à Gauche", command=lambda: tournerGaucheCommande(tournerGaucheTexte.get()), width=20)
+tournerGaucheBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour tourner à droite
+tournerGaucheTexte = tk.Entry(tournerGaucheFrame, width=10)
+tournerGaucheTexte.pack(side="left", fill="x")
 
+
+
+# Lever Crayon Frame
+leverCrayonFrame = tk.Frame(frameBouton)
+leverCrayonFrame.pack(side="top", anchor="w")
+# Création d'un bouton "Lever le crayon"
+leverCrayonBouton = tk.Button(leverCrayonFrame, text="Lever le crayon", command=lambda: leverCrayonCommande(), width=20)
+leverCrayonBouton.pack(side="left", fill="x")
+
+
+# Baisser Crayon Frame
+baisserCrayonFrame = tk.Frame(frameBouton)
+baisserCrayonFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Baisser Crayon"
-baisserCrayonBouton = tk.Button(frameBouton, text="Baisser le crayon", command=lambda: baisserCrayonCommande())
-baisserCrayonBouton.pack()
+baisserCrayonBouton = tk.Button(baisserCrayonFrame, text="Baisser le crayon", command=lambda: baisserCrayonCommande(), width=20)
+baisserCrayonBouton.pack(side="left", fill="x")
 
 # Création d'un bouton "Origine"
-origineBouton = tk.Button(frameBouton, text="Origine", command=lambda: origineCommande())
-origineBouton.pack()
+origineBouton = tk.Button(frameBouton, text="Origine", command=lambda: origineCommande(), width=20)
+origineBouton.pack(side="top", anchor="w")
 
 # Création d'un bouton "Restaurer"
-restaurerBouton = tk.Button(frameBouton, text="Restaurer", command=lambda: restaurerCommande())
-restaurerBouton.pack()
+restaurerBouton = tk.Button(frameBouton, text="Restaurer", command=lambda: restaurerCommande(), width=20)
+restaurerBouton.pack(side="top", anchor="w")
 
 # Création d'un bouton "Nettoyer"
-nettoyerBouton = tk.Button(frameBouton, text="Nettoyer", command=lambda: nettoyerCommande())
-nettoyerBouton.pack()
+nettoyerBouton = tk.Button(frameBouton, text="Nettoyer", command=lambda: nettoyerCommande(), width=20)
+nettoyerBouton.pack(side="top", anchor="w")
 
+
+#FCC
+# Création d'un cadre pour le bouton et le champ de texte "FCC"
+fccFrame = tk.Frame(frameBouton)
+fccFrame.pack(side="top", anchor="w")
 # Création d'un bouton "FCC r v b"
-fccBouton = tk.Button(frameBouton, text="FCC", command=lambda: fccCommande())
-fccBouton.pack()
+fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: fccCommande(fccRed.get(),fccGreen.get(),fccBlue.get()), width=20)
+fccBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fcc r
+fccRed = tk.Entry(fccFrame, width=10)
+fccRed.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fcc v
+fccGreen = tk.Entry(fccFrame, width=10)
+fccGreen.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fcc b
+fccBlue = tk.Entry(fccFrame, width=10)
+fccBlue.pack(side="left", fill="x")
 
-# Création d'un bouton "Avancer"
-fCapBouton = tk.Button(frameBouton, text="FCAP", command=lambda: fCapCommande())
-fCapBouton.pack()
 
-# Création d'un bouton "Avancer"
-fPosBouton = tk.Button(frameBouton, text="FPOS", command=lambda: fPosCommande())
-fPosBouton.pack()
+#fCap
+# Création d'un cadre pour le bouton et le champ de texte "fCap"
+fCapFrame = tk.Frame(frameBouton)
+fCapFrame.pack(side="top", anchor="w")
+# Création d'un bouton "fCap angle"
+fCapBouton = tk.Button(fCapFrame, text="FCAP", command=lambda: fCapCommande(fCapTexte.get()), width=20)
+fCapBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fCap
+fCapTexte = tk.Entry(fCapFrame, width=10)
+fCapTexte.pack(side="left", fill="x")
+
+
+#fPos
+# Création d'un cadre pour le bouton et le champ de texte "fPos"
+fPosFrame = tk.Frame(frameBouton)
+fPosFrame.pack(side="top", anchor="w")
+# Création d'un bouton "fPos x y"
+fPosBouton = tk.Button(fPosFrame, text="FPOS", command=lambda: fPosCommande(fPosX.get(),fPosY.get()), width=20)
+fPosBouton.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fPosX
+fPosX = tk.Entry(fPosFrame, width=10)
+fPosX.pack(side="left", fill="x")
+# Création d'un champ de texte pour entrer du texte pour fPosY
+fPosY = tk.Entry(fPosFrame, width=10)
+fPosY.pack(side="left", fill="x")
+
 
 # Création d'un bouton "Import"
-importerBouton = tk.Button(frameLabel, text="Import", command=lambda: importerCommande())
-importerBouton.grid()
+importerBouton = tk.Button(frameBouton, text="Import", command=lambda: importerCommande(), width=20)
+importerBouton.pack(side="left", anchor="w")
 
 # Création d'un bouton "Export"
-exportBouton = tk.Button(frameLabel, text="Export", command=lambda: exporterCommande())
-exportBouton.grid()
+exportBouton = tk.Button(frameBouton, text="Export", command=lambda: exporterCommande(), width=20)
+exportBouton.pack(side="left", anchor="w")
 
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
