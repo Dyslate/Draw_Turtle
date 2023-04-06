@@ -360,12 +360,13 @@ def repeatCommande(param):
     label_fin.grid(row=taille_espace+5, column=0, sticky="nsew")
 
     def augmenter_espace():
-        print("augmenter taille")
+        print("test")
+        # Augmenter la taille de l'espace entre les accolades
 
     def diminuer_espace():
-        print("diminue taille")
+        print("test")
 
-    bouton_plus = tk.Button(cadre, text="+", command=augmenter_espace, width=2)
+    bouton_plus = tk.Button(cadre, text="+", command=augmenter_espace(), width=2)
     bouton_plus.grid(row=0, column=0, sticky="nsew")
 
     bouton_moins = tk.Button(cadre, text="-", command=diminuer_espace, width=2)
