@@ -423,20 +423,35 @@ class EditeurDeTexte:
                 label_fin.bind("<Button-1>", self.highlight)
                 label_espace.bind("<Button-1>", self.highlight)
 
-    def fccCommande(self, valeur1, valeur2, valeur3):
-        if valeur1 != "" and valeur2 != "" and valeur3 != "":
-            res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
+
+        if self.selectedLabel:
+            self.modify(res)
+        else:
             self.creerLabel(res)
+
+    def fccCommande(self, valeur1, valeur2, valeur3):
+        res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
+        if valeur1 != "" and valeur2 != "" and valeur3 != "":
+            if self.selectedLabel:
+                self.modify(res)
+            else:
+                self.creerLabel(res)
 
     def fCapCommande(self, valeur):
+        res = "fCap " + valeur
         if valeur != "":
-            res = "fCap " + valeur
-            self.creerLabel(res)
+            if self.selectedLabel:
+                self.modify(res)
+            else:
+                self.creerLabel(res)
 
     def fPosCommande(self, valeur1, valeur2):
+        res = "fPos " + valeur1 + " " + valeur2
         if valeur1 != "" and valeur2 != "":
-            res = "fPos " + valeur1 + " " + valeur2
-            self.creerLabel(res)
+            if self.selectedLabel:
+                self.modify(res)
+            else:
+                self.creerLabel(res)
 
 
 ###################################################
@@ -446,7 +461,7 @@ editeur = EditeurDeTexte()
 
 root2 = tk.Tk()
 root2.title("Editeur de texte")
-root2.geometry("400x800")
+root2.geometry("850x500")
 
 frameBouton = tk.Frame(root2)
 frameBouton.pack(side="left", fill="y")
@@ -567,8 +582,7 @@ nettoyerBouton.pack(side="top", anchor="w")
 fccFrame = tk.Frame(frameBouton)
 fccFrame.pack(side="top", anchor="w")
 # Création d'un bouton "FCC r v b"
-fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: editeur.fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()),
-                      width=20)
+fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: editeur.fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()), width=20)
 fccBouton.pack(side="left", fill="x")
 
 # Création d'un champ de texte pour entrer du texte pour fcc r
