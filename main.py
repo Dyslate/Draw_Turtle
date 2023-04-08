@@ -424,10 +424,6 @@ class EditeurDeTexte:
                 label_espace.bind("<Button-1>", self.highlight)
 
 
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
 
     def fccCommande(self, valeur1, valeur2, valeur3):
         res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
@@ -481,12 +477,8 @@ canvas.create_window((0, 0), window=frameLabel, anchor="nw")
 
 label_list = []
 
-# Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
-def on_frame_configure(event):
-    canvas.configure(scrollregion=canvas.bbox("all"))
 
-
-frameLabel.bind("<Configure>", on_frame_configure)
+frameLabel.bind("<Configure>", editeur.on_frame_configure)
 
 
 #######################
