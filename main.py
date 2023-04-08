@@ -297,6 +297,16 @@ class EditeurDeTexte:
         res = self.exporterCommande(commandes)
         print(res)
 
+    def clear(self):
+        self.label_list = []
+        for label in cadre.winfo_children():
+            if label.cget("text") == "+" or label.cget("text") == "-":
+                self.label_list.append(label)
+                continue
+            else:
+                label.destroy()
+        self.selectedLabel = None
+        self.tailleCadre = 2
 
     def avancerCommande(self, valeur):
         res = "AVANCE " + valeur
@@ -430,9 +440,7 @@ class EditeurDeTexte:
     def repeatCommande(self, param):
         if param != "":
             if self.selectedLabel:
-
                 cadre.grid(row=self.tailleCadre, column=1)
-
                 row = self.selectedLabel.grid_info()['row']
                 # Ajouter une ligne
                 self.augmenter_espaceRow(row)
@@ -473,7 +481,7 @@ class EditeurDeTexte:
                 self.tailleCadre += 1
                 self.label_list.append(label_espace)
 
-                label_fin = tk.Label(cadre, text="}    ", bg="white", borderwidth=1, relief="solid", width=15)
+                label_fin = tk.Label(cadre, text="}", bg="white", borderwidth=1, relief="solid", width=15)
                 label_fin.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
 
@@ -684,13 +692,13 @@ fPosX.pack(side="left", fill="x")
 fPosY = tk.Entry(fPosFrame, width=10)
 fPosY.pack(side="left", fill="x")
 
-bouton_plus = tk.Button(cadre, text="+", command=lambda: editeur.augmenter_espace(), width=2)
+bouton_plus = tk.Button(cadre, text="+", command=lambda: editeur.augmenter_espace(), width=20)
 bouton_plus.grid(row=editeur.tailleCadre, column=0, sticky="nsew")
 editeur.tailleCadre += 1
 
 editeur.label_list.append(bouton_plus)
 
-bouton_moins = tk.Button(cadre, text="-", command=lambda: editeur.diminuer_espace(), width=2)
+bouton_moins = tk.Button(cadre, text="-", command=lambda: editeur.diminuer_espace(), width=20)
 bouton_moins.grid(row=editeur.tailleCadre, column=0, sticky="nsew")
 editeur.tailleCadre += 1
 
@@ -703,6 +711,11 @@ importerBouton.pack(side="left", anchor="w")
 # Création d'un bouton "Export"
 exportBouton = tk.Button(frameBouton, text="Export", command=lambda: editeur.exporter(), width=20)
 exportBouton.pack(side="left", anchor="w")
+
+# Création d'un bouton "Clear"
+clearBouton = tk.Button(frameBouton, text="Clear", command=lambda: editeur.clear(), width=20)
+clearBouton.pack(side="left", anchor="w")
+
 
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
