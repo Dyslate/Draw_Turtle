@@ -206,243 +206,10 @@ IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 
-
-
-
-
-class EditeurDeTexte:
-    def __init__(self):
-        # création des cadres de la grille
-        self.tailleCadre = 0
-        self.selectedLabel = None
-        self.label_list = []
-
-    def highlight(self, event):
-        if self.selectedLabel:
-            self.selectedLabel.configure(bg="white")
-
-        self.selectedLabel = event.widget
-        self.selectedLabel.configure(bg="yellow")
-
-    # Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
-    def on_frame_configure(self, event):
-        canvas.configure(scrollregion=canvas.bbox("all"))
-
-    # Fonctions pour les commandes des boutons
-    def importerCommande(self):
-        print("test import")
-
-    def exporterCommande(self):
-        # parcourt le cadre et affiche ce qu'il y a dedans (les labels)
-        for label in cadre.winfo_children():
-            print(label.cget("text"))
-
-    def avancerCommande(self, valeur):
-        res = "avancer " + valeur
-        if valeur != "":
-            if self.selectedLabel:
-                self.modify(res)
-            else:
-                self.creerLabel(res)
-
-    def reculerCommande(self, valeur):
-        res = "reculer " + valeur
-        if valeur != "":
-            if self.selectedLabel:
-                self.modify(res)
-            else:
-                self.creerLabel(res)
-
-    def tournerDroiteCommande(self, valeur):
-        res = "tournerDroite " + valeur
-        if valeur != "":
-            if self.selectedLabel:
-                self.modify(res)
-            else:
-                self.creerLabel(res)
-
-    def tournerGaucheCommande(self, valeur):
-        res = "tournerGauche " + valeur
-        if valeur != "":
-            if self.selectedLabel:
-                self.modify(res)
-            else:
-                self.creerLabel(res)
-
-    def leverCrayonCommande(self):
-        res = "leverCrayon"
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
-
-    def baisserCrayonCommande(self):
-        res = "baisserCrayon"
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
-
-    def origineCommande(self):
-        res = "origine"
-        print("test")
-        print(self.selectedLabel)
-
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
-
-    def restaurerCommande(self):
-        res = "restaurer"
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
-
-    def nettoyerCommande(self):
-        res = "nettoyer"
-        if self.selectedLabel:
-            self.modify(res)
-        else:
-            self.creerLabel(res)
-
-    def refresh(self):
-        for widget in cadre.children.values():
-            widget.grid_forget()
-        for ndex, i in enumerate(self.label_list):
-            i.grid(row=ndex)
-            print(i)
-
-    def diminuer_espace(self):
-        if self.selectedLabel:
-            row = self.selectedLabel.grid_info()['row']
-            print(self.label_list[row])
-            del self.label_list[row]
-            self.refresh()
-            self.tailleCadre -= 1
-
-    def modify(self, param):
-        if self.selectedLabel:
-            row =self.selectedLabel.grid_info()['row']
-            print("rangée: " + str(row))
-            self.label_list[row].configure(text=param)
-            self.refresh()
-
-    def modifyRow(self, param, row):
-        print("rangée: " + str(row))
-        self.label_list[row].configure(text=param)
-        self.refresh()
-
-    def augmenter_espace(self):
-        if self.selectedLabel:
-            row = self.selectedLabel.grid_info()['row']
-            print("rangée: " + str(row))
-
-            label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
-            label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
-            label_espace.bind("<Button-1>", self.highlight)
-
-            self.label_list.insert(row, label_espace)
-            self.refresh()
-            self.tailleCadre += 1
-
-    def augmenter_espaceRow(self, row):
-        label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
-        label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
-        label_espace.bind("<Button-1>", self.highlight)
-
-        self.label_list.insert(row, label_espace)
-        self.refresh()
-        self.tailleCadre += 1
-
-    def creerLabel(self,text):
-        cadre.grid(row=self.tailleCadre, column=1)
-        label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
-        label.grid(row=self.tailleCadre, column=0, sticky="nsew")
-        self.label_list.append(label)
-        # Ajout des bindings pour delete un label et highlight
-        label.bind("<Button-1>", self.highlight)
-        self.tailleCadre += 1
-        print(self.tailleCadre)
-
-    def repeatCommande(self,param):
-        if param != "":
-            if self.selectedLabel:
-
-                cadre.grid(row=self.tailleCadre, column=1)
-
-                row = self.selectedLabel.grid_info()['row']
-                # Ajouter une ligne
-                self.augmenter_espaceRow(row)
-
-                # Modify le nouvel espace créé
-                self.modifyRow("repeat " + param, row)
-
-                # Ajouter une ligne
-                self.augmenter_espaceRow(row + 1)
-
-                # Modify le nouvel espace créé
-                self.modifyRow("{", row + 1)
-
-                # Ajouter une ligne
-                self.augmenter_espaceRow(row + 2)
-
-                # Ajouter une ligne
-                self.augmenter_espaceRow(row + 3)
-
-                # Modify le nouvel espace créé
-                self.modifyRow("}", row + 3)
-
-            else:
-                cadre.grid(row=self.tailleCadre, column=1)
-                label_repeat = tk.Label(cadre, text="repeat " + param, bg="white", borderwidth=1, relief="solid", width=15)
-                label_repeat.grid(row=self.tailleCadre, column=0, sticky="nsew")
-                self.tailleCadre += 1
-                self.label_list.append(label_repeat)
-
-                label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=15)
-                label_debut.grid(row=self.tailleCadre, column=0, sticky="nsew")
-                self.tailleCadre += 1
-                self.label_list.append(label_debut)
-
-                label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
-                label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
-                self.tailleCadre += 1
-                self.label_list.append(label_espace)
-
-                label_fin = tk.Label(cadre, text="}    ", bg="white", borderwidth=1, relief="solid", width=15)
-                label_fin.grid(row=self.tailleCadre, column=0, sticky="nsew")
-                self.tailleCadre += 1
-
-                self.label_list.append(label_fin)
-
-                # Ajout des bindings pour delete un label
-                label_debut.bind("<Button-1>", self.highlight)
-                label_repeat.bind("<Button-1>", self.highlight)
-                label_fin.bind("<Button-1>", self.highlight)
-                label_espace.bind("<Button-1>", self.highlight)
-
-    def fccCommande(self, valeur1, valeur2, valeur3):
-        if valeur1 != "" and valeur2 != "" and valeur3 != "":
-            res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
-            self.creerLabel(res)
-
-    def fCapCommande(self, valeur):
-        if valeur != "":
-            res = "fCap " + valeur
-            self.creerLabel(res)
-
-    def fPosCommande(self, valeur1, valeur2):
-        if valeur1 != "" and valeur2 != "":
-            res = "fPos " + valeur1 + " " + valeur2
-            self.creerLabel(res)
-
-
 ###################################################
 # PARTIE 2: AUTRE FENETRE POUR L'EDITEUR DE TEXTE #
 ###################################################
-editeur = EditeurDeTexte()
+
 
 root2 = tk.Tk()
 root2.title("Editeur de texte")
@@ -488,6 +255,265 @@ selectedLabel = None
 cadre = tk.Frame(frameLabel, highlightthickness=0)
 
 
+def highlight(event):
+    global selectedLabel
+    if selectedLabel:
+        selectedLabel.configure(bg="white")
+
+    selectedLabel = event.widget
+    selectedLabel.configure(bg="yellow")
+
+
+
+
+
+# Fonctions pour les commandes des boutons
+def importerCommande():
+    print("test import")
+
+
+def exporterCommande():
+    # parcourt le cadre et affiche ce qu'il y a dedans (les labels)
+    for label in cadre.winfo_children():
+        print(label.cget("text"))
+
+
+
+def avancerCommande(valeur):
+    global selectedLabel
+    res = "avancer "+valeur
+    if valeur != "":
+        if selectedLabel:
+            modify(res)
+        else:
+            creerLabel(res)
+
+
+def reculerCommande(valeur):
+    global selectedLabel
+    res = "reculer "+valeur
+    if valeur != "":
+        if selectedLabel:
+            modify(res)
+        else:
+            creerLabel(res)
+
+
+def tournerDroiteCommande(valeur):
+    global selectedLabel
+    res = "tournerDroite "+valeur
+    if valeur != "":
+        if selectedLabel:
+            modify(res)
+        else:
+            creerLabel(res)
+
+
+def tournerGaucheCommande(valeur):
+    global selectedLabel
+    res = "tournerGauche " + valeur
+    if valeur != "":
+        if selectedLabel:
+            modify(res)
+        else:
+            creerLabel(res)
+
+def leverCrayonCommande():
+    global selectedLabel
+    res = leverCrayon
+    if selectedLabel:
+        modify(res)
+    else:
+        creerLabel(res)
+
+
+def baisserCrayonCommande():
+    res = "baisserCrayon"
+    global selectedLabel
+    if selectedLabel:
+        modify(res)
+    else:
+        creerLabel(res)
+
+
+def origineCommande():
+    global selectedLabel
+    res = "origine"
+    if selectedLabel:
+        modify(res)
+    else:
+        creerLabel(res)
+
+
+def restaurerCommande():
+    global selectedLabel
+    res = "restaurer"
+    if selectedLabel:
+        modify(res)
+    else:
+        creerLabel(res)
+
+
+
+def nettoyerCommande():
+    global selectedLabel
+    res = "nettoyer"
+    if selectedLabel:
+        modify(res)
+    else:
+        creerLabel(res)
+
+def refresh():
+    global cadre, label_list
+    for widget in cadre.children.values():
+        widget.grid_forget()
+    for ndex, i in enumerate(label_list):
+        i.grid(row=ndex)
+        print(i)
+
+def diminuer_espace():
+    global selectedLabel, tailleCadre, cadre, label_list
+    if selectedLabel:
+        row = selectedLabel.grid_info()['row']
+        print(label_list[row])
+        del label_list[row]
+        refresh()
+        tailleCadre -= 1
+
+def modify(param):
+    global selectedLabel, label_list
+    if selectedLabel:
+        row = selectedLabel.grid_info()['row']
+        print("rangée: "+str(row))
+        label_list[row].configure(text=param)
+        refresh()
+
+
+def modifyRow(param, row):
+    global selectedLabel, label_list
+    print("rangée: "+str(row))
+    label_list[row].configure(text=param)
+    refresh()
+
+
+def augmenter_espace():
+    global selectedLabel, tailleCadre, cadre,  label_list
+    if selectedLabel:
+        row = selectedLabel.grid_info()['row']
+        print("rangée: "+str(row))
+
+        label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+        label_espace.grid(row=tailleCadre, column=0, sticky="nsew")
+        label_espace.bind("<Button-1>", highlight)
+
+        label_list.insert(row, label_espace)
+        refresh()
+        tailleCadre += 1
+
+def augmenter_espaceRow(row):
+    global selectedLabel, tailleCadre, cadre, label_list
+    label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+    label_espace.grid(row=tailleCadre, column=0, sticky="nsew")
+    label_espace.bind("<Button-1>", highlight)
+
+    label_list.insert(row, label_espace)
+    refresh()
+    tailleCadre += 1
+
+
+def creerLabel(text):
+    global tailleCadre, selectedLabel, cadre, label_list
+    cadre.grid(row=tailleCadre, column=1)
+    cadres.append(cadre)
+    label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
+    label.grid(row=tailleCadre, column=0, sticky="nsew")
+    label_list.append(label)
+    # Ajout des bindings pour delete un label et highlight
+    label.bind("<Button-1>", highlight)
+    tailleCadre += 1
+    print(tailleCadre)
+def repeatCommande(param):
+    global tailleCadre, cadre, label_list, selectedLabel
+
+    if param != "":
+        if selectedLabel:
+
+            cadre.grid(row=tailleCadre, column=1)
+            cadres.append(cadre)
+
+            row = selectedLabel.grid_info()['row']
+            #Ajouter une ligne
+            augmenter_espaceRow(row)
+
+            #Modify le nouvel espace créé
+            modifyRow("repeat "+param, row)
+
+
+            #Ajouter une ligne
+            augmenter_espaceRow(row+1)
+
+
+            #Modify le nouvel espace créé
+            modifyRow("{", row+1)
+
+            #Ajouter une ligne
+            augmenter_espaceRow(row+2)
+
+            #Ajouter une ligne
+            augmenter_espaceRow(row+3)
+
+            #Modify le nouvel espace créé
+            modifyRow("}", row+3)
+
+        else:
+            cadre.grid(row=tailleCadre, column=1)
+            cadres.append(cadre)
+            label_repeat = tk.Label(cadre, text="repeat " + param, bg="white", borderwidth=1, relief="solid", width=15)
+            label_repeat.grid(row=tailleCadre, column=0, sticky="nsew")
+            tailleCadre += 1
+            label_list.append(label_repeat)
+
+            label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=15)
+            label_debut.grid(row=tailleCadre, column=0, sticky="nsew")
+            tailleCadre += 1
+            label_list.append(label_debut)
+
+            label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+            label_espace.grid(row=tailleCadre, column=0, sticky="nsew")
+            tailleCadre += 1
+            label_list.append(label_espace)
+
+            label_fin = tk.Label(cadre, text="}    ", bg="white", borderwidth=1, relief="solid", width=15)
+            label_fin.grid(row=tailleCadre, column=0, sticky="nsew")
+            tailleCadre += 1
+
+
+            label_list.append(label_fin)
+
+            # Ajout des bindings pour delete un label
+            label_debut.bind("<Button-1>", highlight)
+            label_repeat.bind("<Button-1>", highlight)
+            label_fin.bind("<Button-1>", highlight)
+            label_espace.bind("<Button-1>", highlight)
+
+
+
+def fccCommande(valeur1, valeur2, valeur3):
+    if valeur1 != "" and valeur2 != "" and valeur3 != "":
+        res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
+        creerLabel(res)
+
+
+def fCapCommande(valeur):
+    if valeur != "":
+        res = "fCap " + valeur
+        creerLabel(res)
+
+
+def fPosCommande(valeur1, valeur2):
+    if valeur1 != "" and valeur2 != "":
+        res = "fPos " + valeur1 + " " + valeur2
+        creerLabel(res)
 
 
 # Avancer
@@ -495,7 +521,7 @@ cadre = tk.Frame(frameLabel, highlightthickness=0)
 avancerFrame = tk.Frame(frameBouton)
 avancerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Avancer"
-avancerBouton = tk.Button(avancerFrame, text="Avancer", command=lambda: editeur.avancerCommande(avancerTexte.get()), width=20)
+avancerBouton = tk.Button(avancerFrame, text="Avancer", command=lambda: avancerCommande(avancerTexte.get()), width=20)
 avancerBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour avancer
 avancerTexte = tk.Entry(avancerFrame, width=10)
@@ -506,7 +532,7 @@ avancerTexte.pack(side="left", fill="x")
 reculerFrame = tk.Frame(frameBouton)
 reculerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "reculer"
-reculerBouton = tk.Button(reculerFrame, text="Reculer", command=lambda: editeur.reculerCommande(reculerTexte.get()), width=20)
+reculerBouton = tk.Button(reculerFrame, text="Reculer", command=lambda: reculerCommande(reculerTexte.get()), width=20)
 reculerBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour reculer
 reculerTexte = tk.Entry(reculerFrame, width=10)
@@ -517,7 +543,7 @@ reculerTexte.pack(side="left", fill="x")
 tournerDroiteFrame = tk.Frame(frameBouton)
 tournerDroiteFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Tourner à droite"
-tournerDroiteBouton = tk.Button(tournerDroiteFrame, text="Tourner à Droite", command=lambda: editeur.tournerDroiteCommande(tournerDroiteTexte.get()), width=20)
+tournerDroiteBouton = tk.Button(tournerDroiteFrame, text="Tourner à Droite", command=lambda: tournerDroiteCommande(tournerDroiteTexte.get()), width=20)
 tournerDroiteBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte
 tournerDroiteTexte = tk.Entry(tournerDroiteFrame, width=10)
@@ -529,7 +555,7 @@ tournerGaucheFrame = tk.Frame(frameBouton)
 tournerGaucheFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Tourner à droite"
 tournerGaucheBouton = tk.Button(tournerGaucheFrame, text="Tourner à Gauche",
-                                command=lambda: editeur.tournerGaucheCommande(tournerGaucheTexte.get()), width=20)
+                                command=lambda: tournerGaucheCommande(tournerGaucheTexte.get()), width=20)
 tournerGaucheBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour tourner à droite
 tournerGaucheTexte = tk.Entry(tournerGaucheFrame, width=10)
@@ -539,27 +565,27 @@ tournerGaucheTexte.pack(side="left", fill="x")
 leverCrayonFrame = tk.Frame(frameBouton)
 leverCrayonFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Lever le crayon"
-leverCrayonBouton = tk.Button(leverCrayonFrame, text="Lever le crayon", command=lambda: editeur.leverCrayonCommande(), width=20)
+leverCrayonBouton = tk.Button(leverCrayonFrame, text="Lever le crayon", command=lambda: leverCrayonCommande(), width=20)
 leverCrayonBouton.pack(side="left", fill="x")
 
 # Baisser Crayon Frame
 baisserCrayonFrame = tk.Frame(frameBouton)
 baisserCrayonFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Baisser Crayon"
-baisserCrayonBouton = tk.Button(baisserCrayonFrame, text="Baisser le crayon", command=lambda: editeur.baisserCrayonCommande(),
+baisserCrayonBouton = tk.Button(baisserCrayonFrame, text="Baisser le crayon", command=lambda: baisserCrayonCommande(),
                                 width=20)
 baisserCrayonBouton.pack(side="left", fill="x")
 
 # Création d'un bouton "Origine"
-origineBouton = tk.Button(frameBouton, text="Origine", command=lambda: editeur.origineCommande(), width=20)
+origineBouton = tk.Button(frameBouton, text="Origine", command=lambda: origineCommande(), width=20)
 origineBouton.pack(side="top", anchor="w")
 
 # Création d'un bouton "Restaurer"
-restaurerBouton = tk.Button(frameBouton, text="Restaurer", command=lambda: editeur.restaurerCommande(), width=20)
+restaurerBouton = tk.Button(frameBouton, text="Restaurer", command=lambda: restaurerCommande(), width=20)
 restaurerBouton.pack(side="top", anchor="w")
 
 # Création d'un bouton "Nettoyer"
-nettoyerBouton = tk.Button(frameBouton, text="Nettoyer", command=lambda: editeur.nettoyerCommande(), width=20)
+nettoyerBouton = tk.Button(frameBouton, text="Nettoyer", command=lambda: nettoyerCommande(), width=20)
 nettoyerBouton.pack(side="top", anchor="w")
 
 # FCC
@@ -567,7 +593,7 @@ nettoyerBouton.pack(side="top", anchor="w")
 fccFrame = tk.Frame(frameBouton)
 fccFrame.pack(side="top", anchor="w")
 # Création d'un bouton "FCC r v b"
-fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: editeur.fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()),
+fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()),
                       width=20)
 fccBouton.pack(side="left", fill="x")
 
@@ -586,7 +612,7 @@ fccBlue.pack(side="left", fill="x")
 fCapFrame = tk.Frame(frameBouton)
 fCapFrame.pack(side="top", anchor="w")
 # Création d'un bouton "fCap angle"
-fCapBouton = tk.Button(fCapFrame, text="FCAP", command=lambda: editeur.fCapCommande(fCapTexte.get()), width=20)
+fCapBouton = tk.Button(fCapFrame, text="FCAP", command=lambda: fCapCommande(fCapTexte.get()), width=20)
 fCapBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour fCap
 fCapTexte = tk.Entry(fCapFrame, width=10)
@@ -597,7 +623,7 @@ fCapTexte.pack(side="left", fill="x")
 repeatFrame = tk.Frame(frameBouton)
 repeatFrame.pack(side="top", anchor="w")
 # Création d'un bouton "repeat"
-repeatBouton = tk.Button(repeatFrame, text="Repeat", command=lambda: editeur.repeatCommande(repeatTexte.get()), width=20)
+repeatBouton = tk.Button(repeatFrame, text="Repeat", command=lambda: repeatCommande(repeatTexte.get()), width=20)
 repeatBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour Repeat
 repeatTexte = tk.Entry(repeatFrame, width=10)
@@ -608,7 +634,7 @@ repeatTexte.pack(side="left", fill="x")
 fPosFrame = tk.Frame(frameBouton)
 fPosFrame.pack(side="top", anchor="w")
 # Création d'un bouton "fPos x y"
-fPosBouton = tk.Button(fPosFrame, text="FPOS", command=lambda: editeur.fPosCommande(fPosX.get(), fPosY.get()), width=20)
+fPosBouton = tk.Button(fPosFrame, text="FPOS", command=lambda: fPosCommande(fPosX.get(), fPosY.get()), width=20)
 fPosBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour fPosX
 fPosX = tk.Entry(fPosFrame, width=10)
@@ -617,25 +643,25 @@ fPosX.pack(side="left", fill="x")
 fPosY = tk.Entry(fPosFrame, width=10)
 fPosY.pack(side="left", fill="x")
 
-bouton_plus = tk.Button(cadre, text="+", command=lambda: editeur.augmenter_espace(), width=2)
-bouton_plus.grid(row=editeur.tailleCadre, column=0, sticky="nsew")
-editeur.tailleCadre += 1
+bouton_plus = tk.Button(cadre, text="+", command=lambda: augmenter_espace(), width=2)
+bouton_plus.grid(row=tailleCadre, column=0, sticky="nsew")
+tailleCadre += 1
 
-editeur.label_list.append(bouton_plus)
+label_list.append(bouton_plus)
 
-bouton_moins = tk.Button(cadre, text="-", command=lambda: editeur.diminuer_espace(), width=2)
-bouton_moins.grid(row=editeur.tailleCadre, column=0, sticky="nsew")
-editeur.tailleCadre += 1
+bouton_moins = tk.Button(cadre, text="-", command=lambda: diminuer_espace(), width=2)
+bouton_moins.grid(row=tailleCadre, column=0, sticky="nsew")
+tailleCadre += 1
 
-editeur.label_list.append(bouton_moins)
+label_list.append(bouton_moins)
 
 
 # Création d'un bouton "Import"
-importerBouton = tk.Button(frameBouton, text="Import", command=lambda: editeur.importerCommande(), width=20)
+importerBouton = tk.Button(frameBouton, text="Import", command=lambda: importerCommande(), width=20)
 importerBouton.pack(side="left", anchor="w")
 
 # Création d'un bouton "Export"
-exportBouton = tk.Button(frameBouton, text="Export", command=lambda: editeur.exporterCommande(), width=20)
+exportBouton = tk.Button(frameBouton, text="Export", command=lambda: exporterCommande(), width=20)
 exportBouton.pack(side="left", anchor="w")
 
 # Boucle principale de tkinter pour afficher le visualisateur
