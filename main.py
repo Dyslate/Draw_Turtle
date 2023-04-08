@@ -215,12 +215,15 @@ class EditeurDeTexte:
         self.label_list = []
 
     def highlight(self, event):
-        if self.selectedLabel:
+        widget = event.widget
+        if widget == self.selectedLabel:
             self.selectedLabel.configure(bg="white")
-
-        self.selectedLabel = event.widget
-        self.selectedLabel.configure(bg="yellow")
-
+            self.selectedLabel = None
+        else:
+            if self.selectedLabel:
+                self.selectedLabel.configure(bg="white")
+            widget.configure(bg="yellow")
+            self.selectedLabel = widget
     # Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
     def on_frame_configure(self, event):
         canvas.configure(scrollregion=canvas.bbox("all"))
