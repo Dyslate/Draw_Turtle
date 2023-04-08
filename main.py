@@ -207,9 +207,6 @@ IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.changerCouleur, "^FCC\s")
 
 
-
-
-
 class EditeurDeTexte:
     def __init__(self):
         # création des cadres de la grille
@@ -232,13 +229,74 @@ class EditeurDeTexte:
     def importerCommande(self):
         print("test import")
 
-    def exporterCommande(self):
-        # parcourt le cadre et affiche ce qu'il y a dedans (les labels)
-        for label in cadre.winfo_children():
-            print(label.cget("text"))
+    def exporterCommande(self, commandes):
+        res = ""
+        i = 0
+        while i < len(commandes):
+            text = commandes[i]
+            if text.startswith("AVANCE"):
+                res += "<avancer dist=" + text.split(" ")[1] + ">\n"
+            elif text.startswith("RECULE"):
+                res += "<reculer dist=" + text.split(" ")[1] + ">\n"
+            elif text.startswith("TOURNEDROITE"):
+                res += "<droite angle=" + text.split(" ")[1] + ">\n"
+            elif text.startswith("TOURNEGAUCHE"):
+                res += "<gauche angle=" + text.split(" ")[1] + ">\n"
+            elif text.startswith("LEVECRAYON"):
+                res += "<lever>" + "\n"
+            elif text.startswith("BAISSECRAYON"):
+                res += "<baisser>" + "\n"
+            elif text.startswith("ORIGINE"):
+                res += "<origine>" + "\n"
+            elif text.startswith("NETTOIE"):
+                res += "<nettoyer>" + "\n"
+            elif text.startswith("RESTAURE"):
+                res += "<restaurer>" + "\n"
+            elif text.startswith("FCC"):
+                res += "<crayon rouge=" + text.split(" ")[1] + " vert=" + text.split(" ")[2] + " bleu=" + \
+                       text.split(" ")[3] + ">\n"
+            elif text.startswith("FCAP"):
+                res += "<cap angle =" + text.split(" ")[1] + ">\n"
+            elif text.startswith("FPOS"):
+                res += "<position x=" + text.split(" ")[1] + " y=" + text.split(" ")[2] + ">\n"
+            elif text.startswith("REPETE"):
+                n = int(text.split(" ")[1])
+                print("ici nombre de fois: "+str(n))
+                i += 1  # Passer à la ligne suivante
+                print("ici commande[i] vaut"+commandes[i])
+                if commandes[i].startswith("{"):
+                    i += 1  # Passer à la ligne suivante
+                    inner_commands = []
+                    bracket_count = 1
+                    print("bracker_count vaut "+str(bracket_count)+"\n")
+                    while bracket_count > 0:
+                        if commandes[i].startswith("{"):
+                            bracket_count += 1
+                        elif commandes[i].startswith("}"):
+                            bracket_count -= 1
+                        if bracket_count > 0:
+                            inner_commands.append(commandes[i])
+                            print("inner commands ici: " + str(inner_commands) + "\n")
+                            i += 1
+                    res += "<répéter fois=" + str(n) + ">\n"
+                    res += self.exporterCommande(inner_commands)
+                    res += "</répéter>\n"
+                    print("ici on repete: "+res)
+            i += 1
+        return res
+
+    # Adapter la méthode pour utiliser exporterCommande
+    def exporter(self):
+        commandes = [label.cget("text") for label in cadre.winfo_children()]
+        del commandes[0]
+        del commandes[0]
+        print(commandes)
+        res = self.exporterCommande(commandes)
+        print(res)
+
 
     def avancerCommande(self, valeur):
-        res = "avancer " + valeur
+        res = "AVANCE " + valeur
         if valeur != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -246,7 +304,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def reculerCommande(self, valeur):
-        res = "reculer " + valeur
+        res = "RECULE " + valeur
         if valeur != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -254,7 +312,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def tournerDroiteCommande(self, valeur):
-        res = "tournerDroite " + valeur
+        res = "TOURNEDROITE " + valeur
         if valeur != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -262,7 +320,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def tournerGaucheCommande(self, valeur):
-        res = "tournerGauche " + valeur
+        res = "TOURNEGAUCHE " + valeur
         if valeur != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -270,21 +328,21 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def leverCrayonCommande(self):
-        res = "leverCrayon"
+        res = "LEVECRAYON"
         if self.selectedLabel:
             self.modify(res)
         else:
             self.creerLabel(res)
 
     def baisserCrayonCommande(self):
-        res = "baisserCrayon"
+        res = "BAISSECRAYON"
         if self.selectedLabel:
             self.modify(res)
         else:
             self.creerLabel(res)
 
     def origineCommande(self):
-        res = "origine"
+        res = "ORIGINE"
         print("test")
         print(self.selectedLabel)
 
@@ -294,14 +352,14 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def restaurerCommande(self):
-        res = "restaurer"
+        res = "RESTAURE"
         if self.selectedLabel:
             self.modify(res)
         else:
             self.creerLabel(res)
 
     def nettoyerCommande(self):
-        res = "nettoyer"
+        res = "NETTOIE"
         if self.selectedLabel:
             self.modify(res)
         else:
@@ -324,7 +382,7 @@ class EditeurDeTexte:
 
     def modify(self, param):
         if self.selectedLabel:
-            row =self.selectedLabel.grid_info()['row']
+            row = self.selectedLabel.grid_info()['row']
             print("rangée: " + str(row))
             self.label_list[row].configure(text=param)
             self.refresh()
@@ -356,7 +414,7 @@ class EditeurDeTexte:
         self.refresh()
         self.tailleCadre += 1
 
-    def creerLabel(self,text):
+    def creerLabel(self, text):
         cadre.grid(row=self.tailleCadre, column=1)
         label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
         label.grid(row=self.tailleCadre, column=0, sticky="nsew")
@@ -366,7 +424,7 @@ class EditeurDeTexte:
         self.tailleCadre += 1
         print(self.tailleCadre)
 
-    def repeatCommande(self,param):
+    def repeatCommande(self, param):
         if param != "":
             if self.selectedLabel:
 
@@ -377,7 +435,7 @@ class EditeurDeTexte:
                 self.augmenter_espaceRow(row)
 
                 # Modify le nouvel espace créé
-                self.modifyRow("repeat " + param, row)
+                self.modifyRow("REPETE " + param, row)
 
                 # Ajouter une ligne
                 self.augmenter_espaceRow(row + 1)
@@ -396,7 +454,8 @@ class EditeurDeTexte:
 
             else:
                 cadre.grid(row=self.tailleCadre, column=1)
-                label_repeat = tk.Label(cadre, text="repeat " + param, bg="white", borderwidth=1, relief="solid", width=15)
+                label_repeat = tk.Label(cadre, text="REPETE " + param, bg="white", borderwidth=1, relief="solid",
+                                        width=15)
                 label_repeat.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
                 self.label_list.append(label_repeat)
@@ -423,8 +482,6 @@ class EditeurDeTexte:
                 label_fin.bind("<Button-1>", self.highlight)
                 label_espace.bind("<Button-1>", self.highlight)
 
-
-
     def fccCommande(self, valeur1, valeur2, valeur3):
         res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
         if valeur1 != "" and valeur2 != "" and valeur3 != "":
@@ -434,7 +491,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def fCapCommande(self, valeur):
-        res = "fCap " + valeur
+        res = "FCAP " + valeur
         if valeur != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -477,14 +534,11 @@ canvas.create_window((0, 0), window=frameLabel, anchor="nw")
 
 label_list = []
 
-
 frameLabel.bind("<Configure>", editeur.on_frame_configure)
-
 
 #######################
 # PARTIE 2: FONCTIONS #
 #######################
-
 
 
 # création des cadres de la grille
@@ -494,15 +548,13 @@ tailleCadre = 0
 selectedLabel = None
 cadre = tk.Frame(frameLabel, highlightthickness=0)
 
-
-
-
 # Avancer
 # Création d'un cadre pour le bouton et le champ de texte "Avancer"
 avancerFrame = tk.Frame(frameBouton)
 avancerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Avancer"
-avancerBouton = tk.Button(avancerFrame, text="Avancer", command=lambda: editeur.avancerCommande(avancerTexte.get()), width=20)
+avancerBouton = tk.Button(avancerFrame, text="Avancer", command=lambda: editeur.avancerCommande(avancerTexte.get()),
+                          width=20)
 avancerBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour avancer
 avancerTexte = tk.Entry(avancerFrame, width=10)
@@ -513,7 +565,8 @@ avancerTexte.pack(side="left", fill="x")
 reculerFrame = tk.Frame(frameBouton)
 reculerFrame.pack(side="top", anchor="w")
 # Création d'un bouton "reculer"
-reculerBouton = tk.Button(reculerFrame, text="Reculer", command=lambda: editeur.reculerCommande(reculerTexte.get()), width=20)
+reculerBouton = tk.Button(reculerFrame, text="Reculer", command=lambda: editeur.reculerCommande(reculerTexte.get()),
+                          width=20)
 reculerBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour reculer
 reculerTexte = tk.Entry(reculerFrame, width=10)
@@ -524,7 +577,8 @@ reculerTexte.pack(side="left", fill="x")
 tournerDroiteFrame = tk.Frame(frameBouton)
 tournerDroiteFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Tourner à droite"
-tournerDroiteBouton = tk.Button(tournerDroiteFrame, text="Tourner à Droite", command=lambda: editeur.tournerDroiteCommande(tournerDroiteTexte.get()), width=20)
+tournerDroiteBouton = tk.Button(tournerDroiteFrame, text="Tourner à Droite",
+                                command=lambda: editeur.tournerDroiteCommande(tournerDroiteTexte.get()), width=20)
 tournerDroiteBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte
 tournerDroiteTexte = tk.Entry(tournerDroiteFrame, width=10)
@@ -546,14 +600,16 @@ tournerGaucheTexte.pack(side="left", fill="x")
 leverCrayonFrame = tk.Frame(frameBouton)
 leverCrayonFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Lever le crayon"
-leverCrayonBouton = tk.Button(leverCrayonFrame, text="Lever le crayon", command=lambda: editeur.leverCrayonCommande(), width=20)
+leverCrayonBouton = tk.Button(leverCrayonFrame, text="Lever le crayon", command=lambda: editeur.leverCrayonCommande(),
+                              width=20)
 leverCrayonBouton.pack(side="left", fill="x")
 
 # Baisser Crayon Frame
 baisserCrayonFrame = tk.Frame(frameBouton)
 baisserCrayonFrame.pack(side="top", anchor="w")
 # Création d'un bouton "Baisser Crayon"
-baisserCrayonBouton = tk.Button(baisserCrayonFrame, text="Baisser le crayon", command=lambda: editeur.baisserCrayonCommande(),
+baisserCrayonBouton = tk.Button(baisserCrayonFrame, text="Baisser le crayon",
+                                command=lambda: editeur.baisserCrayonCommande(),
                                 width=20)
 baisserCrayonBouton.pack(side="left", fill="x")
 
@@ -574,7 +630,8 @@ nettoyerBouton.pack(side="top", anchor="w")
 fccFrame = tk.Frame(frameBouton)
 fccFrame.pack(side="top", anchor="w")
 # Création d'un bouton "FCC r v b"
-fccBouton = tk.Button(fccFrame, text="FCC", command=lambda: editeur.fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()), width=20)
+fccBouton = tk.Button(fccFrame, text="FCC",
+                      command=lambda: editeur.fccCommande(fccRed.get(), fccGreen.get(), fccBlue.get()), width=20)
 fccBouton.pack(side="left", fill="x")
 
 # Création d'un champ de texte pour entrer du texte pour fcc r
@@ -603,7 +660,8 @@ fCapTexte.pack(side="left", fill="x")
 repeatFrame = tk.Frame(frameBouton)
 repeatFrame.pack(side="top", anchor="w")
 # Création d'un bouton "repeat"
-repeatBouton = tk.Button(repeatFrame, text="Repeat", command=lambda: editeur.repeatCommande(repeatTexte.get()), width=20)
+repeatBouton = tk.Button(repeatFrame, text="Repeat", command=lambda: editeur.repeatCommande(repeatTexte.get()),
+                         width=20)
 repeatBouton.pack(side="left", fill="x")
 # Création d'un champ de texte pour entrer du texte pour Repeat
 repeatTexte = tk.Entry(repeatFrame, width=10)
@@ -635,13 +693,12 @@ editeur.tailleCadre += 1
 
 editeur.label_list.append(bouton_moins)
 
-
 # Création d'un bouton "Import"
 importerBouton = tk.Button(frameBouton, text="Import", command=lambda: editeur.importerCommande(), width=20)
 importerBouton.pack(side="left", anchor="w")
 
 # Création d'un bouton "Export"
-exportBouton = tk.Button(frameBouton, text="Export", command=lambda: editeur.exporterCommande(), width=20)
+exportBouton = tk.Button(frameBouton, text="Export", command=lambda: editeur.exporter(), width=20)
 exportBouton.pack(side="left", anchor="w")
 
 # Boucle principale de tkinter pour afficher le visualisateur
