@@ -245,10 +245,6 @@ frameLabel.bind("<Configure>", on_frame_configure)
 # PARTIE 2: FONCTIONS #
 #######################
 
-def deleteLabel(event):
-    """Fonction appelée lorsqu'un label est cliqué."""
-    if messagebox.askyesno("Supprimer", "Voulez-vous supprimer ce label ?"):
-        event.widget.destroy()
 
 
 # création des cadres de la grille
@@ -277,91 +273,95 @@ def importerCommande():
 
 
 def exporterCommande():
-    print("test export")
+    # parcourt le cadre et affiche ce qu'il y a dedans (les labels)
+    for label in cadre.winfo_children():
+        print(label.cget("text"))
+
 
 
 def avancerCommande(valeur):
     global selectedLabel
+    res = "avancer "+valeur
     if valeur != "":
         if selectedLabel:
-            res = "avancer " + valeur
             modify(res)
         else:
-            res = "avancer " + valeur
             creerLabel(res)
 
 
 def reculerCommande(valeur):
     global selectedLabel
+    res = "reculer "+valeur
     if valeur != "":
         if selectedLabel:
-            res = "reculer " + valeur
             modify(res)
         else:
-            res = "reculer " + valeur
             creerLabel(res)
 
 
 def tournerDroiteCommande(valeur):
     global selectedLabel
+    res = "tournerDroite "+valeur
     if valeur != "":
         if selectedLabel:
-            res = "tournerDroite " + valeur
             modify(res)
         else:
-            res = "tournerDroite " + valeur
             creerLabel(res)
 
 
 def tournerGaucheCommande(valeur):
     global selectedLabel
+    res = "tournerGauche " + valeur
     if valeur != "":
         if selectedLabel:
-            res = "tournerGauche " + valeur
             modify(res)
         else:
-            res = "tournerGauche " + valeur
             creerLabel(res)
 
 def leverCrayonCommande():
     global selectedLabel
+    res = leverCrayon
     if selectedLabel:
-        modify("leverCrayon")
+        modify(res)
     else:
-        creerLabel("leverCrayon")
+        creerLabel(res)
 
 
 def baisserCrayonCommande():
+    res = "baisserCrayon"
     global selectedLabel
     if selectedLabel:
-        modify("baisserCrayon")
+        modify(res)
     else:
-        creerLabel("baisserCrayon")
+        creerLabel(res)
 
 
 def origineCommande():
     global selectedLabel
+    res = "origine"
     if selectedLabel:
-        modify("origine")
+        modify(res)
     else:
-        creerLabel("origine")
+        creerLabel(res)
 
 
 def restaurerCommande():
     global selectedLabel
+    res = "restaurer"
     if selectedLabel:
-        modify("restaurer")
+        modify(res)
     else:
-        creerLabel("restaurer")
+        creerLabel(res)
 
 
 
 def nettoyerCommande():
     global selectedLabel
+    res = "nettoyer"
     if selectedLabel:
-        modify("nettoyer")
+        modify(res)
     else:
-        creerLabel("nettoyer")
+        creerLabel(res)
 
 def refresh():
     global cadre, label_list
@@ -429,7 +429,6 @@ def creerLabel(text):
     label.grid(row=tailleCadre, column=0, sticky="nsew")
     label_list.append(label)
     # Ajout des bindings pour delete un label et highlight
-    label.bind("<Button-3>", deleteLabel)
     label.bind("<Button-1>", highlight)
     tailleCadre += 1
     print(tailleCadre)
