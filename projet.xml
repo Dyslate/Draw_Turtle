@@ -1,0 +1,9 @@
+<dessin>
+<répéter fois='3'>
+<dessin>
+<répéter fois='3'>
+<nettoyer/>
+
+</répéter>
+<origine/>
+</dessin>

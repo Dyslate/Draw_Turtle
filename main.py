@@ -295,7 +295,7 @@ class EditeurDeTexte:
             i += 1
         return res
 
-    # Adapter la méthode pour utiliser exporterCommande
+    # Adapter la méthode pour utiliser exporterCommande.
     def exporter(self):
         commandes = [label.cget("text") for label in self.label_list]
         del commandes[0]
