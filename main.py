@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import os
 import re
 from tkinter import messagebox
-
+from tkinter import filedialog
 from ivy.std_api import *
 from pathlib import Path
 
@@ -230,38 +230,46 @@ class EditeurDeTexte:
 
     # Fonctions pour les commandes des boutons
     def importerCommande(self):
-        print("test import")
+        file_path = filedialog.askopenfilename()
+        # Vérifier si un fichier a été sélectionné
+        if file_path:
+            # Ouvrir le fichier et lire son contenu
+            with open(file_path, 'r') as f:
+                xml_str = f.read()
+            print(xml_str)
+        else:
+            print('Aucun fichier sélectionné.')
 
     def exporterCommande(self, commandes):
-        res = ""
         i = 0
+        res = ""
         while i < len(commandes):
             text = commandes[i]
             if text.startswith("AVANCE"):
-                res += "<avancer dist=" + text.split(" ")[1] + ">\n"
+                res += "<avancer dist='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("RECULE"):
-                res += "<reculer dist=" + text.split(" ")[1] + ">\n"
+                res += "<reculer dist='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("TOURNEDROITE"):
-                res += "<droite angle=" + text.split(" ")[1] + ">\n"
+                res += "<droite angle='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("TOURNEGAUCHE"):
-                res += "<gauche angle=" + text.split(" ")[1] + ">\n"
+                res += "<gauche angle='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("LEVECRAYON"):
-                res += "<lever>" + "\n"
+                res += "<lever/>" + "\n"
             elif text.startswith("BAISSECRAYON"):
-                res += "<baisser>" + "\n"
+                res += "<baisser/>" + "\n"
             elif text.startswith("ORIGINE"):
-                res += "<origine>" + "\n"
+                res += "<origine/>" + "\n"
             elif text.startswith("NETTOIE"):
-                res += "<nettoyer>" + "\n"
+                res += "<nettoyer/>" + "\n"
             elif text.startswith("RESTAURE"):
-                res += "<restaurer>" + "\n"
+                res += "<restaurer/>" + "\n"
             elif text.startswith("FCC"):
-                res += "<crayon rouge=" + text.split(" ")[1] + " vert=" + text.split(" ")[2] + " bleu=" + \
-                       text.split(" ")[3] + ">\n"
+                res += "<crayon rouge='" + text.split(" ")[1] + "' vert='" + text.split(" ")[2] + "' bleu='" + \
+                       text.split(" ")[3] + "'/>\n"
             elif text.startswith("FCAP"):
-                res += "<cap angle =" + text.split(" ")[1] + ">\n"
+                res += "<cap angle ='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("FPOS"):
-                res += "<position x=" + text.split(" ")[1] + " y=" + text.split(" ")[2] + ">\n"
+                res += "<position x='" + text.split(" ")[1] + "' y='" + text.split(" ")[2] + "'/>\n"
             elif text.startswith("REPETE"):
                 n = int(text.split(" ")[1])
                 print("ici nombre de fois: "+str(n))
@@ -281,21 +289,29 @@ class EditeurDeTexte:
                             inner_commands.append(commandes[i])
                             print("inner commands ici: " + str(inner_commands) + "\n")
                             i += 1
-                    res += "<répéter fois=" + str(n) + ">\n"
+                    res += "<répéter fois='" + str(n) + "'>\n"
                     res += self.exporterCommande(inner_commands)
                     res += "</répéter>\n"
-                    print("ici on repete: "+res)
             i += 1
         return res
 
     # Adapter la méthode pour utiliser exporterCommande
     def exporter(self):
-        commandes = [label.cget("text") for label in cadre.winfo_children()]
+        commandes = [label.cget("text") for label in self.label_list]
         del commandes[0]
         del commandes[0]
-        print(commandes)
-        res = self.exporterCommande(commandes)
+        res = ""
+        res += "<dessin>\n"
+        res += self.exporterCommande(commandes)
+        res += "</dessin>"
+
+        file_path = filedialog.asksaveasfilename(defaultextension='.xml')
+        # Écrire le fichier XML avec la variable res
         print(res)
+        with open(file_path, 'w') as f:
+            f.write(res)
+            
+
 
     def clear(self):
         self.label_list = []
@@ -383,7 +399,7 @@ class EditeurDeTexte:
             widget.grid_forget()
         for ndex, i in enumerate(self.label_list):
             i.grid(row=ndex)
-            print(i)
+            print(str(i))
 
     def diminuer_espace(self):
         if self.selectedLabel:
@@ -393,27 +409,40 @@ class EditeurDeTexte:
             self.refresh()
             self.tailleCadre -= 1
 
+
+    def diminuer_espaceRow(self, row):
+        print(self.label_list[row])
+        del self.label_list[row]
+        self.refresh()
+        self.tailleCadre -= 1
+
+
     def modify(self, param):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-            print("rangée: " + str(row))
-            self.label_list[row].configure(text=param)
+#            cadre.grid(row=row, column=1)
+         #   self.diminuer_espaceRow(row)
+            label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=15)
+            label.grid(row=row, column=0, sticky="nsew")
+          #  self.tailleCadre+=1
+          #  self.label_list.append(label)
+
+            self.label_list[row] = label
             self.refresh()
 
+
     def modifyRow(self, param, row):
-        print("rangée: " + str(row))
-        self.label_list[row].configure(text=param)
+      #  self.label_list[row].configure(text=param)
+        self.label_list[row] = param
         self.refresh()
 
     def augmenter_espace(self):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-            print("rangée: " + str(row))
 
             label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
             label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
             label_espace.bind("<Button-1>", self.highlight)
-
             self.label_list.insert(row, label_espace)
             self.refresh()
             self.tailleCadre += 1
@@ -428,14 +457,13 @@ class EditeurDeTexte:
         self.tailleCadre += 1
 
     def creerLabel(self, text):
-        cadre.grid(row=self.tailleCadre, column=1)
+        cadre.grid(row=self.tailleCadre, column=2)
         label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
         label.grid(row=self.tailleCadre, column=0, sticky="nsew")
         self.label_list.append(label)
         # Ajout des bindings pour delete un label et highlight
         label.bind("<Button-1>", self.highlight)
         self.tailleCadre += 1
-        print(self.tailleCadre)
 
     def repeatCommande(self, param):
         if param != "":
