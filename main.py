@@ -1,11 +1,12 @@
-import tkinter as tk
-import xml.etree.ElementTree as ET
+import math
 import os
 import re
-from tkinter import messagebox
-from tkinter import filedialog
-from ivy.std_api import *
+import tkinter as tk
+import xml.etree.ElementTree as ET
 from pathlib import Path
+from tkinter import filedialog
+
+from ivy.std_api import *
 
 
 def get_project_root() -> str:
@@ -14,7 +15,7 @@ def get_project_root() -> str:
 
 # Fonction qui efface toute les traces à l'écrans
 def clear_widgets():
-    canvas.delete("all")
+    canvas2.delete("all")
 
 
 class Tortue:
@@ -24,27 +25,32 @@ class Tortue:
         self.xBase = 300
         self.yBase = 300
         self.penActivated = True
-        self.orientation = 0  # 0 pour le nord, 1 pour l'est, 2 pour le sud, 3 pour l'ouest
+        self.angle = 90
         self.commands = []  # pour save le dessin en xml.
+        self.couleur = "#FFFFFF"
 
     def avancer(self, agent, value, ajouterCommande=True):
         value = int(value)
-        if self.orientation == 0:
-            if self.penActivated:
-                canvas.create_line(self.x, self.y, self.x, self.y - value)
-            self.y -= value
-        elif self.orientation == 1:
-            if self.penActivated:
-                canvas.create_line(self.x, self.y, self.x + value, self.y)
-            self.x += value
-        elif self.orientation == 2:
-            if self.penActivated:
-                canvas.create_line(self.x, self.y, self.x, self.y + value)
-            self.y += value
-        elif self.orientation == 3:
-            if self.penActivated:
-                canvas.create_line(self.x, self.y, self.x - value, self.y)
-            self.x -= value
+
+        # Angle en radians
+        angle = math.radians(self.angle)
+
+        # Longueur de la ligne
+        longueur = value
+
+        # Calcul des coordonnées du point d'arrivée
+        x2 = self.x + longueur * math.cos(angle)
+        y2 = self.y - longueur * math.sin(angle)
+
+        print("x1 : ", self.x, "y1 : ", self.y)
+        print("x2 : ", x2, "y2 : ", y2)
+        print("longueur "+str(longueur))
+        # Création de la ligne
+        canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur)
+        print("couleur "+self.couleur)
+        self.x = x2
+        self.y = y2
+
         if ajouterCommande:
             self.commands.append(("AVANCE", value))
 
@@ -54,17 +60,11 @@ class Tortue:
         self.commands.append(("RECULE", value))
 
     def tournerDroite(self, agent, value):
-        self.orientation += 1
-        if self.orientation > 3:
-            self.orientation = 0
-        self.avancer(self, value, False)
+        self.angle += value
         self.commands.append(("TOURNEDROITE", value))
 
     def tournerGauche(self, agent, value):
-        self.orientation -= 1
-        if self.orientation < 0:
-            self.orientation = 3
-        self.avancer(self, value, False)
+        self.angle -= value
         self.commands.append(("TOURNEGAUCHE", value))
 
     def leverCrayon(self, agent):
@@ -77,6 +77,7 @@ class Tortue:
 
     def origine(self, agent):
         self.x, self.y, self.orientation = self.xBase, self.yBase, 0
+        self.angle = 0
         self.commands.append("ORIGINE")
 
     def restaurer(self, agent):
@@ -85,13 +86,16 @@ class Tortue:
         self.commands.append("RESTAURER")
 
     def nettoyer(self, agent):
-        canvas.delete("all")
+        canvas2.delete("all")
         #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
     def changerCouleur(self, r, v, b):
+        print("test")
         # code pour changer la couleur du crayon à partir des composantes r v b
-        print("changer couleur")
+        hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
+        self.couleur = hex_code
+        print("changer couleur en :"+hex_code)
 
     # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
@@ -144,6 +148,11 @@ class Tortue:
             self.origine(self)
         elif command.startswith("NETTOIE"):
             self.nettoyer(self)
+        elif command.startswith("FCC"):
+            value1 = int(command.split(" ")[1])
+            value2 = int(command.split(" ")[2])
+            value3 = int(command.split(" ")[3])
+            self.changerCouleur(value1, value2, value3)
 
     def sauver(self):
         print("sauver")
@@ -176,14 +185,14 @@ root = tk.Tk()
 root.title("Visualiseur")
 
 # Crée un canvas pour dessiner sur
-canvas = tk.Canvas(root, width=600, height=400)
-canvas.pack()
+canvas2 = tk.Canvas(root, width=600, height=400)
+canvas2.pack()
 
 IvyInit("test")
 IvyStart()
 
 # Création d'un bouton "play"
-play_button = tk.Button(root, text="Jouer", command=lambda: tortue.lancerCommandes(command_text.get("1.0", "end-1c")))
+play_button = tk.Button(root, text="Jouer", command=lambda: tortue.lancerCommandes(command_text.get()))
 play_button.pack()
 
 # Création d'un bouton "save"
@@ -191,7 +200,7 @@ save_button = tk.Button(root, text="Enregistrer", command=lambda: tortue.sauver(
 save_button.pack()
 
 # Création d'une zone de saisie pour les commandes
-command_text = tk.Text(root)
+command_text = tk.Entry(root)
 command_text.pack()
 
 tortue = Tortue()
@@ -237,6 +246,7 @@ class EditeurDeTexte:
             with open(file_path, 'r') as f:
                 xml_str = f.read()
             print(xml_str)
+
         else:
             print('Aucun fichier sélectionné.')
 
@@ -420,27 +430,27 @@ class EditeurDeTexte:
     def modify(self, param):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-#            cadre.grid(row=row, column=1)
-         #   self.diminuer_espaceRow(row)
-            label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=15)
+            label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=row, column=0, sticky="nsew")
-          #  self.tailleCadre+=1
-          #  self.label_list.append(label)
+            label.bind("<Button-1>", self.highlight)
 
             self.label_list[row] = label
             self.refresh()
 
 
     def modifyRow(self, param, row):
-      #  self.label_list[row].configure(text=param)
-        self.label_list[row] = param
+        label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
+        label.grid(row=row, column=0, sticky="nsew")
+        label.bind("<Button-1>", self.highlight)
+
+        self.label_list[row] = label
         self.refresh()
 
     def augmenter_espace(self):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
 
-            label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+            label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
             label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
             label_espace.bind("<Button-1>", self.highlight)
             self.label_list.insert(row, label_espace)
@@ -448,7 +458,7 @@ class EditeurDeTexte:
             self.tailleCadre += 1
 
     def augmenter_espaceRow(self, row):
-        label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+        label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
         label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
         label_espace.bind("<Button-1>", self.highlight)
 
@@ -458,8 +468,9 @@ class EditeurDeTexte:
 
     def creerLabel(self, text):
         cadre.grid(row=self.tailleCadre, column=2)
-        label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=15)
+        label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=20)
         label.grid(row=self.tailleCadre, column=0, sticky="nsew")
+
         self.label_list.append(label)
         # Ajout des bindings pour delete un label et highlight
         label.bind("<Button-1>", self.highlight)
@@ -494,22 +505,22 @@ class EditeurDeTexte:
             else:
                 cadre.grid(row=self.tailleCadre, column=1)
                 label_repeat = tk.Label(cadre, text="REPETE " + param, bg="white", borderwidth=1, relief="solid",
-                                        width=15)
+                                        width=20)
                 label_repeat.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
                 self.label_list.append(label_repeat)
 
-                label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=15)
+                label_debut = tk.Label(cadre, text="{", bg="white", borderwidth=1, relief="solid", width=20)
                 label_debut.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
                 self.label_list.append(label_debut)
 
-                label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=15)
+                label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
                 label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
                 self.label_list.append(label_espace)
 
-                label_fin = tk.Label(cadre, text="}", bg="white", borderwidth=1, relief="solid", width=15)
+                label_fin = tk.Label(cadre, text="}", bg="white", borderwidth=1, relief="solid", width=20)
                 label_fin.grid(row=self.tailleCadre, column=0, sticky="nsew")
                 self.tailleCadre += 1
 
