@@ -5,6 +5,7 @@ import tkinter as tk
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tkinter import filedialog
+from PIL import Image, ImageDraw, ImageTk
 
 from ivy.std_api import *
 
@@ -154,31 +155,43 @@ class Tortue:
             value3 = int(command.split(" ")[3])
             self.changerCouleur(value1, value2, value3)
 
-    def sauver(self):
-        print("sauver")
-        root = ET.Element("dessin")
-        # print(self.commands)
-        for cmd in self.commands:
-            print("CECI EST LA COMMANDE: ", cmd)
-            if cmd[0] == "AVANCE":
-                ET.SubElement(root, "avance", dist=str(cmd[1]))
-            elif cmd[0] == "TOURNEDROITE":
-                ET.SubElement(root, "droite", dist=str(cmd[1]))
-            elif cmd[0] == "TOURNEGAUCHE":
-                ET.SubElement(root, "gauche", dist=str(cmd[1]))
-            elif cmd == "LEVECRAYON":
-                ET.SubElement(root, "lever")
-            elif cmd == "BAISSECRAYON":
-                ET.SubElement(root, "baisser")
-            elif cmd[0] == "RECULE":
-                ET.SubElement(root, "recule", dist=str(cmd[1]))
-            elif cmd == "ORIGINE":
-                ET.SubElement(root, "origine")
-            elif cmd == "NETTOIE":
-                ET.SubElement(root, "nettoie\n")
-        tree = ET.ElementTree(root)
+    def importer(self):
+        xml = ""
+        file_path = filedialog.askopenfilename()
+        # Vérifier si un fichier a été sélectionné
+        if file_path:
+            # Ouvrir le fichier et lire son contenu
+            with open(file_path, 'r') as f:
+                xml_str = f.read()
+            #print(xml_str)
+            xml = xml_str
+        else:
+            print('Aucun fichier sélectionné.')
 
-        tree.write(get_project_root())
+        print(xml)
+        commands = editeur.importerCommande(xml)
+#        self.lancerCommandes(commands)
+        print(commands)
+
+
+    def sauver(self):
+        # Créer une image PIL avec les mêmes dimensions que le canvas
+        image = Image.new("RGB", (canvas2.winfo_width(), canvas2.winfo_height()), "white")
+        draw = ImageDraw.Draw(image)
+        filename = filedialog.asksaveasfilename(defaultextension='.JPEG')
+
+        # Redessiner les objets du canvas sur l'image PIL
+        for item in canvas2.find_all():
+            item_type = canvas2.type(item)
+            item_coords = canvas2.coords(item)
+
+            if item_type == "line":
+                draw.line(item_coords, fill="blue")
+
+
+
+        # Sauvegarder l'image PIL en format JPEG
+        image.save(filename, "JPEG")
 
 
 root = tk.Tk()
@@ -193,6 +206,11 @@ IvyStart()
 
 # Création d'un bouton "play"
 play_button = tk.Button(root, text="Jouer", command=lambda: tortue.lancerCommandes(command_text.get()))
+play_button.pack()
+
+
+# Création d'un bouton "play"
+play_button = tk.Button(root, text="Importer", command=lambda: tortue.importer())
 play_button.pack()
 
 # Création d'un bouton "save"

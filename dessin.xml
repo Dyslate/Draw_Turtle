@@ -1,15 +1,9 @@
 <dessin>
 <lever/>
-<avancer dist='50'/>
-<droite angle='90'/>
-<crayon rouge='255' vert='0' bleu='0'/>
 <baisser/>
-<avancer dist='50'/>
+<restaurer/>
 <répéter fois='3'>
-<droite angle='90'/>
-<avancer dist='100'/>
-</répéter>
-<avancer dist='50'/>
 <lever/>
+</répéter>
 <origine/>
 </dessin>
