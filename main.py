@@ -237,18 +237,94 @@ class EditeurDeTexte:
     def on_frame_configure(self, event):
         canvas.configure(scrollregion=canvas.bbox("all"))
 
+    def importerCommande(self,xml_data):
+        def get_attr_value(tag, attr_name):
+            if f"{attr_name}='" in tag:
+                return int(tag.split(f"{attr_name}='")[1].split("'")[0])
+            return None
+
+        def parse_content(content):
+            commands = []
+            buffer = ""
+            i = 0
+
+            while i < len(content):
+                c = content[i]
+
+                if c == "<":
+                    buffer = "<"
+                    while c != ">":
+                        i += 1
+                        c = content[i]
+                        buffer += c
+
+                    if "avancer" in buffer:
+                        dist = get_attr_value(buffer, "dist")
+                        commands.append(f"AVANCE {dist}")
+                    elif "reculer" in buffer:
+                        dist = get_attr_value(buffer, "dist")
+                        commands.append(f"RECULE {dist}")
+                    elif "droite" in buffer:
+                        angle = get_attr_value(buffer, "angle")
+                        commands.append(f"TOURNEDROITE {angle}")
+                    elif "gauche" in buffer:
+                        angle = get_attr_value(buffer, "angle")
+                        commands.append(f"TOURNEGAUCHE {angle}")
+                    elif "lever" in buffer:
+                        commands.append("LEVECRAYON")
+                    elif "baisser" in buffer:
+                        commands.append("BAISSECRAYON")
+                    elif "origine" in buffer:
+                        commands.append("ORIGINE")
+                    elif "restaure" in buffer:
+                        commands.append("RESTAURE")
+                    elif "nettoie" in buffer:
+                        commands.append("NETTOIE")
+                    elif "crayon" in buffer:
+                        r = get_attr_value(buffer, "rouge")
+                        v = get_attr_value(buffer, "vert")
+                        b = get_attr_value(buffer, "bleu")
+                        commands.append(f"FCC {r} {v} {b}")
+                    elif "cap" in buffer:
+                        angle = get_attr_value(buffer, "angle")
+                        commands.append(f"FCAP {angle}")
+                    elif "position" in buffer:
+                        x = get_attr_value(buffer, "x")
+                        y = get_attr_value(buffer, "y")
+                        commands.append(f"FPOS[{x} {y}]")
+                    elif "<répéter" in buffer:
+                        repeat_times = get_attr_value(buffer, "fois")
+                        commands.append(f"REPETE {repeat_times}")
+                        commands.append("{")
+                    elif "/répéter" in buffer:
+                        commands.append("}")
+                else:
+                    i += 1
+
+            return commands
+
+        dessin_start = xml_data.find("<dessin>") + 8
+        dessin_end = xml_data.find("</dessin>")
+        dessin_content = xml_data[dessin_start:dessin_end]
+
+        return parse_content(dessin_content)
     # Fonctions pour les commandes des boutons
-    def importerCommande(self):
+    def importer(self):
+        xml = ""
         file_path = filedialog.askopenfilename()
         # Vérifier si un fichier a été sélectionné
         if file_path:
             # Ouvrir le fichier et lire son contenu
             with open(file_path, 'r') as f:
                 xml_str = f.read()
-            print(xml_str)
-
+            #print(xml_str)
+            xml = xml_str
         else:
             print('Aucun fichier sélectionné.')
+
+        commands = self.importerCommande(xml)
+        for i in commands:
+             self.creerLabel(i)
 
     def exporterCommande(self, commandes):
         i = 0
@@ -310,6 +386,7 @@ class EditeurDeTexte:
         commandes = [label.cget("text") for label in self.label_list]
         del commandes[0]
         del commandes[0]
+        print(commandes)
         res = ""
         res += "<dessin>\n"
         res += self.exporterCommande(commandes)
@@ -744,7 +821,7 @@ editeur.tailleCadre += 1
 editeur.label_list.append(bouton_moins)
 
 # Création d'un bouton "Import"
-importerBouton = tk.Button(frameBouton, text="Import", command=lambda: editeur.importerCommande(), width=20)
+importerBouton = tk.Button(frameBouton, text="Import", command=lambda: editeur.importer(), width=20)
 importerBouton.pack(side="left", anchor="w")
 
 # Création d'un bouton "Export"
