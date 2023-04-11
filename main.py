@@ -651,11 +651,50 @@ class EditeurDeTexte:
     def diminuer_espace(self):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-            print(self.label_list[row])
-            del self.label_list[row]
+            deleted_rows = 0
+            if "REPETE" in self.label_list[row].cget("text"):
+                # Supprimer les lignes jusqu'à "}"
+                while row < len(self.label_list) and "}" not in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+                if row < len(self.label_list) and "}" in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+            elif "{" in self.label_list[row].cget("text"):
+                # Supprimer les lignes jusqu'à "}" et "REPETE"
+                initial_row = row  # Ajoutez cette ligne pour conserver la position initiale de la ligne
+                row += 1
+                while row < len(self.label_list) and "}" not in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+                if row < len(self.label_list) and "}" in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+                    row -= 1
+                if row > 0 and "REPETE" in self.label_list[row - 1].cget("text"):
+                    del self.label_list[row - 1]
+                    deleted_rows += 1
+                initial_row -= (deleted_rows - 1)  # Ajustez l'index initial_row
+                del self.label_list[initial_row+1]  # Supprimez le label avec "{"
+                deleted_rows += 1  # Mettez à jour le nombre de lignes supprimées
+            elif "}" in self.label_list[row].cget("text"):
+                # Supprimer les lignes en remontant jusqu'à "REPETE"
+                del self.label_list[row]
+                deleted_rows += 1
+                row -= 1
+                while row > 0 and "REPETE" not in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+                    row -= 1
+                if row >= 0 and "REPETE" in self.label_list[row].cget("text"):
+                    del self.label_list[row]
+                    deleted_rows += 1
+            else:
+                del self.label_list[row]
+                deleted_rows += 1
             self.refresh()
-            self.tailleCadre -= 1
-
+            self.tailleCadre -= deleted_rows
+            self.selectedLabel = None
 
     def diminuer_espaceRow(self, row):
         print(self.label_list[row])
@@ -686,13 +725,21 @@ class EditeurDeTexte:
     def augmenter_espace(self):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-
             label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
             label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
             label_espace.bind("<Button-1>", self.highlight)
             self.label_list.insert(row, label_espace)
             self.refresh()
             self.tailleCadre += 1
+        else:
+            row = self.tailleCadre
+            label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
+            label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
+            label_espace.bind("<Button-1>", self.highlight)
+            self.label_list.insert(row, label_espace)
+            self.refresh()
+            self.tailleCadre += 1
+
 
     def augmenter_espaceRow(self, row):
         label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
