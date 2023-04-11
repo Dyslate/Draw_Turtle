@@ -2,16 +2,11 @@ import math
 import os
 import re
 import tkinter as tk
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from tkinter import filedialog
-from PIL import Image, ImageDraw, ImageTk
-
-from ivy.std_api import *
-
-
-def get_project_root() -> str:
-    return os.path.join(str(Path(__file__).parent), "dessin.xml")
+from PIL import Image, ImageDraw
+#from ivy.std_api import *
+from ivyprobe import *
 
 
 # Fonction qui efface toute les traces à l'écrans
@@ -28,7 +23,9 @@ class Tortue:
         self.penActivated = True
         self.angle = 90
         self.commands = []  # pour save le dessin en xml.
-        self.couleur = "#FFFFFF"
+        self.couleur = "#FF0000"
+        self.nombreCommande = 0
+
 
     def avancer(self, agent, value, ajouterCommande=True):
         value = int(value)
@@ -48,6 +45,7 @@ class Tortue:
         print("longueur "+str(longueur))
         # Création de la ligne
         canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur)
+
         print("couleur "+self.couleur)
         self.x = x2
         self.y = y2
@@ -85,6 +83,12 @@ class Tortue:
         self.x = self.xBase
         self.y = self.yBase
         self.commands.append("RESTAURER")
+
+    def on_enter_key(self,event):
+        # Fonction à exécuter lorsque la touche "Enter" est enfoncée
+        command = str((command_text.get())).strip()
+        print(f"Commande saisie : {command}")
+        print(IvySendMsg(command))
 
     def nettoyer(self, agent):
         canvas2.delete("all")
@@ -155,6 +159,12 @@ class Tortue:
             value3 = int(command.split(" ")[3])
             self.changerCouleur(value1, value2, value3)
 
+    def testIvy(self):
+        print("test")
+        IvySendMsg("#FIVYCLEAN")  # Effacer le buffer d'Ivy
+        print(IvySendMsg("AVANCE 100"))
+
+
     def importer(self):
         xml = ""
         file_path = filedialog.askopenfilename()
@@ -171,7 +181,11 @@ class Tortue:
         print(xml)
         commands = editeur.importerCommande(xml)
 #        self.lancerCommandes(commands)
-        print(commands)
+
+        for i in commands:
+            label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
+            self.nombreCommande += 1
+            label.grid(row=self.nombreCommande+1, column=1, sticky="nsew")
 
 
     def sauver(self):
@@ -197,31 +211,34 @@ class Tortue:
 root = tk.Tk()
 root.title("Visualiseur")
 
-# Crée un canvas pour dessiner sur
-canvas2 = tk.Canvas(root, width=600, height=400)
-canvas2.pack()
-
-IvyInit("test")
-IvyStart()
-
-# Création d'un bouton "play"
-play_button = tk.Button(root, text="Jouer", command=lambda: tortue.lancerCommandes(command_text.get()))
-play_button.pack()
-
-
-# Création d'un bouton "play"
-play_button = tk.Button(root, text="Importer", command=lambda: tortue.importer())
-play_button.pack()
-
-# Création d'un bouton "save"
-save_button = tk.Button(root, text="Enregistrer", command=lambda: tortue.sauver())
-save_button.pack()
-
-# Création d'une zone de saisie pour les commandes
-command_text = tk.Entry(root)
-command_text.pack()
-
 tortue = Tortue()
+
+# Crée un canvas pour dessiner sur
+
+def on_connection(agent, connected):
+    if connected:
+        print(f"{agent} s'est connecté")
+    else:
+        print(f"{agent} s'est déconnecté")
+
+def on_message(agent, *larg):
+    print(f"Agent {agent}: Message reçu {larg}")
+
+def on_command(agent, *larg):
+    print(f"Agent {agent}: Commande reçue {larg}")
+
+def start_ivy(app_name):
+    IvyInit(app_name, f"{app_name} is ready", 1, on_connection, on_message)
+    IvyStart()
+
+
+app_name = "BusTortue"
+start_ivy(app_name)
+
+def onhello(agent, message, test):
+    print("Got hello message: %s from: %s (coming from ivy agent: %r)"% (message, test, agent))
+
+
 IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
 IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
 IvyBindMsg(tortue.tournerDroite, "^TOURNEDROITE\s(.*)$")
@@ -232,6 +249,54 @@ IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.changerCouleur, "^FCC\s")
+
+# Création d'un frame pour les boutons, la zone de saisie et l'historique
+right_panel = tk.Frame(root)
+right_panel.pack(side=tk.LEFT, anchor="ne", padx=10, pady=10)
+
+
+# Création d'un frame pour les boutons, la zone de saisie et l'historique
+south_panel = tk.Frame(root)
+south_panel.pack(side=tk.BOTTOM, anchor="s", padx=10, pady=10)
+
+canvas2 = tk.Canvas(south_panel, width=600, height=400)
+canvas2.pack(side=tk.TOP, anchor="n", padx=10, pady=10)
+
+
+# Création d'un label "Historique"
+history_label = tk.Label(right_panel, text="Historique")
+history_label.grid(row=1, column=1, pady=5)
+
+# Création d'un frame pour l'historique
+history_frame = tk.Frame(right_panel)
+history_frame.grid(row=1, column=1)
+
+
+# Création d'un bouton "play"
+play_button = tk.Button(south_panel, text="Jouer", command=lambda: tortue.testIvy())
+play_button.pack()
+
+
+# Création d'un bouton "importer"
+importer_button = tk.Button(south_panel, text="Importer", command=lambda: tortue.importer())
+importer_button.pack()
+
+# Création d'un bouton "save"
+save_button = tk.Button(south_panel, text="Enregistrer", command=lambda: tortue.sauver())
+save_button.pack()
+
+
+
+# Création d'une zone de saisie pour les commandes
+command_text = tk.Entry(south_panel)
+# Lier la touche "Enter" à la fonction on_enter_key
+command_text.bind("<Return>", tortue.on_enter_key)
+command_text.pack()
+
+
+
+
+
 
 
 class EditeurDeTexte:
@@ -428,6 +493,17 @@ class EditeurDeTexte:
                 label.destroy()
         self.selectedLabel = None
         self.tailleCadre = 2
+
+
+    def send(self):
+        commandes = [label.cget("text") for label in self.label_list]
+        del commandes[0]
+        del commandes[0]
+        print(commandes)
+        for i in commandes:
+            label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
+            tortue.nombreCommande += 1
+            label.grid(row=tortue.nombreCommande+1, column=1, sticky="nsew")
 
     def avancerCommande(self, valeur):
         res = "AVANCE " + valeur
@@ -850,8 +926,15 @@ exportBouton.pack(side="left", anchor="w")
 clearBouton = tk.Button(frameBouton, text="Clear", command=lambda: editeur.clear(), width=20)
 clearBouton.pack(side="left", anchor="w")
 
+# Création d'un bouton "Clear"
+sendBouton = tk.Button(frameBouton, text="Send", command=lambda: editeur.send(), width=20)
+sendBouton.pack(side="left", anchor="w")
+
 
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
 # Bucle secondaire de tkinter pour afficher l'éditeur de texte
 root2.mainloop()
+
+
+
