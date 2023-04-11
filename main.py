@@ -123,7 +123,6 @@ class Tortue:
         thread = threading.Thread(target=self.run_command)
         thread.start()
 
-       # print(IvySendMsg(command))
 
     def nettoyer(self, agent):
         canvas2.delete("all")
@@ -198,11 +197,11 @@ class Tortue:
 
     def jouer(self):
         def execute_commands():
-            for label in self.liste_historique:
-                command = label.cget("text")
-                print(command)
-                self.run_command_text(command)
-                time.sleep(self.sleep_time.get())
+            listeCommandes = [label.cget("text") for label in self.liste_historique]
+            print(listeCommandes)
+           # print(command)
+         #   self.run_command_text(command)
+            time.sleep(self.sleep_time.get())
 
         thread = threading.Thread(target=execute_commands)
         thread.start()
@@ -389,7 +388,6 @@ class EditeurDeTexte:
             if f"{attr_name}='" in tag:
                 return int(tag.split(f"{attr_name}='")[1].split("'")[0])
             return None
-
         def parse_content(content):
             commands = []
             buffer = ""
@@ -500,9 +498,11 @@ class EditeurDeTexte:
                 res += "<crayon rouge='" + text.split(" ")[1] + "' vert='" + text.split(" ")[2] + "' bleu='" + \
                        text.split(" ")[3] + "'/>\n"
             elif text.startswith("FCAP"):
-                res += "<cap angle ='" + text.split(" ")[1] + "'/>\n"
+                res += "<cap angle='" + text.split(" ")[1] + "'/>\n"
             elif text.startswith("FPOS"):
-                res += "<position x='" + text.split(" ")[1] + "' y='" + text.split(" ")[2] + "'/>\n"
+                coords = text.split("[")[1].split("]")[0].split()
+                x, y = coords[0], coords[1]
+                res += "<position x='{}' y='{}'/>\n".format(x, y)
             elif text.startswith("REPETE"):
                 n = int(text.split(" ")[1])
                 print("ici nombre de fois: "+str(n))
@@ -787,7 +787,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def fPosCommande(self, valeur1, valeur2):
-        res = "fPos " + valeur1 + " " + valeur2
+        res = "FPOS [" + valeur1 + " " + valeur2+"]"
         if valeur1 != "" and valeur2 != "":
             if self.selectedLabel:
                 self.modify(res)
