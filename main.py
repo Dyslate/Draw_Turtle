@@ -14,7 +14,7 @@ def clear_widgets():
     canvas2.delete("all")
 
 
-class Tortue:
+class Tortue():
     def __init__(self):
         self.x = 300
         self.y = 300
@@ -27,11 +27,15 @@ class Tortue:
         self.nombreCommande = 0
         self.liste_historique = []
         self.sleep_time = 1.0
+        self.is_closed = False
+
+    def close_visualizer(self, event):
+        self.is_closed = True  # Ajoutez cette ligne pour mettre à jour l'attribut is_closed
 
     def avancer(self, agent, value, ajouterCommande=True):
         value = int(value)
 
-        #Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
+        # Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
         def cos(angle):
             result = 0
             term = 1
@@ -52,9 +56,7 @@ class Tortue:
         angle_degrees = self.angle
         angle_radians = angle_degrees * (3.141592653589793 / 180)
 
-
         longueur = value
-
 
         # Calcul des coordonnées du point d'arrivée sans utiliser la bibliothèque math
         x2 = self.x + longueur * cos(angle_radians)
@@ -62,11 +64,11 @@ class Tortue:
 
         print("x1 : ", self.x, "y1 : ", self.y)
         print("x2 : ", x2, "y2 : ", y2)
-        print("longueur "+str(longueur))
+        print("longueur " + str(longueur))
         # Création de la ligne
         canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur)
 
-        print("couleur "+self.couleur)
+        print("couleur " + self.couleur)
         self.x = x2
         self.y = y2
 
@@ -122,7 +124,6 @@ class Tortue:
         command_text.config(state=tk.DISABLED)
         thread = threading.Thread(target=self.run_command)
         thread.start()
-
 
     def nettoyer(self, agent):
         canvas2.delete("all")
@@ -199,13 +200,12 @@ class Tortue:
         def execute_commands():
             listeCommandes = [label.cget("text") for label in self.liste_historique]
             print(listeCommandes)
-           # print(command)
-         #   self.run_command_text(command)
+            # print(command)
+            #   self.run_command_text(command)
             time.sleep(self.sleep_time.get())
 
         thread = threading.Thread(target=execute_commands)
         thread.start()
-
 
     def importer(self):
         xml = ""
@@ -215,21 +215,20 @@ class Tortue:
             # Ouvrir le fichier et lire son contenu
             with open(file_path, 'r') as f:
                 xml_str = f.read()
-            #print(xml_str)
+            # print(xml_str)
             xml = xml_str
         else:
             print('Aucun fichier sélectionné.')
 
         print(xml)
         commands = editeur.importerCommande(xml)
-#        self.lancerCommandes(commands)
+        #        self.lancerCommandes(commands)
 
         for i in commands:
             label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
             self.nombreCommande += 1
-            label.grid(row=self.nombreCommande+1, column=1, sticky="nsew")
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             self.liste_historique.append(label)
-
 
     def sauver(self):
         # Créer une image PIL avec les mêmes dimensions que le canvas
@@ -245,16 +244,17 @@ class Tortue:
             if item_type == "line":
                 draw.line(item_coords, fill="blue")
 
-
-
         # Sauvegarder l'image PIL en format JPEG
         image.save(filename, "JPEG")
 
 
 root = tk.Tk()
 root.title("Visualiseur")
-
 tortue = Tortue()
+
+root.bind('<Destroy>', tortue.close_visualizer)
+
+
 
 # Crée un canvas pour dessiner sur
 
@@ -264,11 +264,14 @@ def on_connection(agent, connected):
     else:
         print(f"{agent} s'est déconnecté")
 
+
 def on_message(agent, *larg):
     print(f"Agent {agent}: Message reçu {larg}")
 
+
 def on_command(agent, *larg):
     print(f"Agent {agent}: Commande reçue {larg}")
+
 
 def start_ivy(app_name):
     IvyInit(app_name, f"{app_name} is ready", 1, on_connection, on_message)
@@ -277,8 +280,6 @@ def start_ivy(app_name):
 
 app_name = "BusTortue"
 start_ivy(app_name)
-
-
 
 IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
 IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
@@ -289,13 +290,12 @@ IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
 IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
-IvyBindMsg(tortue.changerCouleur, "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
-
+IvyBindMsg(tortue.changerCouleur,
+           "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 right_panel = tk.Frame(root)
 right_panel.pack(side=tk.LEFT, anchor="ne", padx=10, pady=10)
-
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 south_panel = tk.Frame(root)
@@ -303,7 +303,6 @@ south_panel.pack(side=tk.BOTTOM, anchor="s", padx=10, pady=10)
 
 canvas2 = tk.Canvas(south_panel, width=600, height=400)
 canvas2.pack(side=tk.TOP, anchor="n", padx=10, pady=10)
-
 
 # Création d'un label "Historique"
 history_label = tk.Label(right_panel, text="Historique")
@@ -313,12 +312,9 @@ history_label.grid(row=1, column=1, pady=5)
 history_frame = tk.Frame(right_panel)
 history_frame.grid(row=1, column=1)
 
-
 # Création d'un bouton "play"
 play_button = tk.Button(south_panel, text="Jouer", command=lambda: tortue.jouer())
 play_button.pack()
-
-
 
 # Création d'un bouton "importer"
 importer_button = tk.Button(south_panel, text="Importer", command=lambda: tortue.importer())
@@ -332,10 +328,11 @@ save_button.pack()
 terminal = tk.Text(south_panel, wrap=tk.WORD)
 terminal.pack(expand=True, fill=tk.BOTH)
 
-#Slideur
+# Slideur
 tortue.sleep_time = tk.DoubleVar()
 tortue.sleep_time.set(1.0)  # Valeur initiale du délai en secondes
-slider = tk.Scale(south_panel, from_=0.1, to=5.0, resolution=0.1, orient=tk.HORIZONTAL, label="Temps de pause (s)", variable=tortue.sleep_time)
+slider = tk.Scale(south_panel, from_=0.1, to=5.0, resolution=0.1, orient=tk.HORIZONTAL, label="Temps de pause (s)",
+                  variable=tortue.sleep_time)
 slider.pack()
 
 # Création d'une zone de saisie pour les commandes
@@ -345,7 +342,8 @@ command_text.bind("<Return>", tortue.on_enter_key)
 command_text.pack()
 
 # Exécuter python ivyprobe.py en utilisant subprocess
-process = subprocess.Popen(['python', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+process = subprocess.Popen(['python', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, text=True)
 
 
 # Créer un thread pour lire la sortie du processus et l'afficher dans le widget "Text"
@@ -357,9 +355,9 @@ def read_output():
         else:
             break
 
+
 output_thread = threading.Thread(target=read_output)
 output_thread.start()
-
 
 
 class EditeurDeTexte:
@@ -379,15 +377,17 @@ class EditeurDeTexte:
                 self.selectedLabel.configure(bg="white")
             widget.configure(bg="yellow")
             self.selectedLabel = widget
+
     # Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
     def on_frame_configure(self, event):
         canvas.configure(scrollregion=canvas.bbox("all"))
 
-    def importerCommande(self,xml_data):
+    def importerCommande(self, xml_data):
         def get_attr_value(tag, attr_name):
             if f"{attr_name}='" in tag:
                 return int(tag.split(f"{attr_name}='")[1].split("'")[0])
             return None
+
         def parse_content(content):
             commands = []
             buffer = ""
@@ -453,6 +453,7 @@ class EditeurDeTexte:
         dessin_content = xml_data[dessin_start:dessin_end]
 
         return parse_content(dessin_content)
+
     # Fonctions pour les commandes des boutons
     def importer(self):
         xml = ""
@@ -462,14 +463,14 @@ class EditeurDeTexte:
             # Ouvrir le fichier et lire son contenu
             with open(file_path, 'r') as f:
                 xml_str = f.read()
-            #print(xml_str)
+            # print(xml_str)
             xml = xml_str
         else:
             print('Aucun fichier sélectionné.')
 
         commands = self.importerCommande(xml)
         for i in commands:
-             self.creerLabel(i)
+            self.creerLabel(i)
 
     def exporterCommande(self, commandes):
         i = 0
@@ -505,14 +506,14 @@ class EditeurDeTexte:
                 res += "<position x='{}' y='{}'/>\n".format(x, y)
             elif text.startswith("REPETE"):
                 n = int(text.split(" ")[1])
-                print("ici nombre de fois: "+str(n))
+                print("ici nombre de fois: " + str(n))
                 i += 1  # Passer à la ligne suivante
-                print("ici commande[i] vaut"+commandes[i])
+                print("ici commande[i] vaut" + commandes[i])
                 if commandes[i].startswith("{"):
                     i += 1  # Passer à la ligne suivante
                     inner_commands = []
                     bracket_count = 1
-                    print("bracker_count vaut "+str(bracket_count)+"\n")
+                    print("bracker_count vaut " + str(bracket_count) + "\n")
                     while bracket_count > 0:
                         if commandes[i].startswith("{"):
                             bracket_count += 1
@@ -544,8 +545,6 @@ class EditeurDeTexte:
         print(res)
         with open(file_path, 'w') as f:
             f.write(res)
-            
-
 
     def clear(self):
         self.label_list = []
@@ -558,17 +557,19 @@ class EditeurDeTexte:
         self.selectedLabel = None
         self.tailleCadre = 2
 
-
     def send(self):
         commandes = [label.cget("text") for label in self.label_list]
         del commandes[0]
         del commandes[0]
         print(commandes)
-        for i in commandes:
-            label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
-            tortue.nombreCommande += 1
-            label.grid(row=tortue.nombreCommande+1, column=1, sticky="nsew")
-            tortue.liste_historique.append(label)
+        if tortue.is_closed:
+            tk.messagebox.showerror("Erreur", "Le visualisateur est fermé")
+        else:
+            for i in commandes:
+                label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
+                tortue.nombreCommande += 1
+                label.grid(row=tortue.nombreCommande + 1, column=1, sticky="nsew")
+                tortue.liste_historique.append(label)
 
 
     def avancerCommande(self, valeur):
@@ -675,7 +676,7 @@ class EditeurDeTexte:
                     del self.label_list[row - 1]
                     deleted_rows += 1
                 initial_row -= (deleted_rows - 1)  # Ajustez l'index initial_row
-                del self.label_list[initial_row+1]  # Supprimez le label avec "{"
+                del self.label_list[initial_row + 1]  # Supprimez le label avec "{"
                 deleted_rows += 1  # Mettez à jour le nombre de lignes supprimées
             elif "}" in self.label_list[row].cget("text"):
                 # Supprimer les lignes en remontant jusqu'à "REPETE"
@@ -702,7 +703,6 @@ class EditeurDeTexte:
         self.refresh()
         self.tailleCadre -= 1
 
-
     def modify(self, param):
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
@@ -712,7 +712,6 @@ class EditeurDeTexte:
 
             self.label_list[row] = label
             self.refresh()
-
 
     def modifyRow(self, param, row):
         label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
@@ -739,7 +738,6 @@ class EditeurDeTexte:
             self.label_list.insert(row, label_espace)
             self.refresh()
             self.tailleCadre += 1
-
 
     def augmenter_espaceRow(self, row):
         label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
@@ -834,7 +832,7 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def fPosCommande(self, valeur1, valeur2):
-        res = "FPOS [" + valeur1 + " " + valeur2+"]"
+        res = "FPOS [" + valeur1 + " " + valeur2 + "]"
         if valeur1 != "" and valeur2 != "":
             if self.selectedLabel:
                 self.modify(res)
@@ -1044,11 +1042,7 @@ clearBouton.pack(side="left", anchor="w")
 sendBouton = tk.Button(frameBouton, text="Send", command=lambda: editeur.send(), width=20)
 sendBouton.pack(side="left", anchor="w")
 
-
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
 # Bucle secondaire de tkinter pour afficher l'éditeur de texte
 root2.mainloop()
-
-
-
