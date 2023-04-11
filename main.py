@@ -28,7 +28,7 @@ class Tortue():
         self.liste_historique = []
         self.sleep_time = 1.0
         self.is_closed = False
-
+        self.cap = 100
     def close_visualizer(self, event):
         self.is_closed = True  # Ajoutez cette ligne pour mettre à jour l'attribut is_closed
 
@@ -139,10 +139,13 @@ class Tortue():
         self.couleur = hex_code
         print("changer couleur en :" + hex_code)
 
-    # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
-    def fixerPosition(self, agent, x, y):
-        self.x, self.y = x, y
+    def fixerCap(self, agent, x):
+        self.cap = x
+
+    # code pour fixer le cap de la tortue de manière absolue
+    def setPosition(self, agent, x, y):
+        self.x, self.y = int(x), int(y)
 
     def lancerCommandes(self, commands):
         #  print(commands)
@@ -319,17 +322,18 @@ def start_ivy(app_name):
 app_name = "BusTortue"
 start_ivy(app_name)
 
-IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
-IvyBindMsg(tortue.reculer, "^RECULE\s(.*)$")
-IvyBindMsg(tortue.tournerDroite, "^TOURNEDROITE\s(.*)$")
-IvyBindMsg(tortue.tournerGauche, "^TOURNEGAUCHE\s(.*)$")
+IvyBindMsg(tortue.avancer, "^AVANCE\s+(\d+(?:\.\d+)?)$")
+IvyBindMsg(tortue.reculer, "^RECULE\s+(\d+(?:\.\d+)?)$")
+IvyBindMsg(tortue.tournerDroite, "^TOURNEDROITE\s+(\d+(?:\.\d+)?)$")
+IvyBindMsg(tortue.tournerGauche, "^TOURNEGAUCHE\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.leverCrayon, "^LEVECRAYON$")
 IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
 IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
-IvyBindMsg(tortue.changerCouleur,
-           "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
+IvyBindMsg(tortue.fixerCap, "^FCAP\s+(\d+(?:\.\d+)?)$")
+IvyBindMsg(tortue.setPosition, r"^FPOS\s+\[(\d+)\s+(\d+)\]$")
+IvyBindMsg(tortue.changerCouleur,"^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 right_panel = tk.Frame(root)
