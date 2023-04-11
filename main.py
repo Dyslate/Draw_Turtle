@@ -197,14 +197,52 @@ class Tortue():
             self.changerCouleur(value1, value2, value3)
 
     def jouer(self):
-        def execute_commands():
-            listeCommandes = [label.cget("text") for label in self.liste_historique]
-            print(listeCommandes)
-            # print(command)
-            #   self.run_command_text(command)
-            time.sleep(self.sleep_time.get())
+        print("Lancement de jouer")
 
-        thread = threading.Thread(target=execute_commands)
+        def execute_commands(commandes, labels):
+            index = 0
+            while index < len(commandes):
+                commande = commandes[index]
+                label = labels[index]
+                label.config(bg="yellow")  # Mettre en évidence le label en jaune
+                history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+                if commande.startswith("REPETE"):
+                    repetitions = int(commande.split()[1])
+                    index += 1
+                    nested_commands, nested_labels, index = extract_nested_commands(commandes, labels, index)
+                    for _ in range(repetitions):
+                        execute_commands(nested_commands, nested_labels)
+                else:
+                    self.run_command_text(commande)
+                    print(commande)
+                    time.sleep(self.sleep_time.get())
+                    index += 1
+                label.config(bg="SystemButtonFace")  # Restaurer la couleur d'arrière-plan d'origine
+                history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+
+        def extract_nested_commands(commandes, labels, start_index):
+            nested_commands = []
+            nested_labels = []
+            brace_count = 0
+            index = start_index
+
+            while index < len(commandes):
+                current_command = commandes[index]
+                current_label = labels[index]
+                if current_command == '{':
+                    brace_count += 1
+                elif current_command == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        return nested_commands, nested_labels, index + 1
+                if brace_count > 0:
+                    nested_commands.append(current_command)
+                    nested_labels.append(current_label)
+                index += 1
+            return nested_commands, nested_labels, index
+
+        liste_commandes = [label.cget("text") for label in self.liste_historique]
+        thread = threading.Thread(target=lambda: execute_commands(liste_commandes, self.liste_historique))
         thread.start()
 
     def importer(self):
@@ -213,7 +251,7 @@ class Tortue():
         # Vérifier si un fichier a été sélectionné
         if file_path:
             # Ouvrir le fichier et lire son contenu
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding="utf-8") as f:
                 xml_str = f.read()
             # print(xml_str)
             xml = xml_str
@@ -423,7 +461,7 @@ class EditeurDeTexte:
                         commands.append("ORIGINE")
                     elif "restaure" in buffer:
                         commands.append("RESTAURE")
-                    elif "nettoie" in buffer:
+                    elif "nettoyer" in buffer:
                         commands.append("NETTOIE")
                     elif "crayon" in buffer:
                         r = get_attr_value(buffer, "rouge")
@@ -461,7 +499,7 @@ class EditeurDeTexte:
         # Vérifier si un fichier a été sélectionné
         if file_path:
             # Ouvrir le fichier et lire son contenu
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding="utf-8") as f:
                 xml_str = f.read()
             # print(xml_str)
             xml = xml_str
@@ -543,7 +581,7 @@ class EditeurDeTexte:
         file_path = filedialog.asksaveasfilename(defaultextension='.xml')
         # Écrire le fichier XML avec la variable res
         print(res)
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding="utf-8") as f:
             f.write(res)
 
     def clear(self):
