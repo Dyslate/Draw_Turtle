@@ -1,12 +1,12 @@
-import math
-import os
 import re
+import subprocess
+import threading
+import time
 import tkinter as tk
-from pathlib import Path
 from tkinter import filedialog
+
 from PIL import Image, ImageDraw
-#from ivy.std_api import *
-from ivyprobe import *
+from ivy.std_api import *
 
 
 # Fonction qui efface toute les traces à l'écrans
@@ -25,20 +25,40 @@ class Tortue:
         self.commands = []  # pour save le dessin en xml.
         self.couleur = "#FF0000"
         self.nombreCommande = 0
-
+        self.liste_historique = []
+        self.sleep_time = 1.0
 
     def avancer(self, agent, value, ajouterCommande=True):
         value = int(value)
 
-        # Angle en radians
-        angle = math.radians(self.angle)
+        #Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
+        def cos(angle):
+            result = 0
+            term = 1
+            for i in range(20):
+                result += term
+                term *= -angle * angle / (2 * i + 1) / (2 * i + 2)
+            return result
 
-        # Longueur de la ligne
+        def sin(angle):
+            result = 0
+            term = angle
+            for i in range(1, 20):
+                result += term
+                term *= -angle * angle / (2 * i) / (2 * i + 1)
+            return result
+
+        # Conversion de l'angle en radians
+        angle_degrees = self.angle
+        angle_radians = angle_degrees * (3.141592653589793 / 180)
+
+
         longueur = value
 
-        # Calcul des coordonnées du point d'arrivée
-        x2 = self.x + longueur * math.cos(angle)
-        y2 = self.y - longueur * math.sin(angle)
+
+        # Calcul des coordonnées du point d'arrivée sans utiliser la bibliothèque math
+        x2 = self.x + longueur * cos(angle_radians)
+        y2 = self.y - longueur * sin(angle_radians)
 
         print("x1 : ", self.x, "y1 : ", self.y)
         print("x2 : ", x2, "y2 : ", y2)
@@ -59,11 +79,11 @@ class Tortue:
         self.commands.append(("RECULE", value))
 
     def tournerDroite(self, agent, value):
-        self.angle += value
+        self.angle -= int(value)
         self.commands.append(("TOURNEDROITE", value))
 
     def tournerGauche(self, agent, value):
-        self.angle -= value
+        self.angle += int(value)
         self.commands.append(("TOURNEGAUCHE", value))
 
     def leverCrayon(self, agent):
@@ -84,23 +104,40 @@ class Tortue:
         self.y = self.yBase
         self.commands.append("RESTAURER")
 
-    def on_enter_key(self,event):
-        # Fonction à exécuter lorsque la touche "Enter" est enfoncée
-        command = str((command_text.get())).strip()
-        print(f"Commande saisie : {command}")
-        print(IvySendMsg(command))
+    def run_command(self):
+        command = command_text.get()
+        terminal.insert(tk.END, f'{command}\n')
+        process.stdin.write(command + '\n')
+        process.stdin.flush()
+        command_text.config(state=tk.NORMAL)
+
+    def run_command_text(self, text):
+        command = text
+        terminal.insert(tk.END, f'{command}\n')
+        process.stdin.write(command + '\n')
+        process.stdin.flush()
+        command_text.config(state=tk.NORMAL)
+
+    def on_enter_key(self, event):
+        command_text.config(state=tk.DISABLED)
+        thread = threading.Thread(target=self.run_command)
+        thread.start()
+
+       # print(IvySendMsg(command))
 
     def nettoyer(self, agent):
         canvas2.delete("all")
         #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
-    def changerCouleur(self, r, v, b):
+    def changerCouleur(self, agent, r, v, b):
+        r, v, b = int(r), int(v), int(b)  # Convertir les chaînes de caractères en entiers
+
         print("test")
         # code pour changer la couleur du crayon à partir des composantes r v b
         hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
         self.couleur = hex_code
-        print("changer couleur en :"+hex_code)
+        print("changer couleur en :" + hex_code)
 
     # def fixerCap(self,value):
     # code pour fixer le cap de la tortue de manière absolue
@@ -159,10 +196,16 @@ class Tortue:
             value3 = int(command.split(" ")[3])
             self.changerCouleur(value1, value2, value3)
 
-    def testIvy(self):
-        print("test")
-        IvySendMsg("#FIVYCLEAN")  # Effacer le buffer d'Ivy
-        print(IvySendMsg("AVANCE 100"))
+    def jouer(self):
+        def execute_commands():
+            for label in self.liste_historique:
+                command = label.cget("text")
+                print(command)
+                self.run_command_text(command)
+                time.sleep(self.sleep_time.get())
+
+        thread = threading.Thread(target=execute_commands)
+        thread.start()
 
 
     def importer(self):
@@ -186,6 +229,7 @@ class Tortue:
             label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
             self.nombreCommande += 1
             label.grid(row=self.nombreCommande+1, column=1, sticky="nsew")
+            self.liste_historique.append(label)
 
 
     def sauver(self):
@@ -235,8 +279,6 @@ def start_ivy(app_name):
 app_name = "BusTortue"
 start_ivy(app_name)
 
-def onhello(agent, message, test):
-    print("Got hello message: %s from: %s (coming from ivy agent: %r)"% (message, test, agent))
 
 
 IvyBindMsg(tortue.avancer, "^AVANCE\s(.*)$")
@@ -248,7 +290,8 @@ IvyBindMsg(tortue.baisserCrayon, "^BAISSECRAYON$")
 IvyBindMsg(tortue.origine, "^ORIGINE$")
 IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
-IvyBindMsg(tortue.changerCouleur, "^FCC\s")
+IvyBindMsg(tortue.changerCouleur, "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
+
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 right_panel = tk.Frame(root)
@@ -273,8 +316,9 @@ history_frame.grid(row=1, column=1)
 
 
 # Création d'un bouton "play"
-play_button = tk.Button(south_panel, text="Jouer", command=lambda: tortue.testIvy())
+play_button = tk.Button(south_panel, text="Jouer", command=lambda: tortue.jouer())
 play_button.pack()
+
 
 
 # Création d'un bouton "importer"
@@ -285,7 +329,15 @@ importer_button.pack()
 save_button = tk.Button(south_panel, text="Enregistrer", command=lambda: tortue.sauver())
 save_button.pack()
 
+# Création du widget "Text" pour afficher le contenu du terminal
+terminal = tk.Text(south_panel, wrap=tk.WORD)
+terminal.pack(expand=True, fill=tk.BOTH)
 
+#Slideur
+tortue.sleep_time = tk.DoubleVar()
+tortue.sleep_time.set(1.0)  # Valeur initiale du délai en secondes
+slider = tk.Scale(south_panel, from_=0.1, to=5.0, resolution=0.1, orient=tk.HORIZONTAL, label="Temps de pause (s)", variable=tortue.sleep_time)
+slider.pack()
 
 # Création d'une zone de saisie pour les commandes
 command_text = tk.Entry(south_panel)
@@ -293,9 +345,21 @@ command_text = tk.Entry(south_panel)
 command_text.bind("<Return>", tortue.on_enter_key)
 command_text.pack()
 
+# Exécuter python ivyprobe.py en utilisant subprocess
+process = subprocess.Popen(['python', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 
+# Créer un thread pour lire la sortie du processus et l'afficher dans le widget "Text"
+def read_output():
+    while True:
+        output = process.stdout.readline()
+        if output:
+            terminal.insert(tk.END, output)
+        else:
+            break
 
+output_thread = threading.Thread(target=read_output)
+output_thread.start()
 
 
 
@@ -504,6 +568,8 @@ class EditeurDeTexte:
             label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
             tortue.nombreCommande += 1
             label.grid(row=tortue.nombreCommande+1, column=1, sticky="nsew")
+            tortue.liste_historique.append(label)
+
 
     def avancerCommande(self, valeur):
         res = "AVANCE " + valeur
@@ -705,6 +771,7 @@ class EditeurDeTexte:
 
     def fccCommande(self, valeur1, valeur2, valeur3):
         res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
+        print(res)
         if valeur1 != "" and valeur2 != "" and valeur3 != "":
             if self.selectedLabel:
                 self.modify(res)
