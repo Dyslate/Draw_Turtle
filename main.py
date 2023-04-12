@@ -28,6 +28,8 @@ class Tortue():
         self.sleep_time = 1.0
         self.is_closed = False
         self.cap = 100
+        self.capFixed = False
+
     def close_visualizer(self, event):
         self.is_closed = True  # Ajoutez cette ligne pour mettre à jour l'attribut is_closed
 
@@ -53,6 +55,14 @@ class Tortue():
 
         # Conversion de l'angle en radians
         angle_degrees = self.angle
+        if self.capFixed:
+            self.angle += self.cap
+            print(self.capFixed)
+            print(str("l'angle vaut: "+str(angle_degrees)))
+        else:
+            angle_degrees = self.angle
+            print(str(angle_degrees))
+
         angle_radians = angle_degrees * (3.141592653589793 / 180)
 
         longueur = value
@@ -126,7 +136,7 @@ class Tortue():
 
     def nettoyer(self, agent):
         canvas2.delete("all")
-      #  tortue.origine(self)
+        #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
     def clear(self):
@@ -147,10 +157,15 @@ class Tortue():
 
     # code pour fixer le cap de la tortue de manière absolue
     def fixerCap(self, agent, x):
-        self.cap = x
+        self.cap = float(x)
+        if self.capFixed:
+            self.capFixed = False
+        else:
+            self.capFixed = True
 
     def setPosition(self, agent, x, y):
         self.x, self.y = int(x), int(y)
+
     def jouer(self):
         print("Lancement de jouer")
 
@@ -233,9 +248,12 @@ class Tortue():
         for item in canvas2.find_all():
             item_type = canvas2.type(item)
             item_coords = canvas2.coords(item)
-            #TODO gestion couleur
+
+            # Récupérer la couleur de l'objet
+            item_color = canvas2.itemcget(item, "fill")
+
             if item_type == "line":
-                draw.line(item_coords, fill="blue")
+                draw.line(item_coords, fill=item_color)
 
         # Sauvegarder l'image PIL en format JPEG
         image.save(filename, "JPEG")
@@ -246,7 +264,6 @@ root.title("Visualiseur")
 tortue = Tortue()
 
 root.bind('<Destroy>', tortue.close_visualizer)
-
 
 
 # Crée un canvas pour dessiner sur
@@ -285,7 +302,8 @@ IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.fixerCap, "^FCAP\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.setPosition, r"^FPOS\s+\[(\d+)\s+(\d+)\]$")
-IvyBindMsg(tortue.changerCouleur,"^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
+IvyBindMsg(tortue.changerCouleur,
+           "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 right_panel = tk.Frame(root)
@@ -321,7 +339,6 @@ save_button.pack()
 # Création d'un bouton "save"
 clear_button = tk.Button(south_panel, text="Clear", command=lambda: tortue.clear())
 clear_button.pack()
-
 
 # Création du widget "Text" pour afficher le contenu du terminal
 terminal = tk.Text(south_panel, wrap=tk.WORD)
@@ -570,7 +587,6 @@ class EditeurDeTexte:
                 label.grid(row=tortue.nombreCommande + 1, column=1, sticky="nsew")
                 tortue.liste_historique.append(label)
 
-
     def avancerCommande(self, valeur):
         res = "AVANCE " + valeur
         if valeur != "":
@@ -649,7 +665,7 @@ class EditeurDeTexte:
             print(str(i))
 
     def diminuer_espace(self):
-        #TODO DEBUG
+        # TODO DEBUG
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
             deleted_rows = 0
