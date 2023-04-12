@@ -1,4 +1,3 @@
-import re
 import subprocess
 import threading
 import time
@@ -97,8 +96,8 @@ class Tortue():
         self.commands.append("BAISSECRAYON")
 
     def origine(self, agent):
-        self.x, self.y, self.orientation = self.xBase, self.yBase, 0
-        self.angle = 0
+        self.x, self.y = self.xBase, self.yBase
+        self.angle = 90
         self.commands.append("ORIGINE")
 
     def restaurer(self, agent):
@@ -125,15 +124,22 @@ class Tortue():
         thread = threading.Thread(target=self.run_command)
         thread.start()
 
-    def nettoyer(self, agent):
+    def nettoyer(self):
         canvas2.delete("all")
-        #  tortue.origine(self)
+      #  tortue.origine(self)
         self.commands.append("NETTOYER")
+
+    def clear(self):
+        canvas2.delete("all")
+        for label in self.liste_historique:
+            label.destroy()
+        self.liste_historique = []
+        self.x, self.y = self.xBase, self.yBase
+        self.angle = 90
+        self.commands.append("ORIGINE")
 
     def changerCouleur(self, agent, r, v, b):
         r, v, b = int(r), int(v), int(b)  # Convertir les chaînes de caractères en entiers
-
-        print("test")
         # code pour changer la couleur du crayon à partir des composantes r v b
         hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
         self.couleur = hex_code
@@ -146,59 +152,6 @@ class Tortue():
     # code pour fixer le cap de la tortue de manière absolue
     def setPosition(self, agent, x, y):
         self.x, self.y = int(x), int(y)
-
-    def lancerCommandes(self, commands):
-        #  print(commands)
-        commands = commands.split("\n")
-        for cmd in commands:
-            """Créé une regex qui récupère ce qu'il y a après REPETE dans un premier groupe, exemple: REPETE3
-            Recupère dans un groupe deux l'interieur de []"""
-
-            match = re.match(r'^REPETE (\d+) \[(.+)+]', cmd)
-            print(match)
-            if match:
-                print("HIT")
-                n = int(match.group(1))
-                print(n)
-                actions = match.group(2)
-                actions = actions.split("\n")
-                print("Actions : ", actions)
-                for i in range(n):
-                    for j in range(len(actions)):
-                        self.lancerCommandes(actions[j])
-                    #  print(actions[j])
-            else:
-                print("Commande à traiter: ", cmd)
-                self.traiterCommande(cmd)
-
-    def traiterCommande(self, command):
-        # Vérifier la validité de la commande et exécuter la fonction appropriée
-        if command == "LEVECRAYON":
-            self.penActivated = False
-        elif command == "BAISSECRAYON":
-            self.penActivated = True
-        elif command.startswith("AVANCE"):
-            value = int(command.split(" ")[1])
-            self.avancer(self, value, True)
-        elif command.startswith("TOURNEDROITE"):
-            value = int(command.split(" ")[1])
-            self.tournerDroite(self, value)
-        elif command.startswith("TOURNEGAUCHE"):
-            value = int(command.split(" ")[1])
-            self.tournerGauche(self, value)
-        elif command.startswith("RECULE"):
-            value = int(command.split(" ")[1])
-            self.reculer(self, value)
-        elif command.startswith("ORIGINE"):
-            self.origine(self)
-        elif command.startswith("NETTOIE"):
-            self.nettoyer(self)
-        elif command.startswith("FCC"):
-            value1 = int(command.split(" ")[1])
-            value2 = int(command.split(" ")[2])
-            value3 = int(command.split(" ")[3])
-            self.changerCouleur(value1, value2, value3)
-
     def jouer(self):
         print("Lancement de jouer")
 
@@ -365,6 +318,11 @@ importer_button.pack()
 # Création d'un bouton "save"
 save_button = tk.Button(south_panel, text="Enregistrer", command=lambda: tortue.sauver())
 save_button.pack()
+
+# Création d'un bouton "save"
+clear_button = tk.Button(south_panel, text="Clear", command=lambda: tortue.clear())
+clear_button.pack()
+
 
 # Création du widget "Text" pour afficher le contenu du terminal
 terminal = tk.Text(south_panel, wrap=tk.WORD)
@@ -605,7 +563,7 @@ class EditeurDeTexte:
         del commandes[0]
         print(commandes)
         if tortue.is_closed:
-            tk.messagebox.showerror("Erreur", "Le visualisateur est fermé")
+            tk.messagebox.showerror("Erreur", "Le visualiseur est fermé")
         else:
             for i in commandes:
                 label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
@@ -740,7 +698,6 @@ class EditeurDeTexte:
             self.selectedLabel = None
 
     def diminuer_espaceRow(self, row):
-        print(self.label_list[row])
         del self.label_list[row]
         self.refresh()
         self.tailleCadre -= 1
@@ -858,7 +815,6 @@ class EditeurDeTexte:
 
     def fccCommande(self, valeur1, valeur2, valeur3):
         res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
-        print(res)
         if valeur1 != "" and valeur2 != "" and valeur3 != "":
             if self.selectedLabel:
                 self.modify(res)
