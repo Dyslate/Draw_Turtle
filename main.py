@@ -124,7 +124,7 @@ class Tortue():
         thread = threading.Thread(target=self.run_command)
         thread.start()
 
-    def nettoyer(self):
+    def nettoyer(self, agent):
         canvas2.delete("all")
       #  tortue.origine(self)
         self.commands.append("NETTOYER")
@@ -149,7 +149,6 @@ class Tortue():
     def fixerCap(self, agent, x):
         self.cap = x
 
-    # code pour fixer le cap de la tortue de manière absolue
     def setPosition(self, agent, x, y):
         self.x, self.y = int(x), int(y)
     def jouer(self):
@@ -234,7 +233,7 @@ class Tortue():
         for item in canvas2.find_all():
             item_type = canvas2.type(item)
             item_coords = canvas2.coords(item)
-
+            #TODO gestion couleur
             if item_type == "line":
                 draw.line(item_coords, fill="blue")
 
@@ -650,6 +649,7 @@ class EditeurDeTexte:
             print(str(i))
 
     def diminuer_espace(self):
+        #TODO DEBUG
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
             deleted_rows = 0
@@ -1036,7 +1036,7 @@ exportBouton.pack(side="left", anchor="w")
 clearBouton = tk.Button(frameBouton, text="Clear", command=lambda: editeur.clear(), width=20)
 clearBouton.pack(side="left", anchor="w")
 
-# Création d'un bouton "Clear"
+# Création d'un bouton "Send"
 sendBouton = tk.Button(frameBouton, text="Send", command=lambda: editeur.send(), width=20)
 sendBouton.pack(side="left", anchor="w")
 
