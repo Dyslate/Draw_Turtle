@@ -107,6 +107,11 @@ class Tortue():
         self.items2 = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE",
                        "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS"]  # Add other items as needed
 
+
+        self.zoom_scale = 1.0
+        self.zoom_increment = 0.1
+        self.pan_start = None
+
         menubar = tk.Menu(root)
         # Créer un menu déroulant
         actions_menu = tk.Menu(menubar, tearoff=0)
@@ -129,8 +134,31 @@ class Tortue():
         self.context_menu.add_command(label="Modify", command=lambda: self.modifier(self.clicked_label))
         self.context_menu.add_command(label="Delete", command=lambda: self.supprimer(self.clicked_label))
 
-        self.context_menu.add_command(label="Add a blank line below",
-                                      command=lambda: self.ajouterligneblanche(self.clicked_label))
+        self.context_menu.add_command(label="Add a blank line below", command=lambda: self.ajouterligneblanche(self.clicked_label))
+
+
+    def pan_start(self, event):
+        canvas2.scan_mark(event.x, event.y)
+
+    def pan_move(self, event):
+        x = int(canvas2.canvasx(event.x))
+        y = int(canvas2.canvasy(event.y))
+        canvas2.scan_dragto(x, y, gain=1)
+
+    def pan_end(self, event):
+        canvas2.config(cursor="")
+
+    def show_zoom_menu(self, event):
+        context_menu = tk.Menu(canvas2, tearoff=0)
+        context_menu.add_command(label="Zoom In", command=lambda: self.zoom(event.x, event.y, self.zoom_increment))
+        context_menu.add_command(label="Zoom Out", command=lambda: self.zoom(event.x, event.y, -self.zoom_increment))
+        context_menu.post(event.x_root, event.y_root)
+
+
+    def zoom(self, x, y, increment):
+        self.zoom_scale += increment
+        self.zoom_scale = max(0.1, self.zoom_scale)
+        canvas2.scale('all', x, y, 1 + increment, 1 + increment)
 
     def show_context_menu(self, event):
         # Afficher le menu contextuel à la position du curseur
@@ -274,7 +302,7 @@ class Tortue():
         print("x2 : ", x2, "y2 : ", y2)
         print("longueur " + str(longueur))
         # Création de la ligne
-        canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur)
+        canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur, tags='all')
 
         print("couleur " + self.couleur)
         self.x = x2
@@ -600,7 +628,13 @@ south_panel = tk.Frame(root)
 south_panel.pack(side=tk.BOTTOM, anchor="s", padx=10, pady=10)
 
 canvas2 = tk.Canvas(south_panel, width=600, height=400)
-canvas2.pack(side=tk.TOP, anchor="n", padx=10, pady=10)
+canvas2.pack(fill=tk.BOTH, expand=True)
+
+canvas2.bind('<Button-3>', tortue.show_zoom_menu)
+canvas2.bind('<ButtonPress-2>', tortue.pan_start)
+canvas2.bind('<B2-Motion>', tortue.pan_move)
+canvas2.bind('<ButtonRelease-2>', tortue.pan_end)
+
 
 # Création d'un label "Historique"
 history_label = tk.Label(right_panel, text="History")
