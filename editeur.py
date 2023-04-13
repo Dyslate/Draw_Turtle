@@ -19,9 +19,7 @@ class EditeurDeTexte:
         context_menu.post(event.x_root, event.y_root)
 
     def add_line(self, event):
-        # Ajoutez votre logique pour ajouter une ligne ici
-        print("Ajouter une ligne")
-
+        #ajouter une ligne ici
         self.augmenter_espaceRow(event.widget.grid_info()['row'])
 
     def highlight(self, event):

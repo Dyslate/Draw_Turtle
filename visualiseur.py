@@ -11,10 +11,12 @@ from tkinter import simpledialog
 
 
 class CustomDialog(simpledialog.Dialog):
-    def __init__(self, parent, title, items):
+    def __init__(self, parent, title, items, tortue_instance):
         self.items = items
         self.selected_item = None
         self.entries = []
+        self.tortue_instance = tortue_instance
+
         super().__init__(parent, title)
 
     def body(self, frame):
@@ -46,6 +48,7 @@ class CustomDialog(simpledialog.Dialog):
             "FCC": 3,
             "FCAP": 1,
             "FPOS": 2,
+            "REPETE": 2,
         }
 
         # Clear entries frame
@@ -66,7 +69,16 @@ class CustomDialog(simpledialog.Dialog):
         params = " ".join(entry.get() for entry in self.entries)
         if self.selected_item == "FPOS":
             params = f"[{params}]"
-        self.result = f"{self.selected_item} {params}".strip()
+
+        if self.selected_item == "REPETE":
+            num_repeats = int(params.split()[0])
+            params = params.split()[0]  # Conserve uniquement le premier paramètre (nombre de répétitions)
+        #    self.result = (f"{self.selected_item} {params}", num_repeats)
+
+            # Ajouter les labels REPETE, {, lignes vides et }
+            self.tortue_instance.ajouter_repete_labels(num_repeats, self.tortue_instance.clicked_label)
+        else:
+            self.result = (f"{self.selected_item} {params}".strip(), None)
 
 
 # Fonction qui efface toute les traces à l'écrans
@@ -90,7 +102,7 @@ class Tortue():
         self.is_closed = False
         self.cap = 100
         self.capFixed = False
-        self.items = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE", "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS"]  # Add other items as needed
+        self.items = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE", "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS", "REPETE"]  # Add other items as needed
 
 
         menubar = tk.Menu(root)
@@ -122,13 +134,45 @@ class Tortue():
         self.context_menu.post(event.x_root, event.y_root)
         self.clicked_label = event.widget
 
+    def ajouter_repete_labels(self, num_repeats, clicked_label):
+        # Trouver l'index du label sélectionné dans la liste_historique
+        label_index = self.liste_historique.index(clicked_label)
+
+        # Créer les labels REPETE, {, lignes vides et }
+        repete_label = tk.Label(clicked_label.master, text=f"REPETE {num_repeats}", bg="white", borderwidth=1,
+                                relief="solid", width=20)
+        open_brace_label = tk.Label(clicked_label.master, text="{", bg="white", borderwidth=1, relief="solid", width=20)
+        empty_labels = [tk.Label(clicked_label.master, text="", bg="white", borderwidth=1, relief="solid", width=20) for
+                        _ in range(num_repeats)]
+        close_brace_label = tk.Label(clicked_label.master, text="}", bg="white", borderwidth=1, relief="solid",
+                                     width=20)
+
+        # Insérer les labels dans la liste_historique en dessous du label sélectionné
+        insert_index = label_index + 1
+        self.liste_historique.insert(insert_index, repete_label)
+        self.liste_historique.insert(insert_index + 1, open_brace_label)
+        for i, empty_label in enumerate(empty_labels):
+            self.liste_historique.insert(insert_index + 2 + i, empty_label)
+        self.liste_historique.insert(insert_index + 2 + num_repeats, close_brace_label)
+
+        # Mettre à jour les positions des labels existants
+        for i, hist_label in enumerate(self.liste_historique):
+            hist_label.grid(row=i + 1, column=1, sticky="nsew")
+
+        # Associer le clic droit au menu contextuel pour les nouveaux labels
+        repete_label.bind("<Button-3>", self.show_context_menu)
+        open_brace_label.bind("<Button-3>", self.show_context_menu)
+        for empty_label in empty_labels:
+            empty_label.bind("<Button-3>", self.show_context_menu)
+        close_brace_label.bind("<Button-3>", self.show_context_menu)
+
     def ajouter(self, label):
         # Trouver l'index du label sélectionné dans la liste_historique
         label_index = self.liste_historique.index(label)
 
-        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items)
+        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items, self)
         if dialog.result:
-            new_label_text = dialog.result
+            new_label_text, params = dialog.result
 
             new_label = tk.Label(label.master, text=new_label_text, bg="white", borderwidth=1, relief="solid", width=20)
 
@@ -141,16 +185,13 @@ class Tortue():
 
             # Associer le clic droit au menu contextuel pour le nouveau label
             new_label.bind("<Button-3>", self.show_context_menu)
-        else:
-            tk.messagebox.showerror("Error", "Wrong Selected!")
-
 
     def modifier(self, label):
         # Demander le nouveau texte à l'utilisateur
 
-        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items)
+        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items, self)
         if dialog.result:
-            new_label_text = dialog.result
+            new_label_text, params = dialog.result
             # Mettre à jour le texte du label sélectionné
             label.config(text=new_label_text)
 
