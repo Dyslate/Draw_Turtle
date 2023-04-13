@@ -1,0 +1,40 @@
+<dessin>
+<crayon rouge='139' vert='69' bleu='19'/>
+<répéter fois='18'>
+<avancer dist='30'/>
+<droite angle='20'/>
+</répéter>
+<répéter fois='18'>
+<avancer dist='30'/>
+<gauche angle='20'/>
+</répéter>
+<crayon rouge='255' vert='0' bleu='0'/>
+<position x='308' y='249'/>
+<gauche angle='50'/>
+<avancer dist='200'/>
+<répéter fois='10'>
+<avancer dist='20'/>
+<droite angle='18'/>
+</répéter>
+<avancer dist='180'/>
+<crayon rouge='69' vert='69' bleu='69'/>
+<répéter fois='2'>
+<répéter fois='2'>
+<répéter fois='2'>
+<avancer dist='50'/>
+</répéter>
+<droite angle='16'/>
+<reculer dist='20'/>
+</répéter>
+<avancer dist='50'/>
+</répéter>
+<avancer dist='180'/>
+<position x='359' y='206'/>
+<droite angle='115'/>
+<avancer dist='300'/>
+<crayon rouge='255' vert='215' bleu='0'/>
+<répéter fois='5'>
+<avancer dist='50'/>
+<gauche angle='144'/>
+</répéter>
+</dessin>

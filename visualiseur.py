@@ -118,7 +118,9 @@ class Tortue():
 
         # Ajouter des boutons au menu déroulant
         actions_menu.add_command(label="Import", command=self.importer)
-        actions_menu.add_command(label="Save", command=self.sauver)
+        actions_menu.add_command(label="Save in JPEG", command=self.sauver)
+        actions_menu.add_command(label="Save in XML", command=self.sauverXML)
+
         actions_menu.add_command(label="Clear", command=self.clear)
         actions_menu.add_command(label="Open Editor", command=self.openEditeur)
 
@@ -136,7 +138,93 @@ class Tortue():
 
         self.context_menu.add_command(label="Add a blank line below", command=lambda: self.ajouterligneblanche(self.clicked_label))
 
+    def display_cursor_position(self,event):
+        x = canvas2.canvasx(event.x)
+        y = canvas2.canvasy(event.y)
+        position_text = f"({x}, {y})"
 
+        # Supprimer le texte précédent (s'il existe)
+        canvas2.delete('position_text')
+
+        # Afficher la position du curseur à côté de la souris
+        canvas2.create_text(
+            x + 10, y + 10, text=position_text,
+            anchor='nw', tags='position_text', font=('Arial', 12, 'bold')
+        )
+
+    def exporterCommande(self, commandes):
+        i = 0
+        res = ""
+        while i < len(commandes):
+            text = commandes[i]
+            if text.startswith("AVANCE"):
+                res += "<avancer dist='" + text.split(" ")[1] + "'/>\n"
+            elif text.startswith("RECULE"):
+                res += "<reculer dist='" + text.split(" ")[1] + "'/>\n"
+            elif text.startswith("TOURNEDROITE"):
+                res += "<droite angle='" + text.split(" ")[1] + "'/>\n"
+            elif text.startswith("TOURNEGAUCHE"):
+                res += "<gauche angle='" + text.split(" ")[1] + "'/>\n"
+            elif text.startswith("LEVECRAYON"):
+                res += "<lever/>" + "\n"
+            elif text.startswith("BAISSECRAYON"):
+                res += "<baisser/>" + "\n"
+            elif text.startswith("ORIGINE"):
+                res += "<origine/>" + "\n"
+            elif text.startswith("NETTOIE"):
+                res += "<nettoyer/>" + "\n"
+            elif text.startswith("RESTAURE"):
+                res += "<restaurer/>" + "\n"
+            elif text.startswith("FCC"):
+                res += "<crayon rouge='" + text.split(" ")[1] + "' vert='" + text.split(" ")[2] + "' bleu='" + \
+                       text.split(" ")[3] + "'/>\n"
+            elif text.startswith("FCAP"):
+                res += "<cap angle='" + text.split(" ")[1] + "'/>\n"
+            elif text.startswith("FPOS"):
+                coords = text.split("[")[1].split("]")[0].split()
+                x, y = coords[0], coords[1]
+                res += "<position x='{}' y='{}'/>\n".format(x, y)
+            elif text.startswith("REPETE"):
+                n = int(text.split(" ")[1])
+                print("ici nombre de fois: " + str(n))
+                i += 1  # Passer à la ligne suivante
+                print("ici commande[i] vaut" + commandes[i])
+                if commandes[i].startswith("{"):
+                    i += 1  # Passer à la ligne suivante
+                    inner_commands = []
+                    bracket_count = 1
+                    print("bracker_count vaut " + str(bracket_count) + "\n")
+                    while bracket_count > 0:
+                        if commandes[i].startswith("{"):
+                            bracket_count += 1
+                        elif commandes[i].startswith("}"):
+                            bracket_count -= 1
+                        if bracket_count > 0:
+                            inner_commands.append(commandes[i])
+                            print("inner commands ici: " + str(inner_commands) + "\n")
+                            i += 1
+                    res += "<répéter fois='" + str(n) + "'>\n"
+                    res += self.exporterCommande(inner_commands)
+                    res += "</répéter>\n"
+            i += 1
+        return res
+
+    # Adapter la méthode pour utiliser exporterCommande.
+    def sauverXML(self):
+        commandes = [label.cget("text") for label in self.liste_historique]
+#        del commandes[0]
+     #   del commandes[0]
+        print(commandes)
+        res = ""
+        res += "<dessin>\n"
+        res += self.exporterCommande(commandes)
+        res += "</dessin>"
+
+        file_path = filedialog.asksaveasfilename(defaultextension='.xml')
+        # Écrire le fichier XML avec la variable res
+        print(res)
+        with open(file_path, 'w', encoding="utf-8") as f:
+            f.write(res)
     def pan_start(self, event):
         canvas2.scan_mark(event.x, event.y)
 
@@ -212,7 +300,7 @@ class Tortue():
 
             # Mettre à jour les positions des labels existants
             for i, hist_label in enumerate(self.liste_historique):
-                hist_label.grid(row=i + 1, column=1, sticky="nsew")
+                hist_label.grid(row=i + 2, column=1, sticky="nsew")
 
             # Associer le clic droit au menu contextuel pour le nouveau label
             new_label.bind("<Button-3>", self.show_context_menu)
@@ -228,7 +316,7 @@ class Tortue():
 
         # Mettre à jour les positions des labels existants
         for i, hist_label in enumerate(self.liste_historique):
-            hist_label.grid(row=i + 1, column=1, sticky="nsew")
+            hist_label.grid(row=i + 2, column=1, sticky="nsew")
 
         # Associer le clic droit au menu contextuel pour le nouveau label
         new_label.bind("<Button-3>", self.show_context_menu)
@@ -366,6 +454,13 @@ class Tortue():
         #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
+    def nettoyerDessin(self):
+        self.x = self.xBase
+        self.y = self.yBase
+        self.penActivated = True
+        self.angle = 90
+        canvas2.delete("all")
+
     def clear(self):
         canvas2.delete("all")
         for label in self.liste_historique:
@@ -395,7 +490,7 @@ class Tortue():
 
     def jouer(self):
         print("Lancement de jouer")
-
+        self.nettoyerDessin()
         def execute_commands(commandes, labels):
             index = 0
             while index < len(commandes):
@@ -627,13 +722,14 @@ right_panel.pack(side=tk.LEFT, anchor="ne", padx=10, pady=10)
 south_panel = tk.Frame(root)
 south_panel.pack(side=tk.BOTTOM, anchor="s", padx=10, pady=10)
 
-canvas2 = tk.Canvas(south_panel, width=600, height=400)
+canvas2 = tk.Canvas(root, bg='white')
 canvas2.pack(fill=tk.BOTH, expand=True)
 
 canvas2.bind('<Button-3>', tortue.show_zoom_menu)
 canvas2.bind('<ButtonPress-2>', tortue.pan_start)
 canvas2.bind('<B2-Motion>', tortue.pan_move)
 canvas2.bind('<ButtonRelease-2>', tortue.pan_end)
+canvas2.bind('<Button-1>', tortue.display_cursor_position)
 
 
 # Création d'un label "Historique"
