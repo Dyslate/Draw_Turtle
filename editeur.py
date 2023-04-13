@@ -10,8 +10,26 @@ class EditeurDeTexte:
         self.selectedLabel = None
         self.label_list = []
 
+    def right_click(self, event):
+        # Créer le menu contextuel
+        context_menu = tk.Menu(root2, tearoff=0)
+        context_menu.add_command(label="Ajouter ligne au dessus", command=lambda: self.add_line(event))
+
+        # Afficher le menu contextuel
+        context_menu.post(event.x_root, event.y_root)
+
+    def add_line(self, event):
+        # Ajoutez votre logique pour ajouter une ligne ici
+        print("Ajouter une ligne")
+
+        self.augmenter_espaceRow(event.widget.grid_info()['row'])
+
     def highlight(self, event):
         widget = event.widget
+        # Vérifie si le texte du label est égal à '{' ou '}'
+        if widget["text"] == "{" or widget["text"] == "}":
+            return
+
         if widget == self.selectedLabel:
             self.selectedLabel.configure(bg="white")
             self.selectedLabel = None
@@ -20,6 +38,7 @@ class EditeurDeTexte:
                 self.selectedLabel.configure(bg="white")
             widget.configure(bg="yellow")
             self.selectedLabel = widget
+
 
     # Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
     def on_frame_configure(self, event):
@@ -290,53 +309,40 @@ class EditeurDeTexte:
             print(str(i))
 
     def diminuer_espace(self):
-        # TODO DEBUG
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
-            deleted_rows = 0
-            if "REPETE" in self.label_list[row].cget("text"):
-                # Supprimer les lignes jusqu'à "}"
-                while row < len(self.label_list) and "}" not in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-                if row < len(self.label_list) and "}" in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-            elif "{" in self.label_list[row].cget("text"):
-                # Supprimer les lignes jusqu'à "}" et "REPETE"
-                initial_row = row  # Ajoutez cette ligne pour conserver la position initiale de la ligne
-                row += 1
-                while row < len(self.label_list) and "}" not in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-                if row < len(self.label_list) and "}" in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-                    row -= 1
-                if row > 0 and "REPETE" in self.label_list[row - 1].cget("text"):
-                    del self.label_list[row - 1]
-                    deleted_rows += 1
-                initial_row -= (deleted_rows - 1)  # Ajustez l'index initial_row
-                del self.label_list[initial_row + 1]  # Supprimez le label avec "{"
-                deleted_rows += 1  # Mettez à jour le nombre de lignes supprimées
-            elif "}" in self.label_list[row].cget("text"):
-                # Supprimer les lignes en remontant jusqu'à "REPETE"
-                del self.label_list[row]
-                deleted_rows += 1
-                row -= 1
-                while row > 0 and "REPETE" not in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-                    row -= 1
-                if row >= 0 and "REPETE" in self.label_list[row].cget("text"):
-                    del self.label_list[row]
-                    deleted_rows += 1
-            else:
-                del self.label_list[row]
-                deleted_rows += 1
+            deleted_rows = self.delete_labels(row)
             self.refresh()
             self.tailleCadre -= deleted_rows
             self.selectedLabel = None
+
+    def delete_labels(self, row):
+        deleted_rows = 0
+        is_repete = "REPETE" in self.label_list[row].cget("text")
+
+        if is_repete:
+            # Supprimer le label "REPETE" initial
+            del self.label_list[row]
+            deleted_rows += 1
+
+            # Supprimer les lignes jusqu'à "}"
+            while row < len(self.label_list) and "}" not in self.label_list[row].cget("text"):
+                if "REPETE" in self.label_list[row].cget("text"):
+                    deleted_rows += self.delete_labels(row)
+                    row += 1  # Incrémentez row après l'appel récursif
+                else:
+                    del self.label_list[row]
+                    deleted_rows += 1
+            if row < len(self.label_list) and "}" in self.label_list[row].cget("text"):
+                del self.label_list[row]
+                deleted_rows += 1
+        elif "{" in self.label_list[row].cget("text") or "}" in self.label_list[row].cget("text"):
+            # Cette fonction ne devrait pas être appelée avec un "{" ou "}" sélectionné
+            pass
+        else:
+            del self.label_list[row]
+            deleted_rows += 1
+        return deleted_rows
 
     def diminuer_espaceRow(self, row):
         del self.label_list[row]
@@ -349,7 +355,7 @@ class EditeurDeTexte:
             label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=row, column=0, sticky="nsew")
             label.bind("<Button-1>", self.highlight)
-
+            label.bind("<Button-3>", self.right_click)
             self.label_list[row] = label
             self.refresh()
 
@@ -357,7 +363,7 @@ class EditeurDeTexte:
         label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
         label.grid(row=row, column=0, sticky="nsew")
         label.bind("<Button-1>", self.highlight)
-
+        label.bind("<Button-3>", self.right_click)
         self.label_list[row] = label
         self.refresh()
 
@@ -367,6 +373,8 @@ class EditeurDeTexte:
             label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
             label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
             label_espace.bind("<Button-1>", self.highlight)
+            label_espace.bind("<Button-3>", self.right_click)
+
             self.label_list.insert(row, label_espace)
             self.refresh()
             self.tailleCadre += 1
@@ -383,6 +391,7 @@ class EditeurDeTexte:
         label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
         label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
         label_espace.bind("<Button-1>", self.highlight)
+        label_espace.bind("<Button-3>", self.right_click)
 
         self.label_list.insert(row, label_espace)
         self.refresh()
@@ -396,6 +405,7 @@ class EditeurDeTexte:
         self.label_list.append(label)
         # Ajout des bindings pour delete un label et highlight
         label.bind("<Button-1>", self.highlight)
+        label.bind("<Button-3>", self.right_click)
         self.tailleCadre += 1
 
     def repeatCommande(self, param):
@@ -449,9 +459,14 @@ class EditeurDeTexte:
                 self.label_list.append(label_fin)
 
                 # Ajout des bindings pour delete un label
-                label_debut.bind("<Button-1>", self.highlight)
+                #label_debut.bind("<Button-1>", self.highlight)
                 label_repeat.bind("<Button-1>", self.highlight)
-                label_fin.bind("<Button-1>", self.highlight)
+                label_debut.bind("<Button-3>", self.right_click)
+                label_repeat.bind("<Button-3>", self.right_click)
+                label_fin.bind("<Button-3>", self.right_click)
+                label_espace.bind("<Button-3>", self.right_click)
+
+                #label_fin.bind("<Button-1>", self.highlight)
                 label_espace.bind("<Button-1>", self.highlight)
 
     def fccCommande(self, valeur1, valeur2, valeur3):
