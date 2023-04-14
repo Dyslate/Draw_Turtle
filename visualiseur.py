@@ -108,6 +108,8 @@ class Tortue():
         self.zoom_increment = 0.1
         self.pan_start = None
 
+        self.gomme_active = tk.BooleanVar()
+
         menubar = tk.Menu(root)
         # Créer un menu déroulant
         actions_menu = tk.Menu(menubar, tearoff=0)
@@ -126,6 +128,17 @@ class Tortue():
         # Afficher la barre de menus
         root.config(menu=menubar)
 
+        # 1. Créez un nouveau menu déroulant pour "Outils"
+        tools_menu = tk.Menu(menubar, tearoff=0)
+
+        # 2. Ajoutez un menuitem "Activer Gomme" avec la fonction `add_checkbutton()`
+        # 4. Créez une variable tkinter `BooleanVar` pour suivre l'état de la gomme (activée ou désactivée)
+        gomme_active = tk.BooleanVar()
+        tools_menu.add_checkbutton(label="Activer Gomme", variable=self.gomme_active, command=self.toggle_gomme)
+
+        # 3. Ajoutez le menu déroulant "Outils" à la barre de menus
+        menubar.add_cascade(label="Outils", menu=tools_menu)
+
         # Créer le menu contextuel
         self.context_menu = tk.Menu(root, tearoff=0)
         self.context_menu.add_command(label="Add", command=lambda: self.ajouter(self.clicked_label))
@@ -134,6 +147,29 @@ class Tortue():
 
         self.context_menu.add_command(label="Add a blank line below",
                                       command=lambda: self.ajouterligneblanche(self.clicked_label))
+
+    def toggle_gomme(self):
+        if self.gomme_active.get():
+            print("gomme activé")
+            pass
+        else:
+            print("gomme désactivé")
+            # Désactivez la gomme ici
+            pass
+
+    def gomme(self, event):
+        if self.gomme_active.get():
+            # Taille de la gomme
+            gomme_taille = 10
+
+            # Dessinez un rectangle blanc sur le canvas
+            canvas2.create_rectangle(event.x - gomme_taille / 2,
+                                          event.y - gomme_taille / 2,
+                                          event.x + gomme_taille / 2,
+                                          event.y + gomme_taille / 2,
+                                          fill="white",
+                                          outline="white")
+
 
     def display_cursor_position(self, event):
         x = canvas2.canvasx(event.x)
@@ -836,6 +872,7 @@ canvas2.bind('<ButtonPress-2>', tortue.pan_start)
 canvas2.bind('<B2-Motion>', tortue.pan_move)
 canvas2.bind('<ButtonRelease-2>', tortue.pan_end)
 canvas2.bind('<Button-1>', tortue.display_cursor_position)
+canvas2.bind('<B1-Motion>', tortue.gomme)
 
 # Création d'un frame pour l'historique
 history_frame = tk.Frame(right_panel)
