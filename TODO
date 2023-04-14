@@ -10,3 +10,4 @@ _Remplacer le stylo par une gomme
 -Tout les visualiseurs sont connectés au même bus
 L'editeur envoie sur le bus: plusieurs visualiseurs peuvent recevoir le message en même temps
 
+_FCAP = fixer l'angle

@@ -48,7 +48,6 @@ class CustomDialog(simpledialog.Dialog):
             "FCC": 3,
             "FCAP": 1,
             "FPOS": 2,
-            "REPETE": 2,
         }
 
         # Clear entries frame
@@ -102,9 +101,7 @@ class Tortue():
         self.is_closed = False
         self.cap = 100
         self.capFixed = False
-        self.items1 = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE",
-                       "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS", "REPETE"]  # Add other items as needed
-        self.items2 = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE",
+        self.items = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE",
                        "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS"]  # Add other items as needed
 
 
@@ -212,8 +209,6 @@ class Tortue():
     # Adapter la méthode pour utiliser exporterCommande.
     def sauverXML(self):
         commandes = [label.cget("text") for label in self.liste_historique]
-#        del commandes[0]
-     #   del commandes[0]
         print(commandes)
         res = ""
         res += "<dessin>\n"
@@ -289,7 +284,7 @@ class Tortue():
         # Trouver l'index du label sélectionné dans la liste_historique
         label_index = self.liste_historique.index(label)
 
-        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items1, self)
+        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items, self)
         if dialog.result:
             new_label_text, params = dialog.result
 
@@ -324,7 +319,7 @@ class Tortue():
     def modifier(self, label):
         # Demander le nouveau texte à l'utilisateur
 
-        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items2, self)
+        dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items, self)
         if dialog.result:
             new_label_text, params = dialog.result
             # Mettre à jour le texte du label sélectionné
@@ -396,10 +391,9 @@ class Tortue():
         self.x = x2
         self.y = y2
 
-
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="AVANCER "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(right_panel, text="AVANCE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
@@ -408,62 +402,105 @@ class Tortue():
         if ajouterCommande:
             self.commands.append(("AVANCE", value))
 
-    def reculer(self, agent, value):
+    def reculer(self, agent, value, ajouterCommande=True, ajouterHistorique=True):
         value = int(value)
         self.avancer(self, -value, False)
         self.commands.append(("RECULE", value))
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="RECULE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def tournerDroite(self, agent, value):
+
+    def tournerDroite(self, agent, value, ajouterHistorique = True):
         self.angle -= int(value)
         self.commands.append(("TOURNEDROITE", value))
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="TOURNEDROITE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def tournerGauche(self, agent, value):
+
+    def tournerGauche(self, agent, value, ajouterHistorique = True):
         self.angle += int(value)
         self.commands.append(("TOURNEGAUCHE", value))
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="TOURNEGAUCHE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def leverCrayon(self, agent):
+
+    def leverCrayon(self, agent, ajouterHistorique = True):
         self.penActivated = False
         self.commands.append("LEVECRAYON")
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="LEVECRAYON", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def baisserCrayon(self, agent):
+
+    def baisserCrayon(self, agent, ajouterHistorique = True):
         self.penActivated = True
         self.commands.append("BAISSECRAYON")
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="BAISSECRAYON ", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def origine(self, agent):
+
+    def origine(self, agent, ajouterHistorique = True):
         self.x, self.y = self.xBase, self.yBase
         self.angle = 90
         self.commands.append("ORIGINE")
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="ORIGINE", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def restaurer(self, agent):
+
+    def restaurer(self, agent, ajouterHistorique = True):
         self.x = self.xBase
         self.y = self.yBase
         self.commands.append("RESTAURER")
-
-    def run_command(self):
-        command = command_text.get()
-        terminal.insert(tk.END, f'{command}\n')
-        process.stdin.write(command + '\n')
-        process.stdin.flush()
-        command_text.config(state=tk.NORMAL)
-
-
-    def run_command_text(self, text):
-        command = text
-        terminal.insert(tk.END, f'{command}\n')
-        process.stdin.write(command + '\n')
-        process.stdin.flush()
-        command_text.config(state=tk.NORMAL)
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="RESTAURER", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
 
-    def on_enter_key(self, event):
-        command_text.config(state=tk.DISABLED)
-        thread = threading.Thread(target=self.run_command)
-        thread.start()
-
-    def nettoyer(self, agent):
+    def nettoyer(self, agent, ajouterHistorique = True):
         canvas2.delete("all")
         #  tortue.origine(self)
         self.commands.append("NETTOYER")
+
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="NETTOYER", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
     def nettoyerDessin(self):
         self.x = self.xBase
@@ -471,7 +508,6 @@ class Tortue():
         self.penActivated = True
         self.angle = 90
         canvas2.delete("all")
-
     def clear(self):
         canvas2.delete("all")
         for label in self.liste_historique:
@@ -481,80 +517,88 @@ class Tortue():
         self.angle = 90
         self.commands.append("ORIGINE")
 
-    def changerCouleur(self, agent, r, v, b):
+    def changerCouleur(self, agent, r, v, b, ajouterHistorique = True):
         r, v, b = int(r), int(v), int(b)  # Convertir les chaînes de caractères en entiers
         # code pour changer la couleur du crayon à partir des composantes r v b
         hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
         self.couleur = hex_code
         print("changer couleur en :" + hex_code)
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="FCC "+str(r)+" "+str(v)+" "+str(b), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+
 
     # code pour fixer le cap de la tortue de manière absolue
-    def fixerCap(self, agent, x):
+    def fixerCap(self, agent, x, ajouterHistorique = True):
         self.cap = float(x)
         if self.capFixed:
             self.capFixed = False
         else:
             self.capFixed = True
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="FCAP "+str(x), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
-    def setPosition(self, agent, x, y):
+    def setPosition(self, agent, x, y, ajouterHistorique = True):
         self.x, self.y = int(x), int(y)
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="FPOS ["+str(x)+" "+str(y)+"]", bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
 
-    def commande_label(self, labels):
-        for label in labels:
-            if label.split(" ")[0] == "AVANCER":
-                 self.avancer(False, label.split(" ")[1], False, False)
-                 time.sleep(0.1)
+
+    def commande_label(self):
+        liste_commandes = [label.cget("text") for label in self.liste_historique]
+        for i, label_text in enumerate(liste_commandes):
+            label = self.liste_historique[i]  # Récupérer le label correspondant
+            label.config(bg="yellow")  # Mettre en évidence le label en jaune
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            if label_text.split(" ")[0] == "AVANCE":
+                 self.avancer(False, label_text.split(" ")[1], False, False)
+            if label_text.split(" ")[0] == "RECULE":
+                self.reculer(False, label_text.split(" ")[1], False, False)
+            if label_text.split(" ")[0] == "TOURNEDROITE":
+                self.tournerDroite(False, label_text.split(" ")[1], False)
+            if label_text.split(" ")[0] == "TOURNEGAUCHE":
+                self.tournerGauche(False, label_text.split(" ")[1], False)
+            if label_text.split(" ")[0] == "LEVECRAYON":
+                self.leverCrayon(False, False)
+            if label_text.split(" ")[0] == "BAISSECRAYON":
+                self.baisserCrayon(False, False)
+            if label_text.split(" ")[0] == "ORIGINE":
+                self.origine(False, False)
+            if label_text.split(" ")[0] == "RESTAURE":
+                self.restaurer(False, False)
+            if label_text.split(" ")[0] == "NETTOIE":
+                self.nettoyer(False, False)
+            if label_text.split(" ")[0] == "FCC":
+                self.changerCouleur(False, label_text.split(" ")[1], label_text.split(" ")[2], label_text.split(" ")[3], False)
+            if label_text.split(" ")[0] == "FCAP":
+                self.fixerCap(False, label_text.split(" ")[1], False)
+            if label_text.split(" ")[0] == "FPOS":
+                coords = label_text.split("[")[1].split("]")[0].split()
+                x, y = coords[0], coords[1]
+                self.setPosition(False,x,y, False)
+            time.sleep(self.sleep_time.get())
+            label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+
     def jouer(self):
         print("Lancement de jouer")
         self.nettoyerDessin()
-
-        #for label in self.liste_historique:
-          #  self.commande_label(label)
-        def execute_commands(commandes, labels):
-            index = 0
-            while index < len(commandes):
-                commande = commandes[index]
-                label = labels[index]
-                label.config(bg="yellow")  # Mettre en évidence le label en jaune
-                history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
-                if commande.startswith("REPETE"):
-                    repetitions = int(commande.split()[1])
-                    index += 1
-                    nested_commands, nested_labels, index = extract_nested_commands(commandes, labels, index)
-                    for _ in range(repetitions):
-                        execute_commands(nested_commands, nested_labels)
-                else:
-                    self.run_command_text(commande)
-                    print(commande)
-                    time.sleep(self.sleep_time.get())
-                    index += 1
-                label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
-                history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
-
-        def extract_nested_commands(commandes, labels, start_index):
-            nested_commands = []
-            nested_labels = []
-            brace_count = 0
-            index = start_index
-
-            while index < len(commandes):
-                current_command = commandes[index]
-                current_label = labels[index]
-                if current_command == '{':
-                    brace_count += 1
-                elif current_command == '}':
-                    brace_count -= 1
-                    if brace_count == 0:
-                        return nested_commands, nested_labels, index + 1
-                if brace_count > 0:
-                    nested_commands.append(current_command)
-                    nested_labels.append(current_label)
-                index += 1
-            return nested_commands, nested_labels, index
-
-        liste_commandes = [label.cget("text") for label in self.liste_historique]
-        thread = threading.Thread(target=lambda: self.commande_label(liste_commandes))
+        thread = threading.Thread(target=lambda: self.commande_label())
         thread.start()
 
     def importerCommande(self, xml_data):
@@ -687,6 +731,7 @@ class Tortue():
 
 
 
+#Lancement de root
 root = tk.Tk()
 root.title("Visualiseur")
 tortue = Tortue()
@@ -730,8 +775,7 @@ IvyBindMsg(tortue.restaurer, "^RESTAURE$")
 IvyBindMsg(tortue.nettoyer, "^NETTOIE$")
 IvyBindMsg(tortue.fixerCap, "^FCAP\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.setPosition, r"^FPOS\s+\[(\d+)\s+(\d+)\]$")
-IvyBindMsg(tortue.changerCouleur,
-           "^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
+IvyBindMsg(tortue.changerCouleur,"^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 right_panel = tk.Frame(root)
@@ -750,11 +794,9 @@ canvas2.bind('<B2-Motion>', tortue.pan_move)
 canvas2.bind('<ButtonRelease-2>', tortue.pan_end)
 canvas2.bind('<Button-1>', tortue.display_cursor_position)
 
-
 # Création d'un label "Historique"
 history_label = tk.Label(right_panel, text="History")
 history_label.grid(row=1, column=1, pady=5)
-
 
 # Création d'un frame pour l'historique
 history_frame = tk.Frame(right_panel)
@@ -768,10 +810,6 @@ play_button.pack()
 clear_button = tk.Button(south_panel, text="Clear", command=lambda: tortue.clear(), width=20)
 clear_button.pack()
 
-# Création du widget "Text" pour afficher le contenu du terminal
-terminal = tk.Text(south_panel, wrap=tk.WORD)
-terminal.forget()
-
 # Slideur
 tortue.sleep_time = tk.DoubleVar()
 tortue.sleep_time.set(1.0)  # Valeur initiale du délai en secondes
@@ -779,30 +817,6 @@ slider = tk.Scale(south_panel, from_=0.1, to=5.0, resolution=0.1, orient=tk.HORI
                   label="Pause Time (s)", variable=tortue.sleep_time,
                   length=150, sliderlength=20)
 slider.pack()
-
-# Création d'une zone de saisie pour les commandes
-command_text = tk.Entry(south_panel, width=25)
-# Lier la touche "Enter" à la fonction on_enter_key
-command_text.bind("<Return>", tortue.on_enter_key)
-command_text.pack()
-
-# Exécuter python ivyprobe.py en utilisant subprocess
-process = subprocess.Popen(['python3', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE, text=True)
-
-
-# Créer un thread pour lire la sortie du processus et l'afficher dans le widget "Text"
-def read_output():
-    while True:
-        output = process.stdout.readline()
-        if output:
-            terminal.insert(tk.END, output)
-        else:
-            break
-
-
-output_thread = threading.Thread(target=read_output)
-output_thread.start()
 
 # Boucle principale de tkinter pour afficher le visualisateur
 root.mainloop()
