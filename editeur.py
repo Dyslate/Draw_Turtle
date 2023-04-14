@@ -13,14 +13,14 @@ class EditeurDeTexte:
     def right_click(self, event):
         # Créer le menu contextuel
         context_menu = tk.Menu(root2, tearoff=0)
-        context_menu.add_command(label="Ajouter ligne au dessus", command=lambda: self.add_line(event))
+        context_menu.add_command(label="Ajouter une ligne en dessous", command=lambda: self.add_line(event))
 
         # Afficher le menu contextuel
         context_menu.post(event.x_root, event.y_root)
 
     def add_line(self, event):
         #ajouter une ligne ici
-        self.augmenter_espaceRow(event.widget.grid_info()['row'])
+        self.augmenter_espaceRow(event.widget.grid_info()['row']+1)
 
     def highlight(self, event):
         widget = event.widget

@@ -654,11 +654,9 @@ class Tortue():
         image.save(filename, "JPEG")
 
     def run_main_program(self):
-        # Remplacez le chemin d'accès au fichier main.py par le vôtre.
         file_path = "editeur.py"
-
         # Lancer le programme en utilisant subprocess
-        subprocess.run(["python", file_path])
+        subprocess.run(["python3", file_path])
 
     def openEditeur(self):
         # Créer un nouveau thread pour exécuter le programme
@@ -736,6 +734,7 @@ canvas2.bind('<Button-1>', tortue.display_cursor_position)
 history_label = tk.Label(right_panel, text="History")
 history_label.grid(row=1, column=1, pady=5)
 
+
 # Création d'un frame pour l'historique
 history_frame = tk.Frame(right_panel)
 history_frame.grid(row=1, column=1)
@@ -767,7 +766,7 @@ command_text.bind("<Return>", tortue.on_enter_key)
 command_text.pack()
 
 # Exécuter python ivyprobe.py en utilisant subprocess
-process = subprocess.Popen(['python', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+process = subprocess.Popen(['python3', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, text=True)
 
 
