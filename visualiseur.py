@@ -102,8 +102,7 @@ class Tortue():
         self.cap = 100
         self.capFixed = False
         self.items = ["AVANCE", "RECULE", "TOURNEDROITE", "TOURNEGAUCHE", "LEVECRAYON", "BAISSECRAYON", "ORIGINE",
-                       "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS"]  # Add other items as needed
-
+                      "RESTAURE", "NETTOIE", "FCC", "FCAP", "FPOS"]
 
         self.zoom_scale = 1.0
         self.zoom_increment = 0.1
@@ -133,9 +132,10 @@ class Tortue():
         self.context_menu.add_command(label="Modify", command=lambda: self.modifier(self.clicked_label))
         self.context_menu.add_command(label="Delete", command=lambda: self.supprimer(self.clicked_label))
 
-        self.context_menu.add_command(label="Add a blank line below", command=lambda: self.ajouterligneblanche(self.clicked_label))
+        self.context_menu.add_command(label="Add a blank line below",
+                                      command=lambda: self.ajouterligneblanche(self.clicked_label))
 
-    def display_cursor_position(self,event):
+    def display_cursor_position(self, event):
         x = canvas2.canvasx(event.x)
         y = canvas2.canvasy(event.y)
         position_text = f"({x}, {y})"
@@ -220,6 +220,7 @@ class Tortue():
         print(res)
         with open(file_path, 'w', encoding="utf-8") as f:
             f.write(res)
+
     def pan_start(self, event):
         canvas2.scan_mark(event.x, event.y)
 
@@ -236,7 +237,6 @@ class Tortue():
         context_menu.add_command(label="Zoom In", command=lambda: self.zoom(event.x, event.y, self.zoom_increment))
         context_menu.add_command(label="Zoom Out", command=lambda: self.zoom(event.x, event.y, -self.zoom_increment))
         context_menu.post(event.x_root, event.y_root)
-
 
     def zoom(self, x, y, increment):
         self.zoom_scale += increment
@@ -393,11 +393,14 @@ class Tortue():
 
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="AVANCE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="AVANCE " + str(value), bg="white", borderwidth=1, relief="solid",
+                             width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
         if ajouterCommande:
             self.commands.append(("AVANCE", value))
@@ -408,99 +411,119 @@ class Tortue():
         self.commands.append(("RECULE", value))
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="RECULE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="RECULE " + str(value), bg="white", borderwidth=1, relief="solid",
+                             width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def tournerDroite(self, agent, value, ajouterHistorique = True):
+    def tournerDroite(self, agent, value, ajouterHistorique=True):
         self.angle -= int(value)
         self.commands.append(("TOURNEDROITE", value))
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="TOURNEDROITE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="TOURNEDROITE " + str(value), bg="white", borderwidth=1,
+                             relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def tournerGauche(self, agent, value, ajouterHistorique = True):
+    def tournerGauche(self, agent, value, ajouterHistorique=True):
         self.angle += int(value)
         self.commands.append(("TOURNEGAUCHE", value))
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="TOURNEGAUCHE "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="TOURNEGAUCHE " + str(value), bg="white", borderwidth=1,
+                             relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def leverCrayon(self, agent, ajouterHistorique = True):
+    def leverCrayon(self, agent, ajouterHistorique=True):
         self.penActivated = False
         self.commands.append("LEVECRAYON")
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="LEVECRAYON", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="LEVECRAYON", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def baisserCrayon(self, agent, ajouterHistorique = True):
+    def baisserCrayon(self, agent, ajouterHistorique=True):
         self.penActivated = True
         self.commands.append("BAISSECRAYON")
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="BAISSECRAYON ", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="BAISSECRAYON ", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def origine(self, agent, ajouterHistorique = True):
+    def origine(self, agent, ajouterHistorique=True):
         self.x, self.y = self.xBase, self.yBase
         self.angle = 90
         self.commands.append("ORIGINE")
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="ORIGINE", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="ORIGINE", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def restaurer(self, agent, ajouterHistorique = True):
+    def restaurer(self, agent, ajouterHistorique=True):
         self.x = self.xBase
         self.y = self.yBase
         self.commands.append("RESTAURER")
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="RESTAURER", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="RESTAURER", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-
-    def nettoyer(self, agent, ajouterHistorique = True):
+    def nettoyer(self, agent, ajouterHistorique=True):
         canvas2.delete("all")
         #  tortue.origine(self)
         self.commands.append("NETTOYER")
 
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="NETTOYER", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="NETTOYER", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def nettoyerDessin(self):
         self.x = self.xBase
@@ -508,6 +531,7 @@ class Tortue():
         self.penActivated = True
         self.angle = 90
         canvas2.delete("all")
+
     def clear(self):
         canvas2.delete("all")
         for label in self.liste_historique:
@@ -517,7 +541,7 @@ class Tortue():
         self.angle = 90
         self.commands.append("ORIGINE")
 
-    def changerCouleur(self, agent, r, v, b, ajouterHistorique = True):
+    def changerCouleur(self, agent, r, v, b, ajouterHistorique=True):
         r, v, b = int(r), int(v), int(b)  # Convertir les chaînes de caractères en entiers
         # code pour changer la couleur du crayon à partir des composantes r v b
         hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
@@ -525,15 +549,18 @@ class Tortue():
         print("changer couleur en :" + hex_code)
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="FCC "+str(r)+" "+str(v)+" "+str(b), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="FCC " + str(r) + " " + str(v) + " " + str(b), bg="white",
+                             borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
-
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     # code pour fixer le cap de la tortue de manière absolue
-    def fixerCap(self, agent, x, ajouterHistorique = True):
+    def fixerCap(self, agent, x, ajouterHistorique=True):
         self.cap = float(x)
         if self.capFixed:
             self.capFixed = False
@@ -541,23 +568,28 @@ class Tortue():
             self.capFixed = True
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="FCAP "+str(x), bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="FCAP " + str(x), bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
-    def setPosition(self, agent, x, y, ajouterHistorique = True):
+    def setPosition(self, agent, x, y, ajouterHistorique=True):
         self.x, self.y = int(x), int(y)
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(right_panel, text="FPOS ["+str(x)+" "+str(y)+"]", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="FPOS [" + str(x) + " " + str(y) + "]", bg="white", borderwidth=1,
+                             relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
-
-
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def commande_label(self):
         liste_commandes = [label.cget("text") for label in self.liste_historique]
@@ -566,7 +598,7 @@ class Tortue():
             label.config(bg="yellow")  # Mettre en évidence le label en jaune
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
             if label_text.split(" ")[0] == "AVANCE":
-                 self.avancer(False, label_text.split(" ")[1], False, False)
+                self.avancer(False, label_text.split(" ")[1], False, False)
             if label_text.split(" ")[0] == "RECULE":
                 self.reculer(False, label_text.split(" ")[1], False, False)
             if label_text.split(" ")[0] == "TOURNEDROITE":
@@ -584,13 +616,14 @@ class Tortue():
             if label_text.split(" ")[0] == "NETTOIE":
                 self.nettoyer(False, False)
             if label_text.split(" ")[0] == "FCC":
-                self.changerCouleur(False, label_text.split(" ")[1], label_text.split(" ")[2], label_text.split(" ")[3], False)
+                self.changerCouleur(False, label_text.split(" ")[1], label_text.split(" ")[2], label_text.split(" ")[3],
+                                    False)
             if label_text.split(" ")[0] == "FCAP":
                 self.fixerCap(False, label_text.split(" ")[1], False)
             if label_text.split(" ")[0] == "FPOS":
                 coords = label_text.split("[")[1].split("]")[0].split()
                 x, y = coords[0], coords[1]
-                self.setPosition(False,x,y, False)
+                self.setPosition(False, x, y, False)
             time.sleep(self.sleep_time.get())
             label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
@@ -690,12 +723,15 @@ class Tortue():
         commands = self.importerCommande(xml)
         self.clear()
         for i in commands:
-            label = tk.Label(right_panel, text=i, bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text=i, bg="white", borderwidth=1, relief="solid", width=20)
             self.nombreCommande += 1
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
 
             self.liste_historique.append(label)
+            # Mettre à jour la zone de défilement
+            history_frame.update_idletasks()
+            history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def sauver(self):
         # Créer une image PIL avec les mêmes dimensions que le canvas
@@ -730,8 +766,7 @@ class Tortue():
         new_thread.start()
 
 
-
-#Lancement de root
+# Lancement de root
 root = tk.Tk()
 root.title("Visualiseur")
 tortue = Tortue()
@@ -777,9 +812,17 @@ IvyBindMsg(tortue.fixerCap, "^FCAP\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.setPosition, r"^FPOS\s+\[(\d+)\s+(\d+)\]$")
 IvyBindMsg(tortue.changerCouleur,"^FCC (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5]) (\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$")
 
+# Création d'un frame conteneur pour le right_panel
+container_frame = tk.Frame(root, width=200)
+container_frame.pack(side=tk.LEFT, anchor="e", padx=10, pady=10, fill="y")
+
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
-right_panel = tk.Frame(root)
-right_panel.pack(side=tk.LEFT, anchor="ne", padx=10, pady=10)
+right_panel = tk.Frame(container_frame)
+right_panel.pack(fill="both", expand=True)
+right_panel.columnconfigure(0, weight=1)
+right_panel.rowconfigure(1, weight=1)
+
+
 
 # Création d'un frame pour les boutons, la zone de saisie et l'historique
 south_panel = tk.Frame(root)
@@ -794,13 +837,34 @@ canvas2.bind('<B2-Motion>', tortue.pan_move)
 canvas2.bind('<ButtonRelease-2>', tortue.pan_end)
 canvas2.bind('<Button-1>', tortue.display_cursor_position)
 
-# Création d'un label "Historique"
-history_label = tk.Label(right_panel, text="History")
-history_label.grid(row=1, column=1, pady=5)
-
 # Création d'un frame pour l'historique
 history_frame = tk.Frame(right_panel)
 history_frame.grid(row=1, column=1)
+
+# Création d'un canvas pour l'historique
+history_canvas = tk.Canvas(right_panel)
+history_canvas.grid(row=1, column=0, sticky="nsew")
+
+# Ajouter une scrollbar
+scrollbar = tk.Scrollbar(right_panel, orient="vertical", command=history_canvas.yview)
+scrollbar.grid(row=1, column=1, sticky="ns")
+history_canvas.configure(yscrollcommand=scrollbar.set)
+
+# Création d'un frame interne pour contenir les éléments de l'historique
+history_frame = tk.Frame(history_canvas)
+history_canvas.create_window((0, 0), window=history_frame)
+
+# Configurez la grille de right_panel pour qu'elle s'étende correctement
+right_panel.columnconfigure(0, weight=1)
+right_panel.rowconfigure(1, weight=1)
+
+
+# Mise à jour de la taille du canvas en fonction de la taille du history_frame
+def update_scrollregion(event):
+    history_canvas.configure(scrollregion=history_canvas.bbox("all"))
+
+
+history_frame.bind("<Configure>", update_scrollregion)
 
 # Création d'un bouton "play"
 play_button = tk.Button(south_panel, text="Replay", command=lambda: tortue.jouer(), width=20)

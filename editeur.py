@@ -494,24 +494,18 @@ class EditeurDeTexte:
             else:
                 self.creerLabel(res)
     def run_command_text(self, text):
-
         command = text
-        #terminal.insert(tk.END, f'{command}\n')
         process.stdin.write(command + '\n')
         process.stdin.flush()
-        #command_text.config(state=tk.NORMAL)
 
     def send(self):
         print("Lancement de jouer")
-
-      #  self.nettoyerDessin()
         def execute_commands(commandes, labels):
             index = 0
             while index < len(commandes):
                 commande = commandes[index]
                 label = labels[index]
                 label.config(bg="yellow")  # Mettre en évidence le label en jaune
-              #  history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
                 if commande.startswith("REPETE"):
                     repetitions = int(commande.split()[1])
                     index += 1
@@ -561,7 +555,7 @@ editeur = EditeurDeTexte()
 
 root2 = tk.Tk()
 root2.title("Editeur de texte")
-root2.geometry("850x500")
+root2.geometry("1000x500")
 
 frameBouton = tk.Frame(root2)
 frameBouton.pack(side="left", fill="y")
@@ -740,24 +734,30 @@ editeur.tailleCadre += 1
 
 editeur.label_list.append(bouton_moins)
 
+
+frameBouton_top = tk.Frame(frameBouton)
+frameBouton_top.pack(side="top")
+frameBouton_bottom = tk.Frame(frameBouton)
+frameBouton_bottom.pack(side="bottom")
+
 # Création d'un bouton "Import"
-importerBouton = tk.Button(frameBouton, text="Import", command=lambda: editeur.importer(), width=20)
-importerBouton.pack(side="left", anchor="w")
+importerBouton = tk.Button(frameBouton_top, text="Import", command=lambda: editeur.importer(), width=20)
+importerBouton.pack(side="left", padx=5, pady=5)
 
 # Création d'un bouton "Export"
-exportBouton = tk.Button(frameBouton, text="Export", command=lambda: editeur.exporter(), width=20)
-exportBouton.pack(side="left", anchor="w")
+exportBouton = tk.Button(frameBouton_top, text="Export", command=lambda: editeur.exporter(), width=20)
+exportBouton.pack(side="left", padx=5, pady=5)
 
 # Création d'un bouton "Clear"
-clearBouton = tk.Button(frameBouton, text="Clear", command=lambda: editeur.clear(), width=20)
-clearBouton.pack(side="left", anchor="w")
+clearBouton = tk.Button(frameBouton_bottom, text="Clear", command=lambda: editeur.clear(), width=20)
+clearBouton.pack(side="left", padx=5, pady=5)
 
 # Création d'un bouton "Ouvrir Visualiseur"
-openVisualiseurButton = tk.Button(frameBouton, text="Ouvrir Visualiseur", command=lambda: editeur.openVisualiseur(), width=20)
-openVisualiseurButton.pack(side="left", anchor="w")
+openVisualiseurButton = tk.Button(frameBouton_bottom, text="Ouvrir Visualiseur", command=lambda: editeur.openVisualiseur(), width=20)
+openVisualiseurButton.pack(side="left", padx=5, pady=5)
 
 # Création d'un bouton "Send"
-sendButton = tk.Button(frameBouton, text="Send", command=lambda: editeur.send(), width=20)
+sendButton = tk.Button(frameBouton_bottom, text="Send", command=lambda: editeur.send(), width=20)
 sendButton.pack(side="left", anchor="w")
 
 # Exécuter python ivyprobe.py en utilisant subprocess
