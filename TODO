@@ -1,3 +1,12 @@
 _Remplacer le stylo par une gomme
 -Ajouter un scroll pour l'historique
 
+
+-Editeur haut niveau
+-Visualiseur bas niveau
+
+-Editeur qui envoie sur le bus ivy
+
+-Tout les visualiseurs sont connectés au même bus
+L'editeur envoie sur le bus: plusieurs visualiseurs peuvent recevoir le message en même temps
+

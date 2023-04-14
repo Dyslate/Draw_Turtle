@@ -348,7 +348,7 @@ class Tortue():
     def close_visualizer(self, event):
         self.is_closed = True  # Ajoutez cette ligne pour mettre à jour l'attribut is_closed
 
-    def avancer(self, agent, value, ajouterCommande=True):
+    def avancer(self, agent, value, ajouterCommande=True, ajouterHistorique=True):
         value = int(value)
 
         # Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
@@ -396,6 +396,15 @@ class Tortue():
         self.x = x2
         self.y = y2
 
+
+        if ajouterHistorique:
+            self.nombreCommande += 1
+            label = tk.Label(right_panel, text="AVANCER "+str(value), bg="white", borderwidth=1, relief="solid", width=20)
+            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+            label.bind("<Button-3>", self.show_context_menu)
+            self.liste_historique.append(label)
+            history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+
         if ajouterCommande:
             self.commands.append(("AVANCE", value))
 
@@ -437,12 +446,14 @@ class Tortue():
         process.stdin.flush()
         command_text.config(state=tk.NORMAL)
 
+
     def run_command_text(self, text):
         command = text
         terminal.insert(tk.END, f'{command}\n')
         process.stdin.write(command + '\n')
         process.stdin.flush()
         command_text.config(state=tk.NORMAL)
+
 
     def on_enter_key(self, event):
         command_text.config(state=tk.DISABLED)
@@ -488,9 +499,18 @@ class Tortue():
     def setPosition(self, agent, x, y):
         self.x, self.y = int(x), int(y)
 
+
+    def commande_label(self, labels):
+        for label in labels:
+            if label.split(" ")[0] == "AVANCER":
+                 self.avancer(False, label.split(" ")[1], False, False)
+                 time.sleep(0.1)
     def jouer(self):
         print("Lancement de jouer")
         self.nettoyerDessin()
+
+        #for label in self.liste_historique:
+          #  self.commande_label(label)
         def execute_commands(commandes, labels):
             index = 0
             while index < len(commandes):
@@ -534,7 +554,7 @@ class Tortue():
             return nested_commands, nested_labels, index
 
         liste_commandes = [label.cget("text") for label in self.liste_historique]
-        thread = threading.Thread(target=lambda: execute_commands(liste_commandes, self.liste_historique))
+        thread = threading.Thread(target=lambda: self.commande_label(liste_commandes))
         thread.start()
 
     def importerCommande(self, xml_data):
@@ -666,6 +686,7 @@ class Tortue():
         new_thread.start()
 
 
+
 root = tk.Tk()
 root.title("Visualiseur")
 tortue = Tortue()
@@ -740,7 +761,7 @@ history_frame = tk.Frame(right_panel)
 history_frame.grid(row=1, column=1)
 
 # Création d'un bouton "play"
-play_button = tk.Button(south_panel, text="Play", command=lambda: tortue.jouer(), width=20)
+play_button = tk.Button(south_panel, text="Replay", command=lambda: tortue.jouer(), width=20)
 play_button.pack()
 
 # Création d'un bouton "Clear"
@@ -749,7 +770,7 @@ clear_button.pack()
 
 # Création du widget "Text" pour afficher le contenu du terminal
 terminal = tk.Text(south_panel, wrap=tk.WORD)
-terminal.pack_forget()
+terminal.forget()
 
 # Slideur
 tortue.sleep_time = tk.DoubleVar()

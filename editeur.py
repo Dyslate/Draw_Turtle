@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 import subprocess
 import threading
+import time
 
 class EditeurDeTexte:
     def __init__(self):
@@ -9,6 +10,7 @@ class EditeurDeTexte:
         self.tailleCadre = 0
         self.selectedLabel = None
         self.label_list = []
+        self.sleep_time = 1.0
 
     def right_click(self, event):
         # Créer le menu contextuel
@@ -96,7 +98,7 @@ class EditeurDeTexte:
                     elif "position" in buffer:
                         x = get_attr_value(buffer, "x")
                         y = get_attr_value(buffer, "y")
-                        commands.append(f"FPOS[{x} {y}]")
+                        commands.append(f"FPOS [{x} {y}]")
                     elif "<répéter" in buffer:
                         repeat_times = get_attr_value(buffer, "fois")
                         commands.append(f"REPETE {repeat_times}")
@@ -116,6 +118,7 @@ class EditeurDeTexte:
 
     # Fonctions pour les commandes des boutons
     def importer(self):
+        self.clear()
         xml = ""
         file_path = filedialog.askopenfilename()
         # Vérifier si un fichier a été sélectionné
@@ -221,7 +224,7 @@ class EditeurDeTexte:
         # Remplacez le chemin d'accès au fichier main.py par le vôtre.
         file_path = "visualiseur.py"
         # Lancer le programme en utilisant subprocess
-        subprocess.run(["python", file_path])
+        subprocess.run(["python3", file_path])
 
     def openVisualiseur(self):
         # Créer un nouveau thread pour exécuter le programme
@@ -490,6 +493,65 @@ class EditeurDeTexte:
                 self.modify(res)
             else:
                 self.creerLabel(res)
+    def run_command_text(self, text):
+
+        command = text
+        #terminal.insert(tk.END, f'{command}\n')
+        process.stdin.write(command + '\n')
+        process.stdin.flush()
+        #command_text.config(state=tk.NORMAL)
+
+    def send(self):
+        print("Lancement de jouer")
+
+      #  self.nettoyerDessin()
+        def execute_commands(commandes, labels):
+            index = 0
+            while index < len(commandes):
+                commande = commandes[index]
+                label = labels[index]
+                label.config(bg="yellow")  # Mettre en évidence le label en jaune
+              #  history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+                if commande.startswith("REPETE"):
+                    repetitions = int(commande.split()[1])
+                    index += 1
+                    nested_commands, nested_labels, index = extract_nested_commands(commandes, labels, index)
+                    for _ in range(repetitions):
+                        execute_commands(nested_commands, nested_labels)
+                else:
+                    self.run_command_text(commande)
+                    print(commande)
+                    time.sleep(0.1)
+                    index += 1
+                label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
+               # history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
+
+        def extract_nested_commands(commandes, labels, start_index):
+            nested_commands = []
+            nested_labels = []
+            brace_count = 0
+            index = start_index
+
+            while index < len(commandes):
+                current_command = commandes[index]
+                current_label = labels[index]
+                if current_command == '{':
+                    brace_count += 1
+                elif current_command == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        return nested_commands, nested_labels, index + 1
+                if brace_count > 0:
+                    nested_commands.append(current_command)
+                    nested_labels.append(current_label)
+                index += 1
+            return nested_commands, nested_labels, index
+
+        liste_commandes = [label.cget("text") for label in self.label_list]
+      #  del liste_commandes[0]
+      #  del liste_commandes[0]
+        thread = threading.Thread(target=lambda: execute_commands(liste_commandes, self.label_list))
+        thread.start()
 
 
 ###################################################
@@ -690,9 +752,17 @@ exportBouton.pack(side="left", anchor="w")
 clearBouton = tk.Button(frameBouton, text="Clear", command=lambda: editeur.clear(), width=20)
 clearBouton.pack(side="left", anchor="w")
 
+# Création d'un bouton "Ouvrir Visualiseur"
+openVisualiseurButton = tk.Button(frameBouton, text="Ouvrir Visualiseur", command=lambda: editeur.openVisualiseur(), width=20)
+openVisualiseurButton.pack(side="left", anchor="w")
+
 # Création d'un bouton "Send"
-sendBouton = tk.Button(frameBouton, text="Ouvrir Visualiseur", command=lambda: editeur.openVisualiseur(), width=20)
-sendBouton.pack(side="left", anchor="w")
+sendButton = tk.Button(frameBouton, text="Send", command=lambda: editeur.send(), width=20)
+sendButton.pack(side="left", anchor="w")
+
+# Exécuter python ivyprobe.py en utilisant subprocess
+process = subprocess.Popen(['python3', 'ivyprobe.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, text=True)
 
 # Bucle secondaire de tkinter pour afficher l'éditeur de texte
 root2.mainloop()
