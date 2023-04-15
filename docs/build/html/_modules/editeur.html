@@ -1,0 +1,1073 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>editeur &#8212; Documentation Draw_Turtle 1.0</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Code source de editeur</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="k">import</span> <span class="n">filedialog</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="EditeurDeTexte"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte">[docs]</a><span class="k">class</span> <span class="nc">EditeurDeTexte</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    La classe EditeurDeTexte permet de créer un éditeur de texte ergonomique qui permet d&#39;importer et d&#39;exporter des fichiers XML,</span>
+<span class="sd">    ainsi que d&#39;ajouter, modifier et supprimer des commandes pour contrôler un turtle graphique en utilisant le bus ivy.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        tailleCadre (int): La taille du cadre.</span>
+<span class="sd">        selectedLabel (tk.Label): Le label sélectionné.</span>
+<span class="sd">        label_list (list): Liste des labels dans l&#39;éditeur.</span>
+<span class="sd">        sleep_time (float): Temps d&#39;attente entre les actions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructeur de la classe EditeurDeTexte.</span>
+<span class="sd">        Initialise les attributs de la classe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># création des cadres de la grille</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<div class="viewcode-block" id="EditeurDeTexte.right_click"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.right_click">[docs]</a>    <span class="k">def</span> <span class="nf">right_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour afficher le menu contextuel lors d&#39;un clic droit.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (tk.Event): L&#39;événement généré par un clic droit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Créer le menu contextuel</span>
+        <span class="n">context_menu</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Menu</span><span class="p">(</span><span class="n">root2</span><span class="p">,</span> <span class="n">tearoff</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">context_menu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ajouter une ligne en dessous&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+
+        <span class="c1"># Afficher le menu contextuel</span>
+        <span class="n">context_menu</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x_root</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y_root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.add_line"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.add_line">[docs]</a>    <span class="k">def</span> <span class="nf">add_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour ajouter une ligne dans l&#39;éditeur.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (tk.Event): L&#39;événement généré lors de l&#39;ajout d&#39;une ligne.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#ajouter une ligne ici</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augmenter_espaceRow</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">grid_info</span><span class="p">()[</span><span class="s1">&#39;row&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.highlight"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.highlight">[docs]</a>    <span class="k">def</span> <span class="nf">highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour mettre en surbrillance un label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (tk.Event): L&#39;événement généré lors de la mise en surbrillance d&#39;un label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">widget</span>
+        <span class="c1"># Vérifie si le texte du label est égal à &#39;{&#39; ou &#39;}&#39;</span>
+        <span class="k">if</span> <span class="n">widget</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;{&quot;</span> <span class="ow">or</span> <span class="n">widget</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;}&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">widget</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="n">widget</span></div>
+
+
+    <span class="c1"># Ajout d&#39;un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée</span>
+<div class="viewcode-block" id="EditeurDeTexte.on_frame_configure"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.on_frame_configure">[docs]</a>    <span class="k">def</span> <span class="nf">on_frame_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour adapter la taille du canvas lorsque la fenêtre est redimensionnée.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event (tk.Event): L&#39;événement généré lors du redimensionnement de la fenêtre.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">canvas</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">scrollregion</span><span class="o">=</span><span class="n">canvas</span><span class="o">.</span><span class="n">bbox</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.importerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.importerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">importerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour importer des commandes à partir d&#39;un fichier XML.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xml_data (str): Le contenu du fichier XML sous forme de chaîne de caractères.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Liste des commandes extraites du fichier XML.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">get_attr_value</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{attr_name}</span><span class="s2">=&#39;&quot;</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{attr_name}</span><span class="s2">=&#39;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">parse_content</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+            <span class="n">commands</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span>
+                    <span class="n">buffer</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
+                    <span class="k">while</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">buffer</span> <span class="o">+=</span> <span class="n">c</span>
+
+                    <span class="k">if</span> <span class="s2">&quot;avancer&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">dist</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;dist&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;AVANCE </span><span class="si">{dist}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;reculer&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">dist</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;dist&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;RECULE </span><span class="si">{dist}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;droite&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">angle</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;TOURNEDROITE </span><span class="si">{angle}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;gauche&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">angle</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;TOURNEGAUCHE </span><span class="si">{angle}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;lever&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;LEVECRAYON&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;baisser&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;BAISSECRAYON&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;origine&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ORIGINE&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;restaure&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;RESTAURE&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;nettoyer&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NETTOIE&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;crayon&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;rouge&quot;</span><span class="p">)</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;vert&quot;</span><span class="p">)</span>
+                        <span class="n">b</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;bleu&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;FCC </span><span class="si">{r}</span><span class="s2"> </span><span class="si">{v}</span><span class="s2"> </span><span class="si">{b}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;cap&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">angle</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;FCAP </span><span class="si">{angle}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;position&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                        <span class="n">y</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;FPOS [</span><span class="si">{x}</span><span class="s2"> </span><span class="si">{y}</span><span class="s2">]&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;&lt;répéter&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">repeat_times</span> <span class="o">=</span> <span class="n">get_attr_value</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;fois&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;REPETE </span><span class="si">{repeat_times}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;/répéter&quot;</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">:</span>
+                        <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">return</span> <span class="n">commands</span>
+
+        <span class="n">dessin_start</span> <span class="o">=</span> <span class="n">xml_data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;&lt;dessin&gt;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">8</span>
+        <span class="n">dessin_end</span> <span class="o">=</span> <span class="n">xml_data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;&lt;/dessin&gt;&quot;</span><span class="p">)</span>
+        <span class="n">dessin_content</span> <span class="o">=</span> <span class="n">xml_data</span><span class="p">[</span><span class="n">dessin_start</span><span class="p">:</span><span class="n">dessin_end</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">parse_content</span><span class="p">(</span><span class="n">dessin_content</span><span class="p">)</span></div>
+
+    <span class="c1"># Fonctions pour les commandes des boutons</span>
+<div class="viewcode-block" id="EditeurDeTexte.importer"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.importer">[docs]</a>    <span class="k">def</span> <span class="nf">importer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour importer un fichier XML et afficher les commandes dans l&#39;éditeur.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askopenfilename</span><span class="p">()</span>
+        <span class="c1"># Vérifier si un fichier a été sélectionné</span>
+        <span class="k">if</span> <span class="n">file_path</span><span class="p">:</span>
+            <span class="c1"># Ouvrir le fichier et lire son contenu</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">xml_str</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="c1"># print(xml_str)</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">xml_str</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aucun fichier sélectionné.&#39;</span><span class="p">)</span>
+
+        <span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">importerCommande</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.exporterCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.exporterCommande">[docs]</a>    <span class="k">def</span> <span class="nf">exporterCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commandes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour exporter les commandes en fichier XML.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            commandes (list): Liste des commandes à exporter.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Le contenu du fichier XML généré.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">commandes</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;AVANCE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;avancer dist=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RECULE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;reculer dist=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TOURNEDROITE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;droite angle=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TOURNEGAUCHE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;gauche angle=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;LEVECRAYON&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;lever/&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BAISSECRAYON&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;baisser/&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ORIGINE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;origine/&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;NETTOIE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;nettoyer/&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RESTAURE&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;restaurer/&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FCC&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;crayon rouge=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; vert=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; bleu=&#39;&quot;</span> <span class="o">+</span> \
+                       <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FCAP&quot;</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;cap angle=&#39;&quot;</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FPOS&quot;</span><span class="p">):</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;position x=&#39;</span><span class="si">{}</span><span class="s2">&#39; y=&#39;</span><span class="si">{}</span><span class="s2">&#39;/&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;REPETE&quot;</span><span class="p">):</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ici nombre de fois: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Passer à la ligne suivante</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ici commande[i] vaut&quot;</span> <span class="o">+</span> <span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Passer à la ligne suivante</span>
+                    <span class="n">inner_commands</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">bracket_count</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bracker_count vaut &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bracket_count</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">while</span> <span class="n">bracket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+                            <span class="n">bracket_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">elif</span> <span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">):</span>
+                            <span class="n">bracket_count</span> <span class="o">-=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">bracket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">inner_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">commandes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;inner commands ici: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inner_commands</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;répéter fois=&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exporterCommande</span><span class="p">(</span><span class="n">inner_commands</span><span class="p">)</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/répéter&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+    <span class="c1"># Adapter la méthode pour utiliser exporterCommande.</span>
+<div class="viewcode-block" id="EditeurDeTexte.exporter"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.exporter">[docs]</a>    <span class="k">def</span> <span class="nf">exporter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Méthode pour exporter les commandes dans un fichier XML.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">commandes</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">commandes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">commandes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">commandes</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;dessin&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exporterCommande</span><span class="p">(</span><span class="n">commandes</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/dessin&gt;&quot;</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">asksaveasfilename</span><span class="p">(</span><span class="n">defaultextension</span><span class="o">=</span><span class="s1">&#39;.xml&#39;</span><span class="p">)</span>
+        <span class="c1"># Écrire le fichier XML avec la variable res</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.clear"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Nettoie les labels du cadres, en gardants les deux label + et -</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">cadre</span><span class="o">.</span><span class="n">winfo_children</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span> <span class="ow">or</span> <span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.run_main_program"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.run_main_program">[docs]</a>    <span class="k">def</span> <span class="nf">run_main_program</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exécute le visualiseur en utilisant subprocess.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;visualiseur.py&quot;</span>
+        <span class="c1"># Lancer le programme en utilisant subprocess</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;python3&quot;</span><span class="p">,</span> <span class="n">file_path</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.openVisualiseur"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.openVisualiseur">[docs]</a>    <span class="k">def</span> <span class="nf">openVisualiseur</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ouvre le programme visualiseur dans un nouveau thread.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Créer un nouveau thread pour exécuter le programme</span>
+        <span class="n">new_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_main_program</span><span class="p">)</span>
+        <span class="c1"># Démarrer le nouveau thread</span>
+        <span class="n">new_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.avancerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.avancerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">avancerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;AVANCE&#39; avec la valeur spécifiée, crée ou modifie un label en fonction de l&#39;état de `self.selectedLabel`.</span>
+<span class="sd">        :param valeur: La distance à avancer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;AVANCE &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
+        <span class="k">if</span> <span class="n">valeur</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+    <span class="c1"># Les fonctions suivantes suivent la même logique que `avancerCommande`, elles génèrent des commandes pour des actions spécifiques et les créent ou les modifient en fonction de l&#39;état de `self.selectedLabel`.</span>
+<div class="viewcode-block" id="EditeurDeTexte.reculerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.reculerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">reculerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;RECULE&#39; avec la valeur spécifiée.</span>
+<span class="sd">        :param valeur: La distance à reculer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;RECULE &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
+        <span class="k">if</span> <span class="n">valeur</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.tournerDroiteCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.tournerDroiteCommande">[docs]</a>    <span class="k">def</span> <span class="nf">tournerDroiteCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;TOURNEDROITE&#39; avec la valeur spécifiée.</span>
+<span class="sd">        :param valeur: L&#39;angle en degrés pour tourner à droite.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;TOURNEDROITE &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
+        <span class="k">if</span> <span class="n">valeur</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.tournerGaucheCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.tournerGaucheCommande">[docs]</a>    <span class="k">def</span> <span class="nf">tournerGaucheCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;TOURNEGAUCHE&#39; avec la valeur spécifiée.</span>
+<span class="sd">        :param valeur: L&#39;angle en degrés pour tourner à gauche.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;TOURNEGAUCHE &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
+        <span class="k">if</span> <span class="n">valeur</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.leverCrayonCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.leverCrayonCommande">[docs]</a>    <span class="k">def</span> <span class="nf">leverCrayonCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;LEVECRAYON&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;LEVECRAYON&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.baisserCrayonCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.baisserCrayonCommande">[docs]</a>    <span class="k">def</span> <span class="nf">baisserCrayonCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;BAISSECRAYON&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;BAISSECRAYON&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.origineCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.origineCommande">[docs]</a>    <span class="k">def</span> <span class="nf">origineCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;ORIGINE&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;ORIGINE&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.restaurerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.restaurerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">restaurerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;RESTAURE&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;RESTAURE&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.nettoyerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.nettoyerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">nettoyerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Génère la commande &#39;NETTOIE&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;NETTOIE&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.refresh"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Actualise l&#39;affichage des widgets dans le cadre.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">cadre</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">grid_forget</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ndex</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">):</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">ndex</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.diminuer_espace"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.diminuer_espace">[docs]</a>    <span class="k">def</span> <span class="nf">diminuer_espace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Supprime l&#39;espace sélectionné ou le bloc de commandes associé si &quot;REPETE&quot; est sélectionné.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">grid_info</span><span class="p">()[</span><span class="s1">&#39;row&#39;</span><span class="p">]</span>
+            <span class="n">deleted_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_labels</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">-=</span> <span class="n">deleted_rows</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.delete_labels"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.delete_labels">[docs]</a>    <span class="k">def</span> <span class="nf">delete_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Supprime les labels associés à un bloc &quot;REPETE&quot; à partir d&#39;une ligne donnée.</span>
+<span class="sd">        :param row: La ligne de départ pour la suppression des labels.</span>
+<span class="sd">        :return: Le nombre de lignes supprimées.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">deleted_rows</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">is_repete</span> <span class="o">=</span> <span class="s2">&quot;REPETE&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_repete</span><span class="p">:</span>
+            <span class="c1"># Supprimer le label &quot;REPETE&quot; initial</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">deleted_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Supprimer les lignes jusqu&#39;à &quot;}&quot;</span>
+            <span class="k">while</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;}&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;REPETE&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
+                    <span class="n">deleted_rows</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_labels</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                    <span class="n">row</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Incrémentez row après l&#39;appel récursif</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+                    <span class="n">deleted_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;}&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+                <span class="n">deleted_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="s2">&quot;{&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;}&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="c1"># Cette fonction ne devrait pas être appelée avec un &quot;{&quot; ou &quot;}&quot; sélectionné</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+            <span class="n">deleted_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">deleted_rows</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.diminuer_espaceRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.diminuer_espaceRow">[docs]</a>    <span class="k">def</span> <span class="nf">diminuer_espaceRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Supprime un espace vide à partir d&#39;une ligne donnée.</span>
+<span class="sd">        :param row: La ligne de l&#39;espace vide à supprimer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.modify"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.modify">[docs]</a>    <span class="k">def</span> <span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modifie le texte du label sélectionné avec le paramètre donné.</span>
+<span class="sd">        :param param: Le nouveau texte pour le label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">grid_info</span><span class="p">()[</span><span class="s1">&#39;row&#39;</span><span class="p">]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.modifyRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.modifyRow">[docs]</a>    <span class="k">def</span> <span class="nf">modifyRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modifie le texte du label à une ligne spécifiée avec le paramètre donné.</span>
+<span class="sd">        :param param: Le nouveau texte pour le label.</span>
+<span class="sd">        :param row: La ligne du label à modifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.augmenter_espace"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.augmenter_espace">[docs]</a>    <span class="k">def</span> <span class="nf">augmenter_espace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insère un espace vide avant le label sélectionné ou à la fin de la liste des labels s&#39;il n&#39;y a pas de sélection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">grid_info</span><span class="p">()[</span><span class="s1">&#39;row&#39;</span><span class="p">]</span>
+            <span class="n">label_espace</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">label_espace</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span>
+            <span class="n">label_espace</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">label_espace</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.augmenter_espaceRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.augmenter_espaceRow">[docs]</a>    <span class="k">def</span> <span class="nf">augmenter_espaceRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insère un espace vide à une ligne spécifiée.</span>
+<span class="sd">        :param row: La ligne où insérer l&#39;espace vide.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">label_espace</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+        <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+        <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">label_espace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.creerLabel"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.creerLabel">[docs]</a>    <span class="k">def</span> <span class="nf">creerLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Crée un nouveau label avec le texte donné et l&#39;ajoute à la liste des labels.</span>
+<span class="sd">        :param text: Le texte pour le nouveau label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cadre</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="c1"># Ajout des bindings pour delete un label et highlight</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.repeatCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.repeatCommande">[docs]</a>    <span class="k">def</span> <span class="nf">repeatCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Crée un bloc &quot;REPETE&quot; avec le nombre de répétitions spécifié.</span>
+<span class="sd">        :param param: Le nombre de répétitions pour le bloc &quot;REPETE&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="n">cadre</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="o">.</span><span class="n">grid_info</span><span class="p">()[</span><span class="s1">&#39;row&#39;</span><span class="p">]</span>
+                <span class="c1"># Ajouter une ligne</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">augmenter_espaceRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+                <span class="c1"># Modify le nouvel espace créé</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modifyRow</span><span class="p">(</span><span class="s2">&quot;REPETE &quot;</span> <span class="o">+</span> <span class="n">param</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+
+                <span class="c1"># Ajouter une ligne</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">augmenter_espaceRow</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Modify le nouvel espace créé</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modifyRow</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="n">row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Ajouter une ligne</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">augmenter_espaceRow</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+                <span class="c1"># Ajouter une ligne</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">augmenter_espaceRow</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+
+                <span class="c1"># Modify le nouvel espace créé</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modifyRow</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="n">row</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cadre</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">label_repeat</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;REPETE &quot;</span> <span class="o">+</span> <span class="n">param</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span>
+                                        <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                <span class="n">label_repeat</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_repeat</span><span class="p">)</span>
+
+                <span class="n">label_debut</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                <span class="n">label_debut</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_debut</span><span class="p">)</span>
+
+                <span class="n">label_espace</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_espace</span><span class="p">)</span>
+
+                <span class="n">label_fin</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                <span class="n">label_fin</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_fin</span><span class="p">)</span>
+
+                <span class="c1"># Ajout des bindings pour delete un label</span>
+                <span class="c1">#label_debut.bind(&quot;&lt;Button-1&gt;&quot;, self.highlight)</span>
+                <span class="n">label_repeat</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+                <span class="n">label_debut</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+                <span class="n">label_repeat</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+                <span class="n">label_fin</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+                <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
+
+                <span class="c1">#label_fin.bind(&quot;&lt;Button-1&gt;&quot;, self.highlight)</span>
+                <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.fccCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fccCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fccCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur1</span><span class="p">,</span> <span class="n">valeur2</span><span class="p">,</span> <span class="n">valeur3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Crée une commande &#39;FCC&#39; avec les valeurs spécifiées.</span>
+<span class="sd">        :param valeur1: La première valeur pour la commande &#39;FCC&#39; : Rouge.</span>
+<span class="sd">        :param valeur2: La deuxième valeur pour la commande &#39;FCC&#39; : Vert.</span>
+<span class="sd">        :param valeur3: La troisième valeur pour la commande &#39;FCC&#39;: Bleu.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;FCC &quot;</span> <span class="o">+</span> <span class="n">valeur1</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">valeur2</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">valeur3</span>
+        <span class="k">if</span> <span class="n">valeur1</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">valeur2</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">valeur3</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.fCapCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fCapCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fCapCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Crée une commande &#39;FCAP&#39; avec la valeur spécifiée.</span>
+<span class="sd">        :param valeur: La valeur pour la commande &#39;FCAP&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;FCAP &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
+        <span class="k">if</span> <span class="n">valeur</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditeurDeTexte.fPosCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fPosCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fPosCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur1</span><span class="p">,</span> <span class="n">valeur2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Crée une commande &#39;FPOS&#39; avec les valeurs spécifiées.</span>
+<span class="sd">        :param valeur1: La première valeur pour la commande &#39;FPOS&#39; : X.</span>
+<span class="sd">        :param valeur2: La deuxième valeur pour la commande &#39;FPOS&#39; : Y.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;FPOS [&quot;</span> <span class="o">+</span> <span class="n">valeur1</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">valeur2</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">if</span> <span class="n">valeur1</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">valeur2</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">creerLabel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+<div class="viewcode-block" id="EditeurDeTexte.run_command_text"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.run_command_text">[docs]</a>    <span class="k">def</span> <span class="nf">run_command_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Envoie une commande au processus en cours d&#39;exécution via stdin.</span>
+<span class="sd">        :param text: La commande à envoyer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">command</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+    <span class="c1"># Les fonctions internes `execute_commands` et `extract_nested_commands` sont utilisées dans la méthode send pour faciliter la gestion des commandes imbriquées.</span>
+<div class="viewcode-block" id="EditeurDeTexte.send"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exécute les commandes présentes dans la liste des labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Lancement de jouer&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">execute_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Exécute les commandes en séquence à partir des commandes et des labels fournis.</span>
+<span class="sd">            :param commandes: Une liste de commandes à exécuter.</span>
+<span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">commandes</span><span class="p">):</span>
+                <span class="n">commande</span> <span class="o">=</span> <span class="n">commandes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>  <span class="c1"># Mettre en évidence le label en jaune</span>
+                <span class="k">if</span> <span class="n">commande</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;REPETE&quot;</span><span class="p">):</span>
+                    <span class="n">repetitions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">commande</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">extract_nested_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">repetitions</span><span class="p">):</span>
+                        <span class="n">execute_commands</span><span class="p">(</span><span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">run_command_text</span><span class="p">(</span><span class="n">commande</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">commande</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;White&quot;</span><span class="p">)</span>  <span class="c1"># Restaurer la couleur d&#39;arrière-plan d&#39;origine</span>
+               <span class="c1"># history_frame.update()  # Mettre à jour l&#39;affichage pour montrer le changement de couleur</span>
+
+        <span class="k">def</span> <span class="nf">extract_nested_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">start_index</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Extrait les commandes imbriquées à partir d&#39;une liste de commandes et de labels à partir d&#39;un indice de départ.</span>
+<span class="sd">            :param commandes: Une liste de commandes.</span>
+<span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
+<span class="sd">            :param start_index: L&#39;indice de départ pour l&#39;extraction des commandes imbriquées.</span>
+<span class="sd">            :return: Un tuple contenant les commandes imbriquées, les labels imbriqués et l&#39;indice de fin.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">nested_commands</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">nested_labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">brace_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">start_index</span>
+
+            <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">commandes</span><span class="p">):</span>
+                <span class="n">current_command</span> <span class="o">=</span> <span class="n">commandes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="n">current_label</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">current_command</span> <span class="o">==</span> <span class="s1">&#39;{&#39;</span><span class="p">:</span>
+                    <span class="n">brace_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">current_command</span> <span class="o">==</span> <span class="s1">&#39;}&#39;</span><span class="p">:</span>
+                    <span class="n">brace_count</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">brace_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">brace_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">nested_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_command</span><span class="p">)</span>
+                    <span class="n">nested_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_label</span><span class="p">)</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">,</span> <span class="n">index</span>
+
+        <span class="n">liste_commandes</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">]</span>
+      <span class="c1">#  del liste_commandes[0]</span>
+      <span class="c1">#  del liste_commandes[0]</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">execute_commands</span><span class="p">(</span><span class="n">liste_commandes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">))</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
+
+
+<span class="c1">###################################################</span>
+<span class="c1"># PARTIE 2: AUTRE FENETRE POUR L&#39;EDITEUR DE TEXTE #</span>
+<span class="c1">###################################################</span>
+<span class="n">editeur</span> <span class="o">=</span> <span class="n">EditeurDeTexte</span><span class="p">()</span>
+
+<span class="n">root2</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+<span class="n">root2</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Editeur de texte&quot;</span><span class="p">)</span>
+<span class="n">root2</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;1000x500&quot;</span><span class="p">)</span>
+
+<span class="n">frameBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">root2</span><span class="p">)</span>
+<span class="n">frameBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un canvas contenant les labels</span>
+<span class="n">canvas</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="n">root2</span><span class="p">,</span> <span class="n">highlightthickness</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Ajout d&#39;une scrollbar pour le canvas</span>
+<span class="n">scrollbar</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Scrollbar</span><span class="p">(</span><span class="n">root2</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="n">canvas</span><span class="o">.</span><span class="n">yview</span><span class="p">)</span>
+<span class="n">scrollbar</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">yscrollcommand</span><span class="o">=</span><span class="n">scrollbar</span><span class="o">.</span><span class="n">set</span><span class="p">)</span>
+
+<span class="n">frameLabel</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">root2</span><span class="p">)</span>
+<span class="n">frameLabel</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">canvas</span><span class="o">.</span><span class="n">create_window</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">window</span><span class="o">=</span><span class="n">frameLabel</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;nw&quot;</span><span class="p">)</span>
+
+<span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">frameLabel</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Configure&gt;&quot;</span><span class="p">,</span> <span class="n">editeur</span><span class="o">.</span><span class="n">on_frame_configure</span><span class="p">)</span>
+
+<span class="c1">#######################</span>
+<span class="c1"># PARTIE 2: FONCTIONS #</span>
+<span class="c1">#######################</span>
+
+
+<span class="c1"># création des cadres de la grille</span>
+<span class="n">cadres</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">tailleCadre</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">cadre</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameLabel</span><span class="p">,</span> <span class="n">highlightthickness</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Avancer</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;Avancer&quot;</span>
+<span class="n">avancerFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">avancerFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;Avancer&quot;</span>
+<span class="n">avancerBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">avancerFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Avancer&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">avancerCommande</span><span class="p">(</span><span class="n">avancerTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">avancerBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour avancer</span>
+<span class="n">avancerTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">avancerFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">avancerTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Reculer</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;Reculer&quot;</span>
+<span class="n">reculerFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">reculerFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;reculer&quot;</span>
+<span class="n">reculerBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">reculerFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Reculer&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">reculerCommande</span><span class="p">(</span><span class="n">reculerTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">reculerBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour reculer</span>
+<span class="n">reculerTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">reculerFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">reculerTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Tourner à droite</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;Tourner à droite&quot;</span>
+<span class="n">tournerDroiteFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">tournerDroiteFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;Tourner à droite&quot;</span>
+<span class="n">tournerDroiteBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">tournerDroiteFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Tourner à Droite&quot;</span><span class="p">,</span>
+                                <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">tournerDroiteCommande</span><span class="p">(</span><span class="n">tournerDroiteTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">tournerDroiteBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte</span>
+<span class="n">tournerDroiteTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">tournerDroiteFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">tournerDroiteTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Tourner à gauche</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;Tourner à droite&quot;</span>
+<span class="n">tournerGaucheFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">tournerGaucheFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;Tourner à droite&quot;</span>
+<span class="n">tournerGaucheBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">tournerGaucheFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Tourner à Gauche&quot;</span><span class="p">,</span>
+                                <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">tournerGaucheCommande</span><span class="p">(</span><span class="n">tournerGaucheTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">tournerGaucheBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour tourner à droite</span>
+<span class="n">tournerGaucheTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">tournerGaucheFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">tournerGaucheTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Lever Crayon Frame</span>
+<span class="n">leverCrayonFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">leverCrayonFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;Lever le crayon&quot;</span>
+<span class="n">leverCrayonBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">leverCrayonFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Lever le crayon&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">leverCrayonCommande</span><span class="p">(),</span>
+                              <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">leverCrayonBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Baisser Crayon Frame</span>
+<span class="n">baisserCrayonFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">baisserCrayonFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;Baisser Crayon&quot;</span>
+<span class="n">baisserCrayonBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">baisserCrayonFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Baisser le crayon&quot;</span><span class="p">,</span>
+                                <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">baisserCrayonCommande</span><span class="p">(),</span>
+                                <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">baisserCrayonBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Origine&quot;</span>
+<span class="n">origineBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Origine&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">origineCommande</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">origineBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Restaurer&quot;</span>
+<span class="n">restaurerBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Restaurer&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">restaurerCommande</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">restaurerBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Nettoyer&quot;</span>
+<span class="n">nettoyerBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Nettoyer&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">nettoyerCommande</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">nettoyerBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># FCC</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;FCC&quot;</span>
+<span class="n">fccFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">fccFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;FCC r v b&quot;</span>
+<span class="n">fccBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">fccFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;FCC&quot;</span><span class="p">,</span>
+                      <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">fccCommande</span><span class="p">(</span><span class="n">fccRed</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">fccGreen</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">fccBlue</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">fccBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fcc r</span>
+<span class="n">fccRed</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fccFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fccRed</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fcc v</span>
+<span class="n">fccGreen</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fccFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fccGreen</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fcc b</span>
+<span class="n">fccBlue</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fccFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fccBlue</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># fCap</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;fCap&quot;</span>
+<span class="n">fCapFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">fCapFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;fCap angle&quot;</span>
+<span class="n">fCapBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">fCapFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;FCAP&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">fCapCommande</span><span class="p">(</span><span class="n">fCapTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">fCapBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fCap</span>
+<span class="n">fCapTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fCapFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fCapTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># Repeat</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;Repeat&quot;</span>
+<span class="n">repeatFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">repeatFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;repeat&quot;</span>
+<span class="n">repeatBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">repeatFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Repeat&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">repeatCommande</span><span class="p">(</span><span class="n">repeatTexte</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span>
+                         <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">repeatBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour Repeat</span>
+<span class="n">repeatTexte</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">repeatFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">repeatTexte</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="c1"># fPos</span>
+<span class="c1"># Création d&#39;un cadre pour le bouton et le champ de texte &quot;fPos&quot;</span>
+<span class="n">fPosFrame</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">fPosFrame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un bouton &quot;fPos x y&quot;</span>
+<span class="n">fPosBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">fPosFrame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;FPOS&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">fPosCommande</span><span class="p">(</span><span class="n">fPosX</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">fPosY</span><span class="o">.</span><span class="n">get</span><span class="p">()),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">fPosBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fPosX</span>
+<span class="n">fPosX</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fPosFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fPosX</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="c1"># Création d&#39;un champ de texte pour entrer du texte pour fPosY</span>
+<span class="n">fPosY</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">fPosFrame</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fPosY</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+<span class="n">bouton_plus</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">augmenter_espace</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bouton_plus</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">editeur</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+<span class="n">editeur</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">editeur</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bouton_plus</span><span class="p">)</span>
+
+<span class="n">bouton_moins</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">diminuer_espace</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bouton_moins</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">editeur</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+<span class="n">editeur</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">editeur</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bouton_moins</span><span class="p">)</span>
+
+
+<span class="n">frameBouton_top</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">frameBouton_top</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+<span class="n">frameBouton_bottom</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">frameBouton</span><span class="p">)</span>
+<span class="n">frameBouton_bottom</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Import&quot;</span>
+<span class="n">importerBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton_top</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Import&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">importer</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">importerBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Export&quot;</span>
+<span class="n">exportBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton_top</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Export&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">exporter</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">exportBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Clear&quot;</span>
+<span class="n">clearBouton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton_bottom</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Clear&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">clear</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">clearBouton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Ouvrir Visualiseur&quot;</span>
+<span class="n">openVisualiseurButton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton_bottom</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Ouvrir Visualiseur&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">openVisualiseur</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">openVisualiseurButton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Création d&#39;un bouton &quot;Send&quot;</span>
+<span class="n">sendButton</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">frameBouton_bottom</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Send&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">editeur</span><span class="o">.</span><span class="n">send</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sendButton</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># Exécuter python ivyprobe.py en utilisant subprocess</span>
+<span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s1">&#39;python3&#39;</span><span class="p">,</span> <span class="s1">&#39;ivyprobe.py&#39;</span><span class="p">],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                           <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Bucle secondaire de tkinter pour afficher l&#39;éditeur de texte</span>
+<span class="n">root2</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Draw_Turtle</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualiseur.html">Visualiseur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../editeur.html">Editeur</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Code du module</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, RUAN Henry - FRANCHINA Lucas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

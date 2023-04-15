@@ -5,7 +5,22 @@ import threading
 import time
 
 class EditeurDeTexte:
+    """
+    La classe EditeurDeTexte permet de créer un éditeur de texte ergonomique qui permet d'importer et d'exporter des fichiers XML,
+    ainsi que d'ajouter, modifier et supprimer des commandes pour contrôler un turtle graphique en utilisant le bus ivy.
+
+    Attributes:
+        tailleCadre (int): La taille du cadre.
+        selectedLabel (tk.Label): Le label sélectionné.
+        label_list (list): Liste des labels dans l'éditeur.
+        sleep_time (float): Temps d'attente entre les actions.
+    """
     def __init__(self):
+        """
+        Constructeur de la classe EditeurDeTexte.
+        Initialise les attributs de la classe.
+        """
+
         # création des cadres de la grille
         self.tailleCadre = 0
         self.selectedLabel = None
@@ -13,6 +28,13 @@ class EditeurDeTexte:
         self.sleep_time = 1.0
 
     def right_click(self, event):
+        """
+        Méthode pour afficher le menu contextuel lors d'un clic droit.
+
+        Args:
+            event (tk.Event): L'événement généré par un clic droit.
+        """
+
         # Créer le menu contextuel
         context_menu = tk.Menu(root2, tearoff=0)
         context_menu.add_command(label="Ajouter une ligne en dessous", command=lambda: self.add_line(event))
@@ -21,10 +43,24 @@ class EditeurDeTexte:
         context_menu.post(event.x_root, event.y_root)
 
     def add_line(self, event):
+        """
+        Méthode pour ajouter une ligne dans l'éditeur.
+
+        Args:
+            event (tk.Event): L'événement généré lors de l'ajout d'une ligne.
+        """
+
         #ajouter une ligne ici
         self.augmenter_espaceRow(event.widget.grid_info()['row']+1)
 
     def highlight(self, event):
+        """
+        Méthode pour mettre en surbrillance un label.
+
+        Args:
+            event (tk.Event): L'événement généré lors de la mise en surbrillance d'un label.
+        """
+
         widget = event.widget
         # Vérifie si le texte du label est égal à '{' ou '}'
         if widget["text"] == "{" or widget["text"] == "}":
@@ -42,9 +78,26 @@ class EditeurDeTexte:
 
     # Ajout d'un binding pour adapter la taille du canvas lorsque la fenêtre est redimensionnée
     def on_frame_configure(self, event):
+        """
+        Méthode pour adapter la taille du canvas lorsque la fenêtre est redimensionnée.
+
+        Args:
+            event (tk.Event): L'événement généré lors du redimensionnement de la fenêtre.
+        """
+
         canvas.configure(scrollregion=canvas.bbox("all"))
 
     def importerCommande(self, xml_data):
+        """
+        Méthode pour importer des commandes à partir d'un fichier XML.
+
+        Args:
+            xml_data (str): Le contenu du fichier XML sous forme de chaîne de caractères.
+
+        Returns:
+            list: Liste des commandes extraites du fichier XML.
+        """
+
         def get_attr_value(tag, attr_name):
             if f"{attr_name}='" in tag:
                 return int(tag.split(f"{attr_name}='")[1].split("'")[0])
@@ -118,6 +171,10 @@ class EditeurDeTexte:
 
     # Fonctions pour les commandes des boutons
     def importer(self):
+        """
+        Méthode pour importer un fichier XML et afficher les commandes dans l'éditeur.
+        """
+
         self.clear()
         xml = ""
         file_path = filedialog.askopenfilename()
@@ -136,6 +193,15 @@ class EditeurDeTexte:
             self.creerLabel(i)
 
     def exporterCommande(self, commandes):
+        """
+        Méthode pour exporter les commandes en fichier XML.
+
+        Args:
+            commandes (list): Liste des commandes à exporter.
+
+        Returns:
+            str: Le contenu du fichier XML généré.
+        """
         i = 0
         res = ""
         while i < len(commandes):
@@ -194,6 +260,10 @@ class EditeurDeTexte:
 
     # Adapter la méthode pour utiliser exporterCommande.
     def exporter(self):
+        """
+        Méthode pour exporter les commandes dans un fichier XML.
+        """
+
         commandes = [label.cget("text") for label in self.label_list]
         del commandes[0]
         del commandes[0]
@@ -210,6 +280,10 @@ class EditeurDeTexte:
             f.write(res)
 
     def clear(self):
+        """
+        Nettoie les labels du cadres, en gardants les deux label + et -
+        """
+
         self.label_list = []
         for label in cadre.winfo_children():
             if label.cget("text") == "+" or label.cget("text") == "-":
@@ -221,18 +295,28 @@ class EditeurDeTexte:
         self.tailleCadre = 2
 
     def run_main_program(self):
-        # Remplacez le chemin d'accès au fichier main.py par le vôtre.
+        """
+        Exécute le visualiseur en utilisant subprocess.
+        """
+
         file_path = "visualiseur.py"
         # Lancer le programme en utilisant subprocess
         subprocess.run(["python3", file_path])
 
     def openVisualiseur(self):
+        """
+        Ouvre le programme visualiseur dans un nouveau thread.
+        """
         # Créer un nouveau thread pour exécuter le programme
         new_thread = threading.Thread(target=self.run_main_program)
         # Démarrer le nouveau thread
         new_thread.start()
 
     def avancerCommande(self, valeur):
+        """
+        Génère la commande 'AVANCE' avec la valeur spécifiée, crée ou modifie un label en fonction de l'état de `self.selectedLabel`.
+        :param valeur: La distance à avancer.
+        """
         res = "AVANCE " + valeur
         if valeur != "":
             if self.selectedLabel:
@@ -240,7 +324,13 @@ class EditeurDeTexte:
             else:
                 self.creerLabel(res)
 
+    # Les fonctions suivantes suivent la même logique que `avancerCommande`, elles génèrent des commandes pour des actions spécifiques et les créent ou les modifient en fonction de l'état de `self.selectedLabel`.
     def reculerCommande(self, valeur):
+        """
+        Génère la commande 'RECULE' avec la valeur spécifiée.
+        :param valeur: La distance à reculer.
+        """
+
         res = "RECULE " + valeur
         if valeur != "":
             if self.selectedLabel:
@@ -249,6 +339,11 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def tournerDroiteCommande(self, valeur):
+        """
+        Génère la commande 'TOURNEDROITE' avec la valeur spécifiée.
+        :param valeur: L'angle en degrés pour tourner à droite.
+        """
+
         res = "TOURNEDROITE " + valeur
         if valeur != "":
             if self.selectedLabel:
@@ -257,6 +352,11 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def tournerGaucheCommande(self, valeur):
+        """
+        Génère la commande 'TOURNEGAUCHE' avec la valeur spécifiée.
+        :param valeur: L'angle en degrés pour tourner à gauche.
+        """
+
         res = "TOURNEGAUCHE " + valeur
         if valeur != "":
             if self.selectedLabel:
@@ -265,6 +365,10 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def leverCrayonCommande(self):
+        """
+        Génère la commande 'LEVECRAYON'.
+        """
+
         res = "LEVECRAYON"
         if self.selectedLabel:
             self.modify(res)
@@ -272,6 +376,10 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def baisserCrayonCommande(self):
+        """
+        Génère la commande 'BAISSECRAYON'.
+        """
+
         res = "BAISSECRAYON"
         if self.selectedLabel:
             self.modify(res)
@@ -279,6 +387,10 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def origineCommande(self):
+        """
+        Génère la commande 'ORIGINE'.
+        """
+
         res = "ORIGINE"
         print("test")
         print(self.selectedLabel)
@@ -289,6 +401,10 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def restaurerCommande(self):
+        """
+        Génère la commande 'RESTAURE'.
+        """
+
         res = "RESTAURE"
         if self.selectedLabel:
             self.modify(res)
@@ -296,6 +412,10 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def nettoyerCommande(self):
+        """
+        Génère la commande 'NETTOIE'.
+        """
+
         res = "NETTOIE"
         if self.selectedLabel:
             self.modify(res)
@@ -303,6 +423,10 @@ class EditeurDeTexte:
             self.creerLabel(res)
 
     def refresh(self):
+        """
+        Actualise l'affichage des widgets dans le cadre.
+        """
+
         for widget in cadre.children.values():
             widget.grid_forget()
         for ndex, i in enumerate(self.label_list):
@@ -310,6 +434,10 @@ class EditeurDeTexte:
             print(str(i))
 
     def diminuer_espace(self):
+        """
+        Supprime l'espace sélectionné ou le bloc de commandes associé si "REPETE" est sélectionné.
+        """
+
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
             deleted_rows = self.delete_labels(row)
@@ -318,6 +446,12 @@ class EditeurDeTexte:
             self.selectedLabel = None
 
     def delete_labels(self, row):
+        """
+        Supprime les labels associés à un bloc "REPETE" à partir d'une ligne donnée.
+        :param row: La ligne de départ pour la suppression des labels.
+        :return: Le nombre de lignes supprimées.
+        """
+
         deleted_rows = 0
         is_repete = "REPETE" in self.label_list[row].cget("text")
 
@@ -346,11 +480,21 @@ class EditeurDeTexte:
         return deleted_rows
 
     def diminuer_espaceRow(self, row):
+        """
+        Supprime un espace vide à partir d'une ligne donnée.
+        :param row: La ligne de l'espace vide à supprimer.
+        """
+
         del self.label_list[row]
         self.refresh()
         self.tailleCadre -= 1
 
     def modify(self, param):
+        """
+        Modifie le texte du label sélectionné avec le paramètre donné.
+        :param param: Le nouveau texte pour le label.
+        """
+
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
             label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
@@ -361,6 +505,12 @@ class EditeurDeTexte:
             self.refresh()
 
     def modifyRow(self, param, row):
+        """
+        Modifie le texte du label à une ligne spécifiée avec le paramètre donné.
+        :param param: Le nouveau texte pour le label.
+        :param row: La ligne du label à modifier.
+        """
+
         label = tk.Label(cadre, text=param, bg="white", borderwidth=1, relief="solid", width=20)
         label.grid(row=row, column=0, sticky="nsew")
         label.bind("<Button-1>", self.highlight)
@@ -369,6 +519,10 @@ class EditeurDeTexte:
         self.refresh()
 
     def augmenter_espace(self):
+        """
+        Insère un espace vide avant le label sélectionné ou à la fin de la liste des labels s'il n'y a pas de sélection.
+        """
+
         if self.selectedLabel:
             row = self.selectedLabel.grid_info()['row']
             label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
@@ -389,6 +543,11 @@ class EditeurDeTexte:
             self.tailleCadre += 1
 
     def augmenter_espaceRow(self, row):
+        """
+        Insère un espace vide à une ligne spécifiée.
+        :param row: La ligne où insérer l'espace vide.
+        """
+
         label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
         label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
         label_espace.bind("<Button-1>", self.highlight)
@@ -399,6 +558,11 @@ class EditeurDeTexte:
         self.tailleCadre += 1
 
     def creerLabel(self, text):
+        """
+        Crée un nouveau label avec le texte donné et l'ajoute à la liste des labels.
+        :param text: Le texte pour le nouveau label.
+        """
+
         cadre.grid(row=self.tailleCadre, column=2)
         label = tk.Label(cadre, text=text, bg="white", borderwidth=1, relief="solid", width=20)
         label.grid(row=self.tailleCadre, column=0, sticky="nsew")
@@ -410,6 +574,11 @@ class EditeurDeTexte:
         self.tailleCadre += 1
 
     def repeatCommande(self, param):
+        """
+        Crée un bloc "REPETE" avec le nombre de répétitions spécifié.
+        :param param: Le nombre de répétitions pour le bloc "REPETE".
+        """
+
         if param != "":
             if self.selectedLabel:
                 cadre.grid(row=self.tailleCadre, column=1)
@@ -471,6 +640,12 @@ class EditeurDeTexte:
                 label_espace.bind("<Button-1>", self.highlight)
 
     def fccCommande(self, valeur1, valeur2, valeur3):
+        """
+        Crée une commande 'FCC' avec les valeurs spécifiées.
+        :param valeur1: La première valeur pour la commande 'FCC' : Rouge.
+        :param valeur2: La deuxième valeur pour la commande 'FCC' : Vert.
+        :param valeur3: La troisième valeur pour la commande 'FCC': Bleu.
+        """
         res = "FCC " + valeur1 + " " + valeur2 + " " + valeur3
         if valeur1 != "" and valeur2 != "" and valeur3 != "":
             if self.selectedLabel:
@@ -479,6 +654,11 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def fCapCommande(self, valeur):
+        """
+        Crée une commande 'FCAP' avec la valeur spécifiée.
+        :param valeur: La valeur pour la commande 'FCAP'.
+        """
+
         res = "FCAP " + valeur
         if valeur != "":
             if self.selectedLabel:
@@ -487,6 +667,12 @@ class EditeurDeTexte:
                 self.creerLabel(res)
 
     def fPosCommande(self, valeur1, valeur2):
+        """
+        Crée une commande 'FPOS' avec les valeurs spécifiées.
+        :param valeur1: La première valeur pour la commande 'FPOS' : X.
+        :param valeur2: La deuxième valeur pour la commande 'FPOS' : Y.
+        """
+
         res = "FPOS [" + valeur1 + " " + valeur2 + "]"
         if valeur1 != "" and valeur2 != "":
             if self.selectedLabel:
@@ -494,13 +680,29 @@ class EditeurDeTexte:
             else:
                 self.creerLabel(res)
     def run_command_text(self, text):
+        """
+        Envoie une commande au processus en cours d'exécution via stdin.
+        :param text: La commande à envoyer.
+        """
+
         command = text
         process.stdin.write(command + '\n')
         process.stdin.flush()
 
+    # Les fonctions internes `execute_commands` et `extract_nested_commands` sont utilisées dans la méthode send pour faciliter la gestion des commandes imbriquées.
     def send(self):
+        """
+        Exécute les commandes présentes dans la liste des labels.
+        """
+
         print("Lancement de jouer")
         def execute_commands(commandes, labels):
+            """
+            Exécute les commandes en séquence à partir des commandes et des labels fournis.
+            :param commandes: Une liste de commandes à exécuter.
+            :param labels: Une liste de labels correspondant aux commandes.
+            """
+
             index = 0
             while index < len(commandes):
                 commande = commandes[index]
@@ -521,6 +723,14 @@ class EditeurDeTexte:
                # history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
         def extract_nested_commands(commandes, labels, start_index):
+            """
+            Extrait les commandes imbriquées à partir d'une liste de commandes et de labels à partir d'un indice de départ.
+            :param commandes: Une liste de commandes.
+            :param labels: Une liste de labels correspondant aux commandes.
+            :param start_index: L'indice de départ pour l'extraction des commandes imbriquées.
+            :return: Un tuple contenant les commandes imbriquées, les labels imbriqués et l'indice de fin.
+            """
+
             nested_commands = []
             nested_labels = []
             brace_count = 0

@@ -1,0 +1,449 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Visualiseur &#8212; Documentation Draw_Turtle 1.0</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Editeur" href="editeur.html" />
+    <link rel="prev" title="Welcome to Draw_Turtle’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-visualiseur">
+<span id="visualiseur"></span><h1>Visualiseur<a class="headerlink" href="#module-visualiseur" title="Lien permanent vers ce titre">¶</a></h1>
+<dl class="class">
+<dt id="visualiseur.CustomDialog">
+<em class="property">class </em><code class="descclassname">visualiseur.</code><code class="descname">CustomDialog</code><span class="sig-paren">(</span><em>parent</em>, <em>title</em>, <em>items</em>, <em>tortue_instance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#CustomDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.CustomDialog" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Une classe personnalisée pour afficher une boîte de dialogue avec des éléments spécifiques.</p>
+<dl class="method">
+<dt id="visualiseur.CustomDialog.apply">
+<code class="descname">apply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#CustomDialog.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.CustomDialog.apply" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Applique les modifications effectuées par l’utilisateur dans la boîte de dialogue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.CustomDialog.body">
+<code class="descname">body</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#CustomDialog.body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.CustomDialog.body" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Construit le corps de la boîte de dialogue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>frame</strong> – Le cadre contenant les éléments de la boîte de dialogue.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.CustomDialog.on_item_selected">
+<code class="descname">on_item_selected</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#CustomDialog.on_item_selected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.CustomDialog.on_item_selected" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode appelée lorsque l’utilisateur sélectionne un élément dans la boîte de dialogue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – L’événement déclencheur.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="visualiseur.Tortue">
+<em class="property">class </em><code class="descclassname">visualiseur.</code><code class="descname">Tortue</code><a class="reference internal" href="_modules/visualiseur.html#Tortue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Une classe personnalisée pour déplacer la tortue, et gèrer les menus textuels.</p>
+<dl class="method">
+<dt id="visualiseur.Tortue.ajouter">
+<code class="descname">ajouter</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.ajouter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.ajouter" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ajoute un nouvel élément à la liste des commandes.
+:param label: label sélectionné dans la liste</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.ajouterligneblanche">
+<code class="descname">ajouterligneblanche</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.ajouterligneblanche"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.ajouterligneblanche" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ajoute une ligne blanche à la liste des commandes.
+:param label: label sélectionné dans la liste</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.avancer">
+<code class="descname">avancer</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterCommande=True</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.avancer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.avancer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fait avancer la tortue de la distance spécifiée.
+:param agent: instance de l’agent (bus ivy)
+:param value: distance à parcourir
+:param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.baisserCrayon">
+<code class="descname">baisserCrayon</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.baisserCrayon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.baisserCrayon" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné
+:param agent: instance de l’agent (bus ivy)
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.changerCouleur">
+<code class="descname">changerCouleur</code><span class="sig-paren">(</span><em>agent</em>, <em>r</em>, <em>v</em>, <em>b</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.changerCouleur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.changerCouleur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Change la couleur du crayon en convertissant le RGB en hexadécimal
+:param agent: instance de l’agent (bus ivy)
+:param r: composante rouge
+:param v: composante verte
+:param b: composante bleue
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.clear" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Efface toutes traces de l’écran graphique en remettant la tortue au milieu du dessin, l’angle est reset, et le crayon est baissé.
+En plus de cela, l’historique est reset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.close_visualizer">
+<code class="descname">close_visualizer</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.close_visualizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.close_visualizer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ferme le visualiseur.
+:param event: événement du clic de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.commande_label">
+<code class="descname">commande_label</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.commande_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.commande_label" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonction qui permet de rejouer en fonction de l’historique.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.display_cursor_position">
+<code class="descname">display_cursor_position</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.display_cursor_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.display_cursor_position" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Affiche la position du curseur sur le canvas.
+:param event: événement du déplacement de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.exporterCommande">
+<code class="descname">exporterCommande</code><span class="sig-paren">(</span><em>commandes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.exporterCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.exporterCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Convertit les commandes en une représentation XML.
+:param commandes: liste des commandes à convertir
+:return: str, représentation XML des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.fixerCap">
+<code class="descname">fixerCap</code><span class="sig-paren">(</span><em>agent</em>, <em>x</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.fixerCap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.fixerCap" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fixe le cap de la tortue à une valeur absolue
+:param agent: instance de l’agent (bus ivy)
+:param x: valeur absolue du cap
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.gomme">
+<code class="descname">gomme</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.gomme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.gomme" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonction pour effacer une zone du dessin avec la gomme.
+:param event: événement du clic de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.importer">
+<code class="descname">importer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.importer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.importer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Importe un fichier XML, extrait les commandes à partir des données XML et les ajoute à l’historique.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.importerCommande">
+<code class="descname">importerCommande</code><span class="sig-paren">(</span><em>xml_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.importerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.importerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Extrait les commandes à partir des données XML et les retourne sous forme d’une liste de chaînes de caractères.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.jouer">
+<code class="descname">jouer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.jouer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.jouer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Lance la fonction “Rejouer” qui permet de rejouer en fonction de l’historique.
+Nettoie le dessin avant de commencer et lance la commande_label() dans un nouveau thread.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.leverCrayon">
+<code class="descname">leverCrayon</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.leverCrayon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.leverCrayon" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné
+:param agent: instance de l’agent (bus ivy)
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.modifier">
+<code class="descname">modifier</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.modifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.modifier" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie un élément dans la liste des commandes.
+:param label: label sélectionné dans la liste</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.nettoyer">
+<code class="descname">nettoyer</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.nettoyer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.nettoyer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Efface toutes traces de l’écran graphique sans changer la position de la tortue
+:param agent: instance de l’agent (bus ivy)
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.nettoyerDessin">
+<code class="descname">nettoyerDessin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.nettoyerDessin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.nettoyerDessin" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Efface toutes traces de l’écran graphique en remettant la tortue au milieu du dessin, l’angle est reset, et le crayon est baissé.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.openEditeur">
+<code class="descname">openEditeur</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.openEditeur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.openEditeur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ouvre l’éditeur en créant et lançant un nouveau thread pour exécuter le programme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.origine">
+<code class="descname">origine</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.origine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.origine" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>La tortue revient à l’origine: xBase et yBase.
+:param agent: instance de l’agent (bus ivy)
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.pan_end">
+<code class="descname">pan_end</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_end" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Marque la fin du déplacement de la fenêtre (panning).
+:param event: événement du relâchement de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.pan_move">
+<code class="descname">pan_move</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_move" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Effectue le déplacement de la fenêtre (panning).
+:param event: événement du mouvement de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.pan_start">
+<code class="descname">pan_start</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_start" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Marque le début du déplacement de la fenêtre (panning).
+:param event: événement du clic de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.reculer">
+<code class="descname">reculer</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.reculer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.reculer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fait reculer la tortue de la distance spécifiée.
+:param agent: instance de l’agent (bus ivy)
+:param value: distance à parcourir
+:param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.restaurer">
+<code class="descname">restaurer</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.restaurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.restaurer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Efface les traces, et restaure l’état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0
+:param agent: instance de l’agent (bus ivy)
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.run_main_program">
+<code class="descname">run_main_program</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.run_main_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.run_main_program" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Lance le programme principal “editeur.py” en utilisant subprocess.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.sauver">
+<code class="descname">sauver</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.sauver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.sauver" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Sauvegarde le dessin actuel sous forme d’image JPEG.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.sauverXML">
+<code class="descname">sauverXML</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.sauverXML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.sauverXML" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Enregistre les commandes sous forme de fichier XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.setPosition">
+<code class="descname">setPosition</code><span class="sig-paren">(</span><em>agent</em>, <em>x</em>, <em>y</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.setPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.setPosition" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie la position de la tortue pour [x,y]
+:param agent: instance de l’agent (bus ivy)
+:param x: position en x
+:param y: position en y
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.show_context_menu">
+<code class="descname">show_context_menu</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.show_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.show_context_menu" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Affiche le menu contextuel à la position du curseur.
+:param event: événement du clic droit de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.show_zoom_menu">
+<code class="descname">show_zoom_menu</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.show_zoom_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.show_zoom_menu" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Affiche un menu contextuel pour le zoom.
+:param event: événement du clic droit de la souris</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.supprimer">
+<code class="descname">supprimer</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.supprimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.supprimer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Supprime un élément de la liste des commandes.
+:param label: label sélectionné dans la liste</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.toggle_gomme">
+<code class="descname">toggle_gomme</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.toggle_gomme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.toggle_gomme" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Bascule entre l’activation et la désactivation de la gomme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.tournerDroite">
+<code class="descname">tournerDroite</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.tournerDroite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.tournerDroite" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Changer l’angle de rotation de la tortue pour tourner à droite
+:param agent: instance de l’agent (bus ivy)
+:param value: Angle de rotation
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.tournerGauche">
+<code class="descname">tournerGauche</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.tournerGauche"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.tournerGauche" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Changer l’angle de rotation de la tortue pour tourner à gauche
+:param agent: instance de l’agent (bus ivy)
+:param value: Angle de rotation
+:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="visualiseur.Tortue.zoom">
+<code class="descname">zoom</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>increment</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.zoom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.zoom" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Applique le zoom sur le canvas.
+:param x: coordonnée x du centre du zoom
+:param y: coordonnée y du centre du zoom
+:param increment: valeur de l’incrément de zoom</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="visualiseur.on_command">
+<code class="descclassname">visualiseur.</code><code class="descname">on_command</code><span class="sig-paren">(</span><em>agent</em>, <em>*larg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#on_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.on_command" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonctions de callback pour les événements Ivy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualiseur.on_connection">
+<code class="descclassname">visualiseur.</code><code class="descname">on_connection</code><span class="sig-paren">(</span><em>agent</em>, <em>connected</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#on_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.on_connection" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonctions de callback pour les événements Ivy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualiseur.on_message">
+<code class="descclassname">visualiseur.</code><code class="descname">on_message</code><span class="sig-paren">(</span><em>agent</em>, <em>*larg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#on_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.on_message" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonctions de callback pour les événements Ivy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualiseur.start_ivy">
+<code class="descclassname">visualiseur.</code><code class="descname">start_ivy</code><span class="sig-paren">(</span><em>app_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#start_ivy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.start_ivy" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Initialise et démarre Ivy</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Draw_Turtle</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualiseur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="editeur.html">Editeur</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="Chapitre précédent">Welcome to Draw_Turtle’s documentation!</a></li>
+      <li>Next: <a href="editeur.html" title="Chapitre suivant">Editeur</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, RUAN Henry - FRANCHINA Lucas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/visualiseur.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

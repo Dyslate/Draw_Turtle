@@ -1,0 +1,5 @@
+Editeur
+===========
+
+.. automodule:: editeur
+   :members:

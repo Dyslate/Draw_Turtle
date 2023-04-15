@@ -1,0 +1,372 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Editeur &#8212; Documentation Draw_Turtle 1.0</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="prev" title="Visualiseur" href="visualiseur.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-editeur">
+<span id="editeur"></span><h1>Editeur<a class="headerlink" href="#module-editeur" title="Lien permanent vers ce titre">¶</a></h1>
+<dl class="class">
+<dt id="editeur.EditeurDeTexte">
+<em class="property">class </em><code class="descclassname">editeur.</code><code class="descname">EditeurDeTexte</code><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>La classe EditeurDeTexte permet de créer un éditeur de texte ergonomique qui permet d’importer et d’exporter des fichiers XML,
+ainsi que d’ajouter, modifier et supprimer des commandes pour contrôler un turtle graphique en utilisant le bus ivy.</p>
+<dl class="docutils">
+<dt>Attributes:</dt>
+<dd>tailleCadre (int): La taille du cadre.
+selectedLabel (tk.Label): Le label sélectionné.
+label_list (list): Liste des labels dans l’éditeur.
+sleep_time (float): Temps d’attente entre les actions.</dd>
+</dl>
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.add_line">
+<code class="descname">add_line</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.add_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.add_line" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour ajouter une ligne dans l’éditeur.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>event (tk.Event): L’événement généré lors de l’ajout d’une ligne.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.augmenter_espace">
+<code class="descname">augmenter_espace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.augmenter_espace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.augmenter_espace" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Insère un espace vide avant le label sélectionné ou à la fin de la liste des labels s’il n’y a pas de sélection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.augmenter_espaceRow">
+<code class="descname">augmenter_espaceRow</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.augmenter_espaceRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.augmenter_espaceRow" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Insère un espace vide à une ligne spécifiée.
+:param row: La ligne où insérer l’espace vide.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.avancerCommande">
+<code class="descname">avancerCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.avancerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.avancerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “AVANCE” avec la valeur spécifiée, crée ou modifie un label en fonction de l’état de <cite>self.selectedLabel</cite>.
+:param valeur: La distance à avancer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.baisserCrayonCommande">
+<code class="descname">baisserCrayonCommande</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.baisserCrayonCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.baisserCrayonCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “BAISSECRAYON”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.clear" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Nettoie les labels du cadres, en gardants les deux label + et -</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.creerLabel">
+<code class="descname">creerLabel</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.creerLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.creerLabel" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Crée un nouveau label avec le texte donné et l’ajoute à la liste des labels.
+:param text: Le texte pour le nouveau label.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.delete_labels">
+<code class="descname">delete_labels</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.delete_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.delete_labels" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Supprime les labels associés à un bloc «&nbsp;REPETE&nbsp;» à partir d’une ligne donnée.
+:param row: La ligne de départ pour la suppression des labels.
+:return: Le nombre de lignes supprimées.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.diminuer_espace">
+<code class="descname">diminuer_espace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.diminuer_espace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.diminuer_espace" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Supprime l’espace sélectionné ou le bloc de commandes associé si «&nbsp;REPETE&nbsp;» est sélectionné.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.diminuer_espaceRow">
+<code class="descname">diminuer_espaceRow</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.diminuer_espaceRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.diminuer_espaceRow" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Supprime un espace vide à partir d’une ligne donnée.
+:param row: La ligne de l’espace vide à supprimer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.exporter">
+<code class="descname">exporter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.exporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.exporter" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour exporter les commandes dans un fichier XML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.exporterCommande">
+<code class="descname">exporterCommande</code><span class="sig-paren">(</span><em>commandes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.exporterCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.exporterCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour exporter les commandes en fichier XML.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>commandes (list): Liste des commandes à exporter.</dd>
+<dt>Returns:</dt>
+<dd>str: Le contenu du fichier XML généré.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.fCapCommande">
+<code class="descname">fCapCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fCapCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fCapCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Crée une commande “FCAP” avec la valeur spécifiée.
+:param valeur: La valeur pour la commande “FCAP”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.fPosCommande">
+<code class="descname">fPosCommande</code><span class="sig-paren">(</span><em>valeur1</em>, <em>valeur2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fPosCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fPosCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Crée une commande “FPOS” avec les valeurs spécifiées.
+:param valeur1: La première valeur pour la commande “FPOS” : X.
+:param valeur2: La deuxième valeur pour la commande “FPOS” : Y.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.fccCommande">
+<code class="descname">fccCommande</code><span class="sig-paren">(</span><em>valeur1</em>, <em>valeur2</em>, <em>valeur3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fccCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fccCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Crée une commande “FCC” avec les valeurs spécifiées.
+:param valeur1: La première valeur pour la commande “FCC” : Rouge.
+:param valeur2: La deuxième valeur pour la commande “FCC” : Vert.
+:param valeur3: La troisième valeur pour la commande “FCC”: Bleu.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.highlight">
+<code class="descname">highlight</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.highlight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.highlight" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour mettre en surbrillance un label.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>event (tk.Event): L’événement généré lors de la mise en surbrillance d’un label.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.importer">
+<code class="descname">importer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.importer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.importer" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour importer un fichier XML et afficher les commandes dans l’éditeur.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.importerCommande">
+<code class="descname">importerCommande</code><span class="sig-paren">(</span><em>xml_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.importerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.importerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour importer des commandes à partir d’un fichier XML.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>xml_data (str): Le contenu du fichier XML sous forme de chaîne de caractères.</dd>
+<dt>Returns:</dt>
+<dd>list: Liste des commandes extraites du fichier XML.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.leverCrayonCommande">
+<code class="descname">leverCrayonCommande</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.leverCrayonCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.leverCrayonCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “LEVECRAYON”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.modify">
+<code class="descname">modify</code><span class="sig-paren">(</span><em>param</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.modify" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie le texte du label sélectionné avec le paramètre donné.
+:param param: Le nouveau texte pour le label.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.modifyRow">
+<code class="descname">modifyRow</code><span class="sig-paren">(</span><em>param</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.modifyRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.modifyRow" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Modifie le texte du label à une ligne spécifiée avec le paramètre donné.
+:param param: Le nouveau texte pour le label.
+:param row: La ligne du label à modifier.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.nettoyerCommande">
+<code class="descname">nettoyerCommande</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.nettoyerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.nettoyerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “NETTOIE”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.on_frame_configure">
+<code class="descname">on_frame_configure</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.on_frame_configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.on_frame_configure" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour adapter la taille du canvas lorsque la fenêtre est redimensionnée.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>event (tk.Event): L’événement généré lors du redimensionnement de la fenêtre.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.openVisualiseur">
+<code class="descname">openVisualiseur</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.openVisualiseur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.openVisualiseur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ouvre le programme visualiseur dans un nouveau thread.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.origineCommande">
+<code class="descname">origineCommande</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.origineCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.origineCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “ORIGINE”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.reculerCommande">
+<code class="descname">reculerCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.reculerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.reculerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “RECULE” avec la valeur spécifiée.
+:param valeur: La distance à reculer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.refresh" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Actualise l’affichage des widgets dans le cadre.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.repeatCommande">
+<code class="descname">repeatCommande</code><span class="sig-paren">(</span><em>param</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.repeatCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.repeatCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Crée un bloc «&nbsp;REPETE&nbsp;» avec le nombre de répétitions spécifié.
+:param param: Le nombre de répétitions pour le bloc «&nbsp;REPETE&nbsp;».</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.restaurerCommande">
+<code class="descname">restaurerCommande</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.restaurerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.restaurerCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “RESTAURE”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.right_click">
+<code class="descname">right_click</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.right_click"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.right_click" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Méthode pour afficher le menu contextuel lors d’un clic droit.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>event (tk.Event): L’événement généré par un clic droit.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.run_command_text">
+<code class="descname">run_command_text</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.run_command_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.run_command_text" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Envoie une commande au processus en cours d’exécution via stdin.
+:param text: La commande à envoyer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.run_main_program">
+<code class="descname">run_main_program</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.run_main_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.run_main_program" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Exécute le visualiseur en utilisant subprocess.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.send">
+<code class="descname">send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.send" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Exécute les commandes présentes dans la liste des labels.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.tournerDroiteCommande">
+<code class="descname">tournerDroiteCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.tournerDroiteCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.tournerDroiteCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “TOURNEDROITE” avec la valeur spécifiée.
+:param valeur: L’angle en degrés pour tourner à droite.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="editeur.EditeurDeTexte.tournerGaucheCommande">
+<code class="descname">tournerGaucheCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.tournerGaucheCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.tournerGaucheCommande" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génère la commande “TOURNEGAUCHE” avec la valeur spécifiée.
+:param valeur: L’angle en degrés pour tourner à gauche.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Draw_Turtle</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="visualiseur.html">Visualiseur</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Editeur</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="visualiseur.html" title="Chapitre précédent">Visualiseur</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, RUAN Henry - FRANCHINA Lucas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/editeur.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

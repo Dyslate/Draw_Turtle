@@ -11,7 +11,18 @@ from tkinter import simpledialog
 
 
 class CustomDialog(simpledialog.Dialog):
+    """
+    Une classe personnalisée pour afficher une boîte de dialogue avec des éléments spécifiques.
+    """
     def __init__(self, parent, title, items, tortue_instance):
+        """
+        Initialise un nouvel objet CustomDialog.
+
+        :param parent: Le widget parent de la boîte de dialogue.
+        :param title: Le titre de la boîte de dialogue.
+        :param items: Une liste d'éléments à afficher dans la boîte de dialogue.
+        :param tortue_instance: Une instance de la classe Tortue.
+        """
         self.items = items
         self.selected_item = None
         self.entries = []
@@ -20,6 +31,12 @@ class CustomDialog(simpledialog.Dialog):
         super().__init__(parent, title)
 
     def body(self, frame):
+        """
+        Construit le corps de la boîte de dialogue.
+
+        :param frame: Le cadre contenant les éléments de la boîte de dialogue.
+        """
+
         self.listbox = tk.Listbox(frame, selectmode=tk.SINGLE, exportselection=False)
         self.listbox.pack(side=tk.TOP, padx=5, pady=5)
 
@@ -32,6 +49,12 @@ class CustomDialog(simpledialog.Dialog):
         self.entries_frame.pack(side=tk.TOP, padx=5, pady=5)
 
     def on_item_selected(self, event):
+        """
+        Méthode appelée lorsque l'utilisateur sélectionne un élément dans la boîte de dialogue.
+
+        :param event: L'événement déclencheur.
+        """
+
         index = self.listbox.curselection()[0]
         self.selected_item = self.items[index]
 
@@ -65,34 +88,32 @@ class CustomDialog(simpledialog.Dialog):
             self.entries.append(entry)
 
     def apply(self):
+        """
+        Applique les modifications effectuées par l'utilisateur dans la boîte de dialogue.
+        """
         params = " ".join(entry.get() for entry in self.entries)
         if self.selected_item == "FPOS":
             params = f"[{params}]"
-
-        if self.selected_item == "REPETE":
-            num_repeats = int(params.split()[0])
-            params = params.split()[0]  # Conserve uniquement le premier paramètre (nombre de répétitions)
-            #    self.result = (f"{self.selected_item} {params}", num_repeats)
-
-            # Ajouter les labels REPETE, {, lignes vides et }
-            self.tortue_instance.ajouter_repete_labels(num_repeats, self.tortue_instance.clicked_label)
         else:
             self.result = (f"{self.selected_item} {params}".strip(), None)
 
 
-# Fonction qui efface toute les traces à l'écrans
-def clear_widgets():
-    canvas2.delete("all")
 
-
-class Tortue():
+class Tortue:
+    """
+    Une classe personnalisée pour déplacer la tortue, et gèrer les menus textuels.
+    """
     def __init__(self):
+        """
+        Initialise les attributs de la classe Tortue et crée les menus.
+        """
         self.x = 300
         self.y = 300
         self.xBase = 300
         self.yBase = 300
         self.penActivated = True
         self.angle = 90
+        self.angleBase = 90
         self.commands = []  # pour save le dessin en xml.
         self.couleur = "#FF0000"
         self.nombreCommande = 0
@@ -128,15 +149,10 @@ class Tortue():
         # Afficher la barre de menus
         root.config(menu=menubar)
 
-        # 1. Créez un nouveau menu déroulant pour "Outils"
+        #Gomme et Menu "Outils"
         tools_menu = tk.Menu(menubar, tearoff=0)
-
-        # 2. Ajoutez un menuitem "Activer Gomme" avec la fonction `add_checkbutton()`
-        # 4. Créez une variable tkinter `BooleanVar` pour suivre l'état de la gomme (activée ou désactivée)
-        gomme_active = tk.BooleanVar()
+        self.gomme_active = tk.BooleanVar()
         tools_menu.add_checkbutton(label="Activer Gomme", variable=self.gomme_active, command=self.toggle_gomme)
-
-        # 3. Ajoutez le menu déroulant "Outils" à la barre de menus
         menubar.add_cascade(label="Outils", menu=tools_menu)
 
         # Créer le menu contextuel
@@ -149,15 +165,21 @@ class Tortue():
                                       command=lambda: self.ajouterligneblanche(self.clicked_label))
 
     def toggle_gomme(self):
+        """
+        Bascule entre l'activation et la désactivation de la gomme.
+        """
         if self.gomme_active.get():
             print("gomme activé")
             pass
         else:
             print("gomme désactivé")
-            # Désactivez la gomme ici
             pass
 
     def gomme(self, event):
+        """
+        Fonction pour effacer une zone du dessin avec la gomme.
+        :param event: événement du clic de la souris
+        """
         if self.gomme_active.get():
             # Taille de la gomme
             gomme_taille = 10
@@ -172,6 +194,10 @@ class Tortue():
 
 
     def display_cursor_position(self, event):
+        """
+        Affiche la position du curseur sur le canvas.
+        :param event: événement du déplacement de la souris
+        """
         x = canvas2.canvasx(event.x)
         y = canvas2.canvasy(event.y)
         position_text = f"({x}, {y})"
@@ -186,6 +212,11 @@ class Tortue():
         )
 
     def exporterCommande(self, commandes):
+        """
+        Convertit les commandes en une représentation XML.
+        :param commandes: liste des commandes à convertir
+        :return: str, représentation XML des commandes
+        """
         i = 0
         res = ""
         while i < len(commandes):
@@ -244,6 +275,10 @@ class Tortue():
 
     # Adapter la méthode pour utiliser exporterCommande.
     def sauverXML(self):
+        """
+        Enregistre les commandes sous forme de fichier XML.
+        """
+
         commandes = [label.cget("text") for label in self.liste_historique]
         print(commandes)
         res = ""
@@ -258,65 +293,66 @@ class Tortue():
             f.write(res)
 
     def pan_start(self, event):
+        """
+        Marque le début du déplacement de la fenêtre (panning).
+        :param event: événement du clic de la souris
+        """
         canvas2.scan_mark(event.x, event.y)
 
     def pan_move(self, event):
+        """
+        Effectue le déplacement de la fenêtre (panning).
+        :param event: événement du mouvement de la souris
+        """
+
         x = int(canvas2.canvasx(event.x))
         y = int(canvas2.canvasy(event.y))
         canvas2.scan_dragto(x, y, gain=1)
 
     def pan_end(self, event):
+        """
+        Marque la fin du déplacement de la fenêtre (panning).
+        :param event: événement du relâchement de la souris
+        """
         canvas2.config(cursor="")
 
     def show_zoom_menu(self, event):
+        """
+        Affiche un menu contextuel pour le zoom.
+        :param event: événement du clic droit de la souris
+        """
+
         context_menu = tk.Menu(canvas2, tearoff=0)
         context_menu.add_command(label="Zoom In", command=lambda: self.zoom(event.x, event.y, self.zoom_increment))
         context_menu.add_command(label="Zoom Out", command=lambda: self.zoom(event.x, event.y, -self.zoom_increment))
         context_menu.post(event.x_root, event.y_root)
 
     def zoom(self, x, y, increment):
+        """
+        Applique le zoom sur le canvas.
+        :param x: coordonnée x du centre du zoom
+        :param y: coordonnée y du centre du zoom
+        :param increment: valeur de l'incrément de zoom
+        """
+
         self.zoom_scale += increment
         self.zoom_scale = max(0.1, self.zoom_scale)
         canvas2.scale('all', x, y, 1 + increment, 1 + increment)
 
     def show_context_menu(self, event):
-        # Afficher le menu contextuel à la position du curseur
+        """
+        Affiche le menu contextuel à la position du curseur.
+        :param event: événement du clic droit de la souris
+        """
         self.context_menu.post(event.x_root, event.y_root)
         self.clicked_label = event.widget
 
-    def ajouter_repete_labels(self, num_repeats, clicked_label):
-        # Trouver l'index du label sélectionné dans la liste_historique
-        label_index = self.liste_historique.index(clicked_label)
-
-        # Créer les labels REPETE, {, lignes vides et }
-        repete_label = tk.Label(clicked_label.master, text=f"REPETE {num_repeats}", bg="white", borderwidth=1,
-                                relief="solid", width=20)
-        open_brace_label = tk.Label(clicked_label.master, text="{", bg="white", borderwidth=1, relief="solid", width=20)
-        empty_labels = [tk.Label(clicked_label.master, text="", bg="white", borderwidth=1, relief="solid", width=20) for
-                        _ in range(num_repeats)]
-        close_brace_label = tk.Label(clicked_label.master, text="}", bg="white", borderwidth=1, relief="solid",
-                                     width=20)
-
-        # Insérer les labels dans la liste_historique en dessous du label sélectionné
-        insert_index = label_index + 2
-        self.liste_historique.insert(insert_index, repete_label)
-        self.liste_historique.insert(insert_index + 2, open_brace_label)
-        for i, empty_label in enumerate(empty_labels):
-            self.liste_historique.insert(insert_index + 3 + i, empty_label)
-        self.liste_historique.insert(insert_index + 3 + num_repeats, close_brace_label)
-
-        # Mettre à jour les positions des labels existants
-        for i, hist_label in enumerate(self.liste_historique):
-            hist_label.grid(row=i + 2, column=1, sticky="nsew")
-
-        # Associer le clic droit au menu contextuel pour les nouveaux labels
-        repete_label.bind("<Button-3>", self.show_context_menu)
-        open_brace_label.bind("<Button-3>", self.show_context_menu)
-        for empty_label in empty_labels:
-            empty_label.bind("<Button-3>", self.show_context_menu)
-        close_brace_label.bind("<Button-3>", self.show_context_menu)
-
     def ajouter(self, label):
+        """
+        Ajoute un nouvel élément à la liste des commandes.
+        :param label: label sélectionné dans la liste
+        """
+
         # Trouver l'index du label sélectionné dans la liste_historique
         label_index = self.liste_historique.index(label)
 
@@ -337,6 +373,11 @@ class Tortue():
             new_label.bind("<Button-3>", self.show_context_menu)
 
     def ajouterligneblanche(self, label):
+        """
+        Ajoute une ligne blanche à la liste des commandes.
+        :param label: label sélectionné dans la liste
+        """
+
         # Trouver l'index du label sélectionné dans la liste_historique
         label_index = self.liste_historique.index(label)
 
@@ -353,6 +394,11 @@ class Tortue():
         new_label.bind("<Button-3>", self.show_context_menu)
 
     def modifier(self, label):
+        """
+        Modifie un élément dans la liste des commandes.
+        :param label: label sélectionné dans la liste
+        """
+
         # Demander le nouveau texte à l'utilisateur
 
         dialog = CustomDialog(root, "Ajouter un nouvel élément", self.items, self)
@@ -370,6 +416,11 @@ class Tortue():
             tk.messagebox.showerror("Error", "Wrong Selected!")
 
     def supprimer(self, label):
+        """
+        Supprime un élément de la liste des commandes.
+        :param label: label sélectionné dans la liste
+        """
+
         for i, hist_label in enumerate(self.liste_historique):
             if hist_label == label:
                 del self.liste_historique[i]
@@ -377,9 +428,21 @@ class Tortue():
         label.destroy()
 
     def close_visualizer(self, event):
+        """
+        Ferme le visualiseur.
+        :param event: événement du clic de la souris
+        """
+
         self.is_closed = True  # Ajoutez cette ligne pour mettre à jour l'attribut is_closed
 
     def avancer(self, agent, value, ajouterCommande=True, ajouterHistorique=True):
+        """
+        Fait avancer la tortue de la distance spécifiée.
+        :param agent: instance de l'agent (bus ivy)
+        :param value: distance à parcourir
+        :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         value = int(value)
 
         # Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
@@ -402,12 +465,14 @@ class Tortue():
         # Conversion de l'angle en radians
         angle_degrees = self.angle
         if self.capFixed:
-            self.angle += self.cap
-            print(self.capFixed)
-            print(str("l'angle vaut: " + str(angle_degrees)))
+            self.angle = self.cap
+            print(str("l'angle vaut: " + str(self.angle)))
+
         else:
             angle_degrees = self.angle
             print(str(angle_degrees))
+
+        self.capFixed = False
 
         angle_radians = angle_degrees * (3.141592653589793 / 180)
 
@@ -441,9 +506,16 @@ class Tortue():
         if ajouterCommande:
             self.commands.append(("AVANCE", value))
 
-    def reculer(self, agent, value, ajouterCommande=True, ajouterHistorique=True):
+    def reculer(self, agent, value, ajouterHistorique=True):
+        """
+        Fait reculer la tortue de la distance spécifiée.
+        :param agent: instance de l'agent (bus ivy)
+        :param value: distance à parcourir
+        :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         value = int(value)
-        self.avancer(self, -value, False)
+        self.avancer(self, -value, False, False)
         self.commands.append(("RECULE", value))
         if ajouterHistorique:
             self.nombreCommande += 1
@@ -458,6 +530,12 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def tournerDroite(self, agent, value, ajouterHistorique=True):
+        """
+        Changer l'angle de rotation de la tortue pour tourner à droite
+        :param agent: instance de l'agent (bus ivy)
+        :param value: Angle de rotation
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.angle -= int(value)
         self.commands.append(("TOURNEDROITE", value))
         if ajouterHistorique:
@@ -473,6 +551,13 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def tournerGauche(self, agent, value, ajouterHistorique=True):
+        """
+        Changer l'angle de rotation de la tortue pour tourner à gauche
+        :param agent: instance de l'agent (bus ivy)
+        :param value: Angle de rotation
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
+
         self.angle += int(value)
         self.commands.append(("TOURNEGAUCHE", value))
         if ajouterHistorique:
@@ -488,6 +573,12 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def leverCrayon(self, agent, ajouterHistorique=True):
+        """
+        Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné
+        :param agent: instance de l'agent (bus ivy)
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
+
         self.penActivated = False
         self.commands.append("LEVECRAYON")
         if ajouterHistorique:
@@ -502,6 +593,11 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def baisserCrayon(self, agent, ajouterHistorique=True):
+        """
+        Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné
+        :param agent: instance de l'agent (bus ivy)
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.penActivated = True
         self.commands.append("BAISSECRAYON")
         if ajouterHistorique:
@@ -516,8 +612,12 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def origine(self, agent, ajouterHistorique=True):
+        """
+        La tortue revient à l'origine: xBase et yBase.
+        :param agent: instance de l'agent (bus ivy)
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.x, self.y = self.xBase, self.yBase
-        self.angle = 90
         self.commands.append("ORIGINE")
         if ajouterHistorique:
             self.nombreCommande += 1
@@ -531,8 +631,17 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def restaurer(self, agent, ajouterHistorique=True):
+        """
+        Efface les traces, et restaure l'état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0
+        :param agent: instance de l'agent (bus ivy)
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.x = self.xBase
         self.y = self.yBase
+        self.angle = 90
+        self.penActivated = True
+        self.color = 0
+
         self.commands.append("RESTAURER")
         if ajouterHistorique:
             self.nombreCommande += 1
@@ -546,10 +655,13 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def nettoyer(self, agent, ajouterHistorique=True):
+        """
+        Efface toutes traces de l'écran graphique sans changer la position de la tortue
+        :param agent: instance de l'agent (bus ivy)
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         canvas2.delete("all")
-        #  tortue.origine(self)
         self.commands.append("NETTOYER")
-
         if ajouterHistorique:
             self.nombreCommande += 1
             label = tk.Label(history_frame, text="NETTOYER", bg="white", borderwidth=1, relief="solid", width=20)
@@ -562,27 +674,44 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def nettoyerDessin(self):
+        """
+        Efface toutes traces de l'écran graphique en remettant la tortue au milieu du dessin, l'angle est reset, et le crayon est baissé.
+        """
         self.x = self.xBase
         self.y = self.yBase
         self.penActivated = True
-        self.angle = 90
+        self.angle = self.angleBase
         canvas2.delete("all")
 
     def clear(self):
+        """
+        Efface toutes traces de l'écran graphique en remettant la tortue au milieu du dessin, l'angle est reset, et le crayon est baissé.
+        En plus de cela, l'historique est reset.
+        """
         canvas2.delete("all")
         for label in self.liste_historique:
             label.destroy()
         self.liste_historique = []
         self.x, self.y = self.xBase, self.yBase
-        self.angle = 90
+        self.angle = self.angleBase
         self.commands.append("ORIGINE")
 
     def changerCouleur(self, agent, r, v, b, ajouterHistorique=True):
+        """
+        Change la couleur du crayon en convertissant le RGB en hexadécimal
+        :param agent: instance de l'agent (bus ivy)
+        :param r: composante rouge
+        :param v: composante verte
+        :param b: composante bleue
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         r, v, b = int(r), int(v), int(b)  # Convertir les chaînes de caractères en entiers
         # code pour changer la couleur du crayon à partir des composantes r v b
         hex_code = '#{0:02X}{1:02X}{2:02X}'.format(r, v, b)
         self.couleur = hex_code
         print("changer couleur en :" + hex_code)
+
+        self.commands.append("FCC " + str(r) + " " + str(v) + " " + str(b))
         if ajouterHistorique:
             self.nombreCommande += 1
             label = tk.Label(history_frame, text="FCC " + str(r) + " " + str(v) + " " + str(b), bg="white",
@@ -597,11 +726,15 @@ class Tortue():
 
     # code pour fixer le cap de la tortue de manière absolue
     def fixerCap(self, agent, x, ajouterHistorique=True):
+        """
+        Fixe le cap de la tortue à une valeur absolue
+        :param agent: instance de l'agent (bus ivy)
+        :param x: valeur absolue du cap
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.cap = float(x)
-        if self.capFixed:
-            self.capFixed = False
-        else:
-            self.capFixed = True
+        self.commands.append("FCAP " + str(x))
+        self.capFixed = True
         if ajouterHistorique:
             self.nombreCommande += 1
             label = tk.Label(history_frame, text="FCAP " + str(x), bg="white", borderwidth=1, relief="solid", width=20)
@@ -614,7 +747,17 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def setPosition(self, agent, x, y, ajouterHistorique=True):
+        """
+        Modifie la position de la tortue pour [x,y]
+        :param agent: instance de l'agent (bus ivy)
+        :param x: position en x
+        :param y: position en y
+        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
+        """
         self.x, self.y = int(x), int(y)
+
+        self.commands.append("FPOS [" + str(x) + " " + str(y) + "]")
+
         if ajouterHistorique:
             self.nombreCommande += 1
             label = tk.Label(history_frame, text="FPOS [" + str(x) + " " + str(y) + "]", bg="white", borderwidth=1,
@@ -628,6 +771,9 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def commande_label(self):
+        """
+        Fonction qui permet de rejouer en fonction de l'historique.
+        """
         liste_commandes = [label.cget("text") for label in self.liste_historique]
         for i, label_text in enumerate(liste_commandes):
             label = self.liste_historique[i]  # Récupérer le label correspondant
@@ -636,7 +782,7 @@ class Tortue():
             if label_text.split(" ")[0] == "AVANCE":
                 self.avancer(False, label_text.split(" ")[1], False, False)
             if label_text.split(" ")[0] == "RECULE":
-                self.reculer(False, label_text.split(" ")[1], False, False)
+                self.reculer(False, label_text.split(" ")[1], False)
             if label_text.split(" ")[0] == "TOURNEDROITE":
                 self.tournerDroite(False, label_text.split(" ")[1], False)
             if label_text.split(" ")[0] == "TOURNEGAUCHE":
@@ -665,12 +811,19 @@ class Tortue():
             history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
     def jouer(self):
-        print("Lancement de jouer")
+        """
+        Lance la fonction 'Rejouer' qui permet de rejouer en fonction de l'historique.
+        Nettoie le dessin avant de commencer et lance la commande_label() dans un nouveau thread.
+        """
+        print("Lancement de Rejouer")
         self.nettoyerDessin()
         thread = threading.Thread(target=lambda: self.commande_label())
         thread.start()
 
     def importerCommande(self, xml_data):
+        """
+        Extrait les commandes à partir des données XML et les retourne sous forme d'une liste de chaînes de caractères.
+        """
         def get_attr_value(tag, attr_name):
             if f"{attr_name}='" in tag:
                 return int(tag.split(f"{attr_name}='")[1].split("'")[0])
@@ -743,6 +896,10 @@ class Tortue():
         return parse_content(dessin_content)
 
     def importer(self):
+        """
+        Importe un fichier XML, extrait les commandes à partir des données XML et les ajoute à l'historique.
+        """
+
         xml = ""
         file_path = filedialog.askopenfilename()
         # Vérifier si un fichier a été sélectionné
@@ -770,6 +927,10 @@ class Tortue():
             history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def sauver(self):
+        """
+        Sauvegarde le dessin actuel sous forme d'image JPEG.
+        """
+
         # Créer une image PIL avec les mêmes dimensions que le canvas
         image = Image.new("RGB", (canvas2.winfo_width(), canvas2.winfo_height()), "white")
         draw = ImageDraw.Draw(image)
@@ -787,14 +948,22 @@ class Tortue():
                 draw.line(item_coords, fill=item_color)
 
         # Sauvegarder l'image PIL en format JPEG
-        image.save(filename, "JPEG")
+        image.save(filename, "jpeg")
 
     def run_main_program(self):
+        """
+        Lance le programme principal 'editeur.py' en utilisant subprocess.
+        """
+
         file_path = "editeur.py"
         # Lancer le programme en utilisant subprocess
         subprocess.run(["python3", file_path])
 
     def openEditeur(self):
+        """
+        Ouvre l'éditeur en créant et lançant un nouveau thread pour exécuter le programme.
+        """
+
         # Créer un nouveau thread pour exécuter le programme
         new_thread = threading.Thread(target=self.run_main_program)
 
@@ -802,7 +971,7 @@ class Tortue():
         new_thread.start()
 
 
-# Lancement de root
+# Initialisation de l'application tkinter
 root = tk.Tk()
 root.title("Visualiseur")
 tortue = Tortue()
@@ -810,9 +979,12 @@ tortue = Tortue()
 root.bind('<Destroy>', tortue.close_visualizer)
 
 
-# Crée un canvas pour dessiner sur
+
 
 def on_connection(agent, connected):
+    '''
+    Fonctions de callback pour les événements Ivy
+    '''
     if connected:
         print(f"{agent} s'est connecté")
     else:
@@ -820,14 +992,23 @@ def on_connection(agent, connected):
 
 
 def on_message(agent, *larg):
+    '''
+    Fonctions de callback pour les événements Ivy
+    '''
     print(f"Agent {agent}: Message reçu {larg}")
 
 
 def on_command(agent, *larg):
+    '''
+    Fonctions de callback pour les événements Ivy
+    '''
     print(f"Agent {agent}: Commande reçue {larg}")
 
 
 def start_ivy(app_name):
+    '''
+    Initialise et démarre Ivy
+    '''
     IvyInit(app_name, f"{app_name} is ready", 1, on_connection, on_message)
     IvyStart()
 
@@ -835,6 +1016,7 @@ def start_ivy(app_name):
 app_name = "BusTortue"
 start_ivy(app_name)
 
+# Liaison des messages Ivy aux fonctions de Tortue
 IvyBindMsg(tortue.avancer, "^AVANCE\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.reculer, "^RECULE\s+(\d+(?:\.\d+)?)$")
 IvyBindMsg(tortue.tournerDroite, "^TOURNEDROITE\s+(\d+(?:\.\d+)?)$")
@@ -911,7 +1093,7 @@ play_button.pack()
 clear_button = tk.Button(south_panel, text="Clear", command=lambda: tortue.clear(), width=20)
 clear_button.pack()
 
-# Slideur
+# Création d'un slider pour régler le temps de pause
 tortue.sleep_time = tk.DoubleVar()
 tortue.sleep_time.set(1.0)  # Valeur initiale du délai en secondes
 slider = tk.Scale(south_panel, from_=0.1, to=5.0, resolution=0.1, orient=tk.HORIZONTAL,
