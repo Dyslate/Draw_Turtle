@@ -348,6 +348,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.avancerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.avancerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">avancerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Génère la commande &#39;AVANCE&#39; avec la valeur spécifiée, crée ou modifie un label en fonction de l&#39;état de `self.selectedLabel`.</span>
+
 <span class="sd">        :param valeur: La distance à avancer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;AVANCE &quot;</span> <span class="o">+</span> <span class="n">valeur</span>
@@ -361,6 +362,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.reculerCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.reculerCommande">[docs]</a>    <span class="k">def</span> <span class="nf">reculerCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Génère la commande &#39;RECULE&#39; avec la valeur spécifiée.</span>
+
 <span class="sd">        :param valeur: La distance à reculer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -374,6 +376,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.tournerDroiteCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.tournerDroiteCommande">[docs]</a>    <span class="k">def</span> <span class="nf">tournerDroiteCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Génère la commande &#39;TOURNEDROITE&#39; avec la valeur spécifiée.</span>
+
 <span class="sd">        :param valeur: L&#39;angle en degrés pour tourner à droite.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -387,6 +390,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.tournerGaucheCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.tournerGaucheCommande">[docs]</a>    <span class="k">def</span> <span class="nf">tournerGaucheCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Génère la commande &#39;TOURNEGAUCHE&#39; avec la valeur spécifiée.</span>
+
 <span class="sd">        :param valeur: L&#39;angle en degrés pour tourner à gauche.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -481,6 +485,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.delete_labels"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.delete_labels">[docs]</a>    <span class="k">def</span> <span class="nf">delete_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Supprime les labels associés à un bloc &quot;REPETE&quot; à partir d&#39;une ligne donnée.</span>
+
 <span class="sd">        :param row: La ligne de départ pour la suppression des labels.</span>
 <span class="sd">        :return: Le nombre de lignes supprimées.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -515,6 +520,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.diminuer_espaceRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.diminuer_espaceRow">[docs]</a>    <span class="k">def</span> <span class="nf">diminuer_espaceRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Supprime un espace vide à partir d&#39;une ligne donnée.</span>
+
 <span class="sd">        :param row: La ligne de l&#39;espace vide à supprimer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -525,6 +531,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.modify"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.modify">[docs]</a>    <span class="k">def</span> <span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie le texte du label sélectionné avec le paramètre donné.</span>
+
 <span class="sd">        :param param: Le nouveau texte pour le label.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -540,6 +547,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.modifyRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.modifyRow">[docs]</a>    <span class="k">def</span> <span class="nf">modifyRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie le texte du label à une ligne spécifiée avec le paramètre donné.</span>
+
 <span class="sd">        :param param: Le nouveau texte pour le label.</span>
 <span class="sd">        :param row: La ligne du label à modifier.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -578,6 +586,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.augmenter_espaceRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.augmenter_espaceRow">[docs]</a>    <span class="k">def</span> <span class="nf">augmenter_espaceRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Insère un espace vide à une ligne spécifiée.</span>
+
 <span class="sd">        :param row: La ligne où insérer l&#39;espace vide.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -592,7 +601,8 @@
 
 <div class="viewcode-block" id="EditeurDeTexte.creerLabel"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.creerLabel">[docs]</a>    <span class="k">def</span> <span class="nf">creerLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Crée un nouveau label avec le texte donné et l&#39;ajoute à la liste des labels.</span>
+<span class="sd">        Cree un nouveau label avec le texte donné et l&#39;ajoute à la liste des labels.</span>
+
 <span class="sd">        :param text: Le texte pour le nouveau label.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -609,6 +619,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.repeatCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.repeatCommande">[docs]</a>    <span class="k">def</span> <span class="nf">repeatCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Crée un bloc &quot;REPETE&quot; avec le nombre de répétitions spécifié.</span>
+
 <span class="sd">        :param param: Le nombre de répétitions pour le bloc &quot;REPETE&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -675,6 +686,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.fccCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fccCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fccCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur1</span><span class="p">,</span> <span class="n">valeur2</span><span class="p">,</span> <span class="n">valeur3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Crée une commande &#39;FCC&#39; avec les valeurs spécifiées.</span>
+
 <span class="sd">        :param valeur1: La première valeur pour la commande &#39;FCC&#39; : Rouge.</span>
 <span class="sd">        :param valeur2: La deuxième valeur pour la commande &#39;FCC&#39; : Vert.</span>
 <span class="sd">        :param valeur3: La troisième valeur pour la commande &#39;FCC&#39;: Bleu.</span>
@@ -689,6 +701,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.fCapCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fCapCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fCapCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Crée une commande &#39;FCAP&#39; avec la valeur spécifiée.</span>
+
 <span class="sd">        :param valeur: La valeur pour la commande &#39;FCAP&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -702,6 +715,7 @@
 <div class="viewcode-block" id="EditeurDeTexte.fPosCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fPosCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fPosCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur1</span><span class="p">,</span> <span class="n">valeur2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Crée une commande &#39;FPOS&#39; avec les valeurs spécifiées.</span>
+
 <span class="sd">        :param valeur1: La première valeur pour la commande &#39;FPOS&#39; : X.</span>
 <span class="sd">        :param valeur2: La deuxième valeur pour la commande &#39;FPOS&#39; : Y.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -732,6 +746,7 @@
         <span class="k">def</span> <span class="nf">execute_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Exécute les commandes en séquence à partir des commandes et des labels fournis.</span>
+
 <span class="sd">            :param commandes: Une liste de commandes à exécuter.</span>
 <span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
@@ -758,6 +773,7 @@
         <span class="k">def</span> <span class="nf">extract_nested_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">start_index</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Extrait les commandes imbriquées à partir d&#39;une liste de commandes et de labels à partir d&#39;un indice de départ.</span>
+
 <span class="sd">            :param commandes: Une liste de commandes.</span>
 <span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
 <span class="sd">            :param start_index: L&#39;indice de départ pour l&#39;extraction des commandes imbriquées.</span>

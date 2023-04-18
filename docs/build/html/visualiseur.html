@@ -81,44 +81,88 @@
 <dl class="method">
 <dt id="visualiseur.Tortue.ajouter">
 <code class="descname">ajouter</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.ajouter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.ajouter" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Ajoute un nouvel élément à la liste des commandes.
-:param label: label sélectionné dans la liste</p>
+<dd><p>Ajoute un nouvel élément à la liste des commandes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>label</strong> – label sélectionné dans la liste</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.ajouterligneblanche">
 <code class="descname">ajouterligneblanche</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.ajouterligneblanche"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.ajouterligneblanche" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Ajoute une ligne blanche à la liste des commandes.
-:param label: label sélectionné dans la liste</p>
+<dd><p>Ajoute une ligne blanche à la liste des commandes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>label</strong> – label sélectionné dans la liste</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.avancer">
 <code class="descname">avancer</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterCommande=True</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.avancer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.avancer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Fait avancer la tortue de la distance spécifiée.
-:param agent: instance de l’agent (bus ivy)
-:param value: distance à parcourir
-:param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Fait avancer la tortue de la distance spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>value</strong> – distance à parcourir</li>
+<li><strong>ajouterCommande</strong> – booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.baisserCrayon">
 <code class="descname">baisserCrayon</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.baisserCrayon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.baisserCrayon" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné
-:param agent: instance de l’agent (bus ivy)
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.changerCouleur">
 <code class="descname">changerCouleur</code><span class="sig-paren">(</span><em>agent</em>, <em>r</em>, <em>v</em>, <em>b</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.changerCouleur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.changerCouleur" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Change la couleur du crayon en convertissant le RGB en hexadécimal
-:param agent: instance de l’agent (bus ivy)
-:param r: composante rouge
-:param v: composante verte
-:param b: composante bleue
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Change la couleur du crayon en convertissant le RGB en hexadécimal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>r</strong> – composante rouge</li>
+<li><strong>v</strong> – composante verte</li>
+<li><strong>b</strong> – composante bleue</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -131,8 +175,15 @@ En plus de cela, l’historique est reset.</p>
 <dl class="method">
 <dt id="visualiseur.Tortue.close_visualizer">
 <code class="descname">close_visualizer</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.close_visualizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.close_visualizer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Ferme le visualiseur.
-:param event: événement du clic de la souris</p>
+<dd><p>Ferme le visualiseur.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du clic de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -144,32 +195,64 @@ En plus de cela, l’historique est reset.</p>
 <dl class="method">
 <dt id="visualiseur.Tortue.display_cursor_position">
 <code class="descname">display_cursor_position</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.display_cursor_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.display_cursor_position" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Affiche la position du curseur sur le canvas.
-:param event: événement du déplacement de la souris</p>
+<dd><p>Affiche la position du curseur sur le canvas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du déplacement de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.exporterCommande">
 <code class="descname">exporterCommande</code><span class="sig-paren">(</span><em>commandes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.exporterCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.exporterCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Convertit les commandes en une représentation XML.
-:param commandes: liste des commandes à convertir
-:return: str, représentation XML des commandes</p>
+<dd><p>Convertit les commandes en une représentation XML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>commandes</strong> – liste des commandes à convertir</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Renvoie:</th><td class="field-body">str, représentation XML des commandes</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.fixerCap">
 <code class="descname">fixerCap</code><span class="sig-paren">(</span><em>agent</em>, <em>x</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.fixerCap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.fixerCap" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Fixe le cap de la tortue à une valeur absolue
-:param agent: instance de l’agent (bus ivy)
-:param x: valeur absolue du cap
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Fixe le cap de la tortue à une valeur absolue</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>x</strong> – valeur absolue du cap</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.gomme">
 <code class="descname">gomme</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.gomme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.gomme" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Fonction pour effacer une zone du dessin avec la gomme.
-:param event: événement du clic de la souris</p>
+<dd><p>Fonction pour effacer une zone du dessin avec la gomme.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du clic de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -194,24 +277,51 @@ Nettoie le dessin avant de commencer et lance la commande_label() dans un nouvea
 <dl class="method">
 <dt id="visualiseur.Tortue.leverCrayon">
 <code class="descname">leverCrayon</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.leverCrayon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.leverCrayon" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné
-:param agent: instance de l’agent (bus ivy)
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.modifier">
 <code class="descname">modifier</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.modifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.modifier" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie un élément dans la liste des commandes.
-:param label: label sélectionné dans la liste</p>
+<dd><p>Modifie un élément dans la liste des commandes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>label</strong> – label sélectionné dans la liste</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.nettoyer">
 <code class="descname">nettoyer</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.nettoyer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.nettoyer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Efface toutes traces de l’écran graphique sans changer la position de la tortue
-:param agent: instance de l’agent (bus ivy)
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Efface toutes traces de l’écran graphique sans changer la position de la tortue</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -229,48 +339,99 @@ Nettoie le dessin avant de commencer et lance la commande_label() dans un nouvea
 <dl class="method">
 <dt id="visualiseur.Tortue.origine">
 <code class="descname">origine</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.origine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.origine" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>La tortue revient à l’origine: xBase et yBase.
-:param agent: instance de l’agent (bus ivy)
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>La tortue revient à l’origine: xBase et yBase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.pan_end">
 <code class="descname">pan_end</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_end" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Marque la fin du déplacement de la fenêtre (panning).
-:param event: événement du relâchement de la souris</p>
+<dd><p>Marque la fin du déplacement de la fenêtre (panning).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du relâchement de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.pan_move">
 <code class="descname">pan_move</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_move" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Effectue le déplacement de la fenêtre (panning).
-:param event: événement du mouvement de la souris</p>
+<dd><p>Effectue le déplacement de la fenêtre (panning).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du mouvement de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.pan_start">
 <code class="descname">pan_start</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.pan_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.pan_start" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Marque le début du déplacement de la fenêtre (panning).
-:param event: événement du clic de la souris</p>
+<dd><p>Marque le début du déplacement de la fenêtre (panning).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du clic de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.reculer">
 <code class="descname">reculer</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.reculer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.reculer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Fait reculer la tortue de la distance spécifiée.
-:param agent: instance de l’agent (bus ivy)
-:param value: distance à parcourir
-:param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Fait reculer la tortue de la distance spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>value</strong> – distance à parcourir</li>
+<li><strong>ajouterCommande</strong> – booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.restaurer">
 <code class="descname">restaurer</code><span class="sig-paren">(</span><em>agent</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.restaurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.restaurer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Efface les traces, et restaure l’état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0
-:param agent: instance de l’agent (bus ivy)
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Efface les traces, et restaure l’état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -294,32 +455,63 @@ Nettoie le dessin avant de commencer et lance la commande_label() dans un nouvea
 <dl class="method">
 <dt id="visualiseur.Tortue.setPosition">
 <code class="descname">setPosition</code><span class="sig-paren">(</span><em>agent</em>, <em>x</em>, <em>y</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.setPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.setPosition" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie la position de la tortue pour [x,y]
-:param agent: instance de l’agent (bus ivy)
-:param x: position en x
-:param y: position en y
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Modifie la position de la tortue pour [x,y]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>x</strong> – position en x</li>
+<li><strong>y</strong> – position en y</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.show_context_menu">
 <code class="descname">show_context_menu</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.show_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.show_context_menu" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Affiche le menu contextuel à la position du curseur.
-:param event: événement du clic droit de la souris</p>
+<dd><p>Affiche le menu contextuel à la position du curseur.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du clic droit de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.show_zoom_menu">
 <code class="descname">show_zoom_menu</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.show_zoom_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.show_zoom_menu" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Affiche un menu contextuel pour le zoom.
-:param event: événement du clic droit de la souris</p>
+<dd><p>Affiche un menu contextuel pour le zoom.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>event</strong> – événement du clic droit de la souris</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.supprimer">
 <code class="descname">supprimer</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.supprimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.supprimer" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Supprime un élément de la liste des commandes.
-:param label: label sélectionné dans la liste</p>
+<dd><p>Supprime un élément de la liste des commandes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>label</strong> – label sélectionné dans la liste</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -331,28 +523,58 @@ Nettoie le dessin avant de commencer et lance la commande_label() dans un nouvea
 <dl class="method">
 <dt id="visualiseur.Tortue.tournerDroite">
 <code class="descname">tournerDroite</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.tournerDroite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.tournerDroite" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Changer l’angle de rotation de la tortue pour tourner à droite
-:param agent: instance de l’agent (bus ivy)
-:param value: Angle de rotation
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Changer l’angle de rotation de la tortue pour tourner à droite</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>value</strong> – Angle de rotation</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.tournerGauche">
 <code class="descname">tournerGauche</code><span class="sig-paren">(</span><em>agent</em>, <em>value</em>, <em>ajouterHistorique=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.tournerGauche"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.tournerGauche" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Changer l’angle de rotation de la tortue pour tourner à gauche
-:param agent: instance de l’agent (bus ivy)
-:param value: Angle de rotation
-:param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</p>
+<dd><p>Changer l’angle de rotation de la tortue pour tourner à gauche</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> – instance de l’agent (bus ivy)</li>
+<li><strong>value</strong> – Angle de rotation</li>
+<li><strong>ajouterHistorique</strong> – booléen, si True, ajoute la commande à la liste des commandes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="visualiseur.Tortue.zoom">
 <code class="descname">zoom</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>increment</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualiseur.html#Tortue.zoom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualiseur.Tortue.zoom" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Applique le zoom sur le canvas.
-:param x: coordonnée x du centre du zoom
-:param y: coordonnée y du centre du zoom
-:param increment: valeur de l’incrément de zoom</p>
+<dd><p>Applique le zoom sur le canvas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> – coordonnée x du centre du zoom</li>
+<li><strong>y</strong> – coordonnée y du centre du zoom</li>
+<li><strong>increment</strong> – valeur de l’incrément de zoom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

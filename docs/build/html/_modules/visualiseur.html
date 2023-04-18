@@ -139,6 +139,26 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialise les attributs de la classe Tortue et crée les menus.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            x (int): Position actuel de la tortue en x.</span>
+<span class="sd">            y (int): Position actuel de la tortue en y.</span>
+<span class="sd">            xBase (int): Position sauvegardé de la tortue en x.</span>
+<span class="sd">            yBase (int): Position sauvegardé de la tortue en y.</span>
+<span class="sd">            penActivated (bool): Si le crayon est levé ou non.</span>
+<span class="sd">            angle (int): Angle actuel de la tortue.</span>
+<span class="sd">            angleBase (int): Angle sauvegardé de la tortue.</span>
+<span class="sd">            commands (list): Liste des commandes envoyées à la tortue.</span>
+<span class="sd">            couleur (str): Couleur actuelle de la tortue. (hexédecimal)</span>
+<span class="sd">            nombreCommande (int): Nombre de commandes envoyées à la tortue.</span>
+<span class="sd">            liste_historique (list): Liste des commandes envoyées à la tortue via le bus ivy(Historique)</span>
+<span class="sd">            zoom_scale (float): Échelle de zoom actuelle.</span>
+<span class="sd">            zoom_increment (float): Incrément de zoom.</span>
+<span class="sd">            pan_start (tuple): Position de départ du pan.</span>
+<span class="sd">            pan_end (tuple): Position de fin du pan.</span>
+<span class="sd">            sleep_time (float): Temps d&#39;attente entre les actions.</span>
+<span class="sd">            items (list): Liste des commandes disponibles pour l&#39;interface de modification des commandes de l&#39;historique</span>
+<span class="sd">            gomme_active (bool): Si la gomme est activée ou non.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">300</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">300</span>
@@ -211,6 +231,7 @@
 <div class="viewcode-block" id="Tortue.gomme"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.gomme">[docs]</a>    <span class="k">def</span> <span class="nf">gomme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fonction pour effacer une zone du dessin avec la gomme.</span>
+
 <span class="sd">        :param event: événement du clic de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gomme_active</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
@@ -229,6 +250,7 @@
 <div class="viewcode-block" id="Tortue.display_cursor_position"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.display_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">display_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Affiche la position du curseur sur le canvas.</span>
+
 <span class="sd">        :param event: événement du déplacement de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">canvas2</span><span class="o">.</span><span class="n">canvasx</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
@@ -247,7 +269,9 @@
 <div class="viewcode-block" id="Tortue.exporterCommande"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.exporterCommande">[docs]</a>    <span class="k">def</span> <span class="nf">exporterCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commandes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convertit les commandes en une représentation XML.</span>
+
 <span class="sd">        :param commandes: liste des commandes à convertir</span>
+
 <span class="sd">        :return: str, représentation XML des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -328,6 +352,7 @@
 <div class="viewcode-block" id="Tortue.pan_start"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.pan_start">[docs]</a>    <span class="k">def</span> <span class="nf">pan_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Marque le début du déplacement de la fenêtre (panning).</span>
+
 <span class="sd">        :param event: événement du clic de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">canvas2</span><span class="o">.</span><span class="n">scan_mark</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">)</span></div>
@@ -335,6 +360,7 @@
 <div class="viewcode-block" id="Tortue.pan_move"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.pan_move">[docs]</a>    <span class="k">def</span> <span class="nf">pan_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Effectue le déplacement de la fenêtre (panning).</span>
+
 <span class="sd">        :param event: événement du mouvement de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -345,6 +371,7 @@
 <div class="viewcode-block" id="Tortue.pan_end"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.pan_end">[docs]</a>    <span class="k">def</span> <span class="nf">pan_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Marque la fin du déplacement de la fenêtre (panning).</span>
+
 <span class="sd">        :param event: événement du relâchement de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">canvas2</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">cursor</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
@@ -352,6 +379,7 @@
 <div class="viewcode-block" id="Tortue.show_zoom_menu"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.show_zoom_menu">[docs]</a>    <span class="k">def</span> <span class="nf">show_zoom_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Affiche un menu contextuel pour le zoom.</span>
+
 <span class="sd">        :param event: événement du clic droit de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -363,6 +391,7 @@
 <div class="viewcode-block" id="Tortue.zoom"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.zoom">[docs]</a>    <span class="k">def</span> <span class="nf">zoom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">increment</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applique le zoom sur le canvas.</span>
+
 <span class="sd">        :param x: coordonnée x du centre du zoom</span>
 <span class="sd">        :param y: coordonnée y du centre du zoom</span>
 <span class="sd">        :param increment: valeur de l&#39;incrément de zoom</span>
@@ -375,6 +404,7 @@
 <div class="viewcode-block" id="Tortue.show_context_menu"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.show_context_menu">[docs]</a>    <span class="k">def</span> <span class="nf">show_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Affiche le menu contextuel à la position du curseur.</span>
+
 <span class="sd">        :param event: événement du clic droit de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x_root</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y_root</span><span class="p">)</span>
@@ -383,6 +413,7 @@
 <div class="viewcode-block" id="Tortue.ajouter"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.ajouter">[docs]</a>    <span class="k">def</span> <span class="nf">ajouter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ajoute un nouvel élément à la liste des commandes.</span>
+
 <span class="sd">        :param label: label sélectionné dans la liste</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -408,6 +439,7 @@
 <div class="viewcode-block" id="Tortue.ajouterligneblanche"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.ajouterligneblanche">[docs]</a>    <span class="k">def</span> <span class="nf">ajouterligneblanche</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ajoute une ligne blanche à la liste des commandes.</span>
+
 <span class="sd">        :param label: label sélectionné dans la liste</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -429,6 +461,7 @@
 <div class="viewcode-block" id="Tortue.modifier"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.modifier">[docs]</a>    <span class="k">def</span> <span class="nf">modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie un élément dans la liste des commandes.</span>
+
 <span class="sd">        :param label: label sélectionné dans la liste</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -451,6 +484,7 @@
 <div class="viewcode-block" id="Tortue.supprimer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.supprimer">[docs]</a>    <span class="k">def</span> <span class="nf">supprimer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Supprime un élément de la liste des commandes.</span>
+
 <span class="sd">        :param label: label sélectionné dans la liste</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -463,6 +497,7 @@
 <div class="viewcode-block" id="Tortue.close_visualizer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.close_visualizer">[docs]</a>    <span class="k">def</span> <span class="nf">close_visualizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ferme le visualiseur.</span>
+
 <span class="sd">        :param event: événement du clic de la souris</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -471,6 +506,7 @@
 <div class="viewcode-block" id="Tortue.avancer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.avancer">[docs]</a>    <span class="k">def</span> <span class="nf">avancer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ajouterCommande</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fait avancer la tortue de la distance spécifiée.</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param value: distance à parcourir</span>
 <span class="sd">        :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE</span>
@@ -542,6 +578,7 @@
 <div class="viewcode-block" id="Tortue.reculer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.reculer">[docs]</a>    <span class="k">def</span> <span class="nf">reculer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fait reculer la tortue de la distance spécifiée.</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param value: distance à parcourir</span>
 <span class="sd">        :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE</span>
@@ -565,6 +602,7 @@
 <div class="viewcode-block" id="Tortue.tournerDroite"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.tournerDroite">[docs]</a>    <span class="k">def</span> <span class="nf">tournerDroite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Changer l&#39;angle de rotation de la tortue pour tourner à droite</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param value: Angle de rotation</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
@@ -586,6 +624,7 @@
 <div class="viewcode-block" id="Tortue.tournerGauche"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.tournerGauche">[docs]</a>    <span class="k">def</span> <span class="nf">tournerGauche</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Changer l&#39;angle de rotation de la tortue pour tourner à gauche</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param value: Angle de rotation</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
@@ -608,6 +647,7 @@
 <div class="viewcode-block" id="Tortue.leverCrayon"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.leverCrayon">[docs]</a>    <span class="k">def</span> <span class="nf">leverCrayon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -628,6 +668,7 @@
 <div class="viewcode-block" id="Tortue.baisserCrayon"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.baisserCrayon">[docs]</a>    <span class="k">def</span> <span class="nf">baisserCrayon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -647,6 +688,7 @@
 <div class="viewcode-block" id="Tortue.origine"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.origine">[docs]</a>    <span class="k">def</span> <span class="nf">origine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        La tortue revient à l&#39;origine: xBase et yBase.</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -666,6 +708,7 @@
 <div class="viewcode-block" id="Tortue.restaurer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.restaurer">[docs]</a>    <span class="k">def</span> <span class="nf">restaurer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Efface les traces, et restaure l&#39;état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -690,6 +733,7 @@
 <div class="viewcode-block" id="Tortue.nettoyer"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.nettoyer">[docs]</a>    <span class="k">def</span> <span class="nf">nettoyer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Efface toutes traces de l&#39;écran graphique sans changer la position de la tortue</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -732,6 +776,7 @@
 <div class="viewcode-block" id="Tortue.changerCouleur"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.changerCouleur">[docs]</a>    <span class="k">def</span> <span class="nf">changerCouleur</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change la couleur du crayon en convertissant le RGB en hexadécimal</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param r: composante rouge</span>
 <span class="sd">        :param v: composante verte</span>
@@ -761,6 +806,7 @@
 <div class="viewcode-block" id="Tortue.fixerCap"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.fixerCap">[docs]</a>    <span class="k">def</span> <span class="nf">fixerCap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fixe le cap de la tortue à une valeur absolue</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param x: valeur absolue du cap</span>
 <span class="sd">        :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes</span>
@@ -782,6 +828,7 @@
 <div class="viewcode-block" id="Tortue.setPosition"><a class="viewcode-back" href="../visualiseur.html#visualiseur.Tortue.setPosition">[docs]</a>    <span class="k">def</span> <span class="nf">setPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ajouterHistorique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modifie la position de la tortue pour [x,y]</span>
+
 <span class="sd">        :param agent: instance de l&#39;agent (bus ivy)</span>
 <span class="sd">        :param x: position en x</span>
 <span class="sd">        :param y: position en y</span>

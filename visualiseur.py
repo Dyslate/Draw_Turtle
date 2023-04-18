@@ -106,6 +106,26 @@ class Tortue:
     def __init__(self):
         """
         Initialise les attributs de la classe Tortue et crée les menus.
+
+        Attributes:
+            x (int): Position actuel de la tortue en x.
+            y (int): Position actuel de la tortue en y.
+            xBase (int): Position sauvegardé de la tortue en x.
+            yBase (int): Position sauvegardé de la tortue en y.
+            penActivated (bool): Si le crayon est levé ou non.
+            angle (int): Angle actuel de la tortue.
+            angleBase (int): Angle sauvegardé de la tortue.
+            commands (list): Liste des commandes envoyées à la tortue.
+            couleur (str): Couleur actuelle de la tortue. (hexédecimal)
+            nombreCommande (int): Nombre de commandes envoyées à la tortue.
+            liste_historique (list): Liste des commandes envoyées à la tortue via le bus ivy(Historique)
+            zoom_scale (float): Échelle de zoom actuelle.
+            zoom_increment (float): Incrément de zoom.
+            pan_start (tuple): Position de départ du pan.
+            pan_end (tuple): Position de fin du pan.
+            sleep_time (float): Temps d'attente entre les actions.
+            items (list): Liste des commandes disponibles pour l'interface de modification des commandes de l'historique
+            gomme_active (bool): Si la gomme est activée ou non.
         """
         self.x = 300
         self.y = 300
@@ -178,6 +198,7 @@ class Tortue:
     def gomme(self, event):
         """
         Fonction pour effacer une zone du dessin avec la gomme.
+
         :param event: événement du clic de la souris
         """
         if self.gomme_active.get():
@@ -196,6 +217,7 @@ class Tortue:
     def display_cursor_position(self, event):
         """
         Affiche la position du curseur sur le canvas.
+
         :param event: événement du déplacement de la souris
         """
         x = canvas2.canvasx(event.x)
@@ -214,7 +236,9 @@ class Tortue:
     def exporterCommande(self, commandes):
         """
         Convertit les commandes en une représentation XML.
+
         :param commandes: liste des commandes à convertir
+
         :return: str, représentation XML des commandes
         """
         i = 0
@@ -295,6 +319,7 @@ class Tortue:
     def pan_start(self, event):
         """
         Marque le début du déplacement de la fenêtre (panning).
+
         :param event: événement du clic de la souris
         """
         canvas2.scan_mark(event.x, event.y)
@@ -302,6 +327,7 @@ class Tortue:
     def pan_move(self, event):
         """
         Effectue le déplacement de la fenêtre (panning).
+
         :param event: événement du mouvement de la souris
         """
 
@@ -312,6 +338,7 @@ class Tortue:
     def pan_end(self, event):
         """
         Marque la fin du déplacement de la fenêtre (panning).
+
         :param event: événement du relâchement de la souris
         """
         canvas2.config(cursor="")
@@ -319,6 +346,7 @@ class Tortue:
     def show_zoom_menu(self, event):
         """
         Affiche un menu contextuel pour le zoom.
+
         :param event: événement du clic droit de la souris
         """
 
@@ -330,6 +358,7 @@ class Tortue:
     def zoom(self, x, y, increment):
         """
         Applique le zoom sur le canvas.
+
         :param x: coordonnée x du centre du zoom
         :param y: coordonnée y du centre du zoom
         :param increment: valeur de l'incrément de zoom
@@ -342,6 +371,7 @@ class Tortue:
     def show_context_menu(self, event):
         """
         Affiche le menu contextuel à la position du curseur.
+
         :param event: événement du clic droit de la souris
         """
         self.context_menu.post(event.x_root, event.y_root)
@@ -350,6 +380,7 @@ class Tortue:
     def ajouter(self, label):
         """
         Ajoute un nouvel élément à la liste des commandes.
+
         :param label: label sélectionné dans la liste
         """
 
@@ -375,6 +406,7 @@ class Tortue:
     def ajouterligneblanche(self, label):
         """
         Ajoute une ligne blanche à la liste des commandes.
+
         :param label: label sélectionné dans la liste
         """
 
@@ -396,6 +428,7 @@ class Tortue:
     def modifier(self, label):
         """
         Modifie un élément dans la liste des commandes.
+
         :param label: label sélectionné dans la liste
         """
 
@@ -418,6 +451,7 @@ class Tortue:
     def supprimer(self, label):
         """
         Supprime un élément de la liste des commandes.
+
         :param label: label sélectionné dans la liste
         """
 
@@ -430,6 +464,7 @@ class Tortue:
     def close_visualizer(self, event):
         """
         Ferme le visualiseur.
+
         :param event: événement du clic de la souris
         """
 
@@ -438,6 +473,7 @@ class Tortue:
     def avancer(self, agent, value, ajouterCommande=True, ajouterHistorique=True):
         """
         Fait avancer la tortue de la distance spécifiée.
+
         :param agent: instance de l'agent (bus ivy)
         :param value: distance à parcourir
         :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
@@ -509,6 +545,7 @@ class Tortue:
     def reculer(self, agent, value, ajouterHistorique=True):
         """
         Fait reculer la tortue de la distance spécifiée.
+
         :param agent: instance de l'agent (bus ivy)
         :param value: distance à parcourir
         :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
@@ -532,6 +569,7 @@ class Tortue:
     def tournerDroite(self, agent, value, ajouterHistorique=True):
         """
         Changer l'angle de rotation de la tortue pour tourner à droite
+
         :param agent: instance de l'agent (bus ivy)
         :param value: Angle de rotation
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
@@ -553,6 +591,7 @@ class Tortue:
     def tournerGauche(self, agent, value, ajouterHistorique=True):
         """
         Changer l'angle de rotation de la tortue pour tourner à gauche
+
         :param agent: instance de l'agent (bus ivy)
         :param value: Angle de rotation
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
@@ -575,6 +614,7 @@ class Tortue:
     def leverCrayon(self, agent, ajouterHistorique=True):
         """
         Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin ne doit pas être dessiné
+
         :param agent: instance de l'agent (bus ivy)
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
@@ -595,6 +635,7 @@ class Tortue:
     def baisserCrayon(self, agent, ajouterHistorique=True):
         """
         Modifie le booléen qui indique si le dessin doit être dessiné ou non: le dessin doit être dessiné
+
         :param agent: instance de l'agent (bus ivy)
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
@@ -614,6 +655,7 @@ class Tortue:
     def origine(self, agent, ajouterHistorique=True):
         """
         La tortue revient à l'origine: xBase et yBase.
+
         :param agent: instance de l'agent (bus ivy)
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
@@ -633,6 +675,7 @@ class Tortue:
     def restaurer(self, agent, ajouterHistorique=True):
         """
         Efface les traces, et restaure l'état initial (tortue au centre et regardant vers le haut, crayon baissé, couleur = 0
+
         :param agent: instance de l'agent (bus ivy)
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
@@ -657,6 +700,7 @@ class Tortue:
     def nettoyer(self, agent, ajouterHistorique=True):
         """
         Efface toutes traces de l'écran graphique sans changer la position de la tortue
+
         :param agent: instance de l'agent (bus ivy)
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
@@ -699,6 +743,7 @@ class Tortue:
     def changerCouleur(self, agent, r, v, b, ajouterHistorique=True):
         """
         Change la couleur du crayon en convertissant le RGB en hexadécimal
+
         :param agent: instance de l'agent (bus ivy)
         :param r: composante rouge
         :param v: composante verte
@@ -728,6 +773,7 @@ class Tortue:
     def fixerCap(self, agent, x, ajouterHistorique=True):
         """
         Fixe le cap de la tortue à une valeur absolue
+
         :param agent: instance de l'agent (bus ivy)
         :param x: valeur absolue du cap
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
@@ -749,6 +795,7 @@ class Tortue:
     def setPosition(self, agent, x, y, ajouterHistorique=True):
         """
         Modifie la position de la tortue pour [x,y]
+
         :param agent: instance de l'agent (bus ivy)
         :param x: position en x
         :param y: position en y

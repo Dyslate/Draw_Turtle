@@ -315,6 +315,7 @@ class EditeurDeTexte:
     def avancerCommande(self, valeur):
         """
         Génère la commande 'AVANCE' avec la valeur spécifiée, crée ou modifie un label en fonction de l'état de `self.selectedLabel`.
+
         :param valeur: La distance à avancer.
         """
         res = "AVANCE " + valeur
@@ -328,6 +329,7 @@ class EditeurDeTexte:
     def reculerCommande(self, valeur):
         """
         Génère la commande 'RECULE' avec la valeur spécifiée.
+
         :param valeur: La distance à reculer.
         """
 
@@ -341,6 +343,7 @@ class EditeurDeTexte:
     def tournerDroiteCommande(self, valeur):
         """
         Génère la commande 'TOURNEDROITE' avec la valeur spécifiée.
+
         :param valeur: L'angle en degrés pour tourner à droite.
         """
 
@@ -354,6 +357,7 @@ class EditeurDeTexte:
     def tournerGaucheCommande(self, valeur):
         """
         Génère la commande 'TOURNEGAUCHE' avec la valeur spécifiée.
+
         :param valeur: L'angle en degrés pour tourner à gauche.
         """
 
@@ -448,6 +452,7 @@ class EditeurDeTexte:
     def delete_labels(self, row):
         """
         Supprime les labels associés à un bloc "REPETE" à partir d'une ligne donnée.
+
         :param row: La ligne de départ pour la suppression des labels.
         :return: Le nombre de lignes supprimées.
         """
@@ -482,6 +487,7 @@ class EditeurDeTexte:
     def diminuer_espaceRow(self, row):
         """
         Supprime un espace vide à partir d'une ligne donnée.
+
         :param row: La ligne de l'espace vide à supprimer.
         """
 
@@ -492,6 +498,7 @@ class EditeurDeTexte:
     def modify(self, param):
         """
         Modifie le texte du label sélectionné avec le paramètre donné.
+
         :param param: Le nouveau texte pour le label.
         """
 
@@ -507,6 +514,7 @@ class EditeurDeTexte:
     def modifyRow(self, param, row):
         """
         Modifie le texte du label à une ligne spécifiée avec le paramètre donné.
+
         :param param: Le nouveau texte pour le label.
         :param row: La ligne du label à modifier.
         """
@@ -545,6 +553,7 @@ class EditeurDeTexte:
     def augmenter_espaceRow(self, row):
         """
         Insère un espace vide à une ligne spécifiée.
+
         :param row: La ligne où insérer l'espace vide.
         """
 
@@ -559,7 +568,8 @@ class EditeurDeTexte:
 
     def creerLabel(self, text):
         """
-        Crée un nouveau label avec le texte donné et l'ajoute à la liste des labels.
+        Cree un nouveau label avec le texte donné et l'ajoute à la liste des labels.
+
         :param text: Le texte pour le nouveau label.
         """
 
@@ -576,6 +586,7 @@ class EditeurDeTexte:
     def repeatCommande(self, param):
         """
         Crée un bloc "REPETE" avec le nombre de répétitions spécifié.
+
         :param param: Le nombre de répétitions pour le bloc "REPETE".
         """
 
@@ -642,6 +653,7 @@ class EditeurDeTexte:
     def fccCommande(self, valeur1, valeur2, valeur3):
         """
         Crée une commande 'FCC' avec les valeurs spécifiées.
+
         :param valeur1: La première valeur pour la commande 'FCC' : Rouge.
         :param valeur2: La deuxième valeur pour la commande 'FCC' : Vert.
         :param valeur3: La troisième valeur pour la commande 'FCC': Bleu.
@@ -656,6 +668,7 @@ class EditeurDeTexte:
     def fCapCommande(self, valeur):
         """
         Crée une commande 'FCAP' avec la valeur spécifiée.
+
         :param valeur: La valeur pour la commande 'FCAP'.
         """
 
@@ -669,6 +682,7 @@ class EditeurDeTexte:
     def fPosCommande(self, valeur1, valeur2):
         """
         Crée une commande 'FPOS' avec les valeurs spécifiées.
+
         :param valeur1: La première valeur pour la commande 'FPOS' : X.
         :param valeur2: La deuxième valeur pour la commande 'FPOS' : Y.
         """
@@ -699,6 +713,7 @@ class EditeurDeTexte:
         def execute_commands(commandes, labels):
             """
             Exécute les commandes en séquence à partir des commandes et des labels fournis.
+
             :param commandes: Une liste de commandes à exécuter.
             :param labels: Une liste de labels correspondant aux commandes.
             """
@@ -725,6 +740,7 @@ class EditeurDeTexte:
         def extract_nested_commands(commandes, labels, start_index):
             """
             Extrait les commandes imbriquées à partir d'une liste de commandes et de labels à partir d'un indice de départ.
+
             :param commandes: Une liste de commandes.
             :param labels: Une liste de labels correspondant aux commandes.
             :param start_index: L'indice de départ pour l'extraction des commandes imbriquées.

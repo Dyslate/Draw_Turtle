@@ -64,15 +64,29 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.augmenter_espaceRow">
 <code class="descname">augmenter_espaceRow</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.augmenter_espaceRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.augmenter_espaceRow" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Insère un espace vide à une ligne spécifiée.
-:param row: La ligne où insérer l’espace vide.</p>
+<dd><p>Insère un espace vide à une ligne spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>row</strong> – La ligne où insérer l’espace vide.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.avancerCommande">
 <code class="descname">avancerCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.avancerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.avancerCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Génère la commande “AVANCE” avec la valeur spécifiée, crée ou modifie un label en fonction de l’état de <cite>self.selectedLabel</cite>.
-:param valeur: La distance à avancer.</p>
+<dd><p>Génère la commande “AVANCE” avec la valeur spécifiée, crée ou modifie un label en fonction de l’état de <cite>self.selectedLabel</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>valeur</strong> – La distance à avancer.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -90,16 +104,31 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.creerLabel">
 <code class="descname">creerLabel</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.creerLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.creerLabel" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Crée un nouveau label avec le texte donné et l’ajoute à la liste des labels.
-:param text: Le texte pour le nouveau label.</p>
+<dd><p>Cree un nouveau label avec le texte donné et l’ajoute à la liste des labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>text</strong> – Le texte pour le nouveau label.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.delete_labels">
 <code class="descname">delete_labels</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.delete_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.delete_labels" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Supprime les labels associés à un bloc «&nbsp;REPETE&nbsp;» à partir d’une ligne donnée.
-:param row: La ligne de départ pour la suppression des labels.
-:return: Le nombre de lignes supprimées.</p>
+<dd><p>Supprime les labels associés à un bloc «&nbsp;REPETE&nbsp;» à partir d’une ligne donnée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>row</strong> – La ligne de départ pour la suppression des labels.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Renvoie:</th><td class="field-body">Le nombre de lignes supprimées.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -111,8 +140,15 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.diminuer_espaceRow">
 <code class="descname">diminuer_espaceRow</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.diminuer_espaceRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.diminuer_espaceRow" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Supprime un espace vide à partir d’une ligne donnée.
-:param row: La ligne de l’espace vide à supprimer.</p>
+<dd><p>Supprime un espace vide à partir d’une ligne donnée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>row</strong> – La ligne de l’espace vide à supprimer.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -136,25 +172,52 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.fCapCommande">
 <code class="descname">fCapCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fCapCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fCapCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Crée une commande “FCAP” avec la valeur spécifiée.
-:param valeur: La valeur pour la commande “FCAP”.</p>
+<dd><p>Crée une commande “FCAP” avec la valeur spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>valeur</strong> – La valeur pour la commande “FCAP”.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.fPosCommande">
 <code class="descname">fPosCommande</code><span class="sig-paren">(</span><em>valeur1</em>, <em>valeur2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fPosCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fPosCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Crée une commande “FPOS” avec les valeurs spécifiées.
-:param valeur1: La première valeur pour la commande “FPOS” : X.
-:param valeur2: La deuxième valeur pour la commande “FPOS” : Y.</p>
+<dd><p>Crée une commande “FPOS” avec les valeurs spécifiées.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>valeur1</strong> – La première valeur pour la commande “FPOS” : X.</li>
+<li><strong>valeur2</strong> – La deuxième valeur pour la commande “FPOS” : Y.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.fccCommande">
 <code class="descname">fccCommande</code><span class="sig-paren">(</span><em>valeur1</em>, <em>valeur2</em>, <em>valeur3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.fccCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.fccCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Crée une commande “FCC” avec les valeurs spécifiées.
-:param valeur1: La première valeur pour la commande “FCC” : Rouge.
-:param valeur2: La deuxième valeur pour la commande “FCC” : Vert.
-:param valeur3: La troisième valeur pour la commande “FCC”: Bleu.</p>
+<dd><p>Crée une commande “FCC” avec les valeurs spécifiées.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>valeur1</strong> – La première valeur pour la commande “FCC” : Rouge.</li>
+<li><strong>valeur2</strong> – La deuxième valeur pour la commande “FCC” : Vert.</li>
+<li><strong>valeur3</strong> – La troisième valeur pour la commande “FCC”: Bleu.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -194,16 +257,33 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.modify">
 <code class="descname">modify</code><span class="sig-paren">(</span><em>param</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.modify" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie le texte du label sélectionné avec le paramètre donné.
-:param param: Le nouveau texte pour le label.</p>
+<dd><p>Modifie le texte du label sélectionné avec le paramètre donné.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>param</strong> – Le nouveau texte pour le label.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.modifyRow">
 <code class="descname">modifyRow</code><span class="sig-paren">(</span><em>param</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.modifyRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.modifyRow" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Modifie le texte du label à une ligne spécifiée avec le paramètre donné.
-:param param: Le nouveau texte pour le label.
-:param row: La ligne du label à modifier.</p>
+<dd><p>Modifie le texte du label à une ligne spécifiée avec le paramètre donné.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><ul class="first last simple">
+<li><strong>param</strong> – Le nouveau texte pour le label.</li>
+<li><strong>row</strong> – La ligne du label à modifier.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -237,8 +317,15 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.reculerCommande">
 <code class="descname">reculerCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.reculerCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.reculerCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Génère la commande “RECULE” avec la valeur spécifiée.
-:param valeur: La distance à reculer.</p>
+<dd><p>Génère la commande “RECULE” avec la valeur spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>valeur</strong> – La distance à reculer.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -250,8 +337,15 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.repeatCommande">
 <code class="descname">repeatCommande</code><span class="sig-paren">(</span><em>param</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.repeatCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.repeatCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Crée un bloc «&nbsp;REPETE&nbsp;» avec le nombre de répétitions spécifié.
-:param param: Le nombre de répétitions pour le bloc «&nbsp;REPETE&nbsp;».</p>
+<dd><p>Crée un bloc «&nbsp;REPETE&nbsp;» avec le nombre de répétitions spécifié.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>param</strong> – Le nombre de répétitions pour le bloc «&nbsp;REPETE&nbsp;».</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -292,15 +386,29 @@ sleep_time (float): Temps d’attente entre les actions.</dd>
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.tournerDroiteCommande">
 <code class="descname">tournerDroiteCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.tournerDroiteCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.tournerDroiteCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Génère la commande “TOURNEDROITE” avec la valeur spécifiée.
-:param valeur: L’angle en degrés pour tourner à droite.</p>
+<dd><p>Génère la commande “TOURNEDROITE” avec la valeur spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>valeur</strong> – L’angle en degrés pour tourner à droite.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="editeur.EditeurDeTexte.tournerGaucheCommande">
 <code class="descname">tournerGaucheCommande</code><span class="sig-paren">(</span><em>valeur</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/editeur.html#EditeurDeTexte.tournerGaucheCommande"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#editeur.EditeurDeTexte.tournerGaucheCommande" title="Lien permanent vers cette définition">¶</a></dt>
-<dd><p>Génère la commande “TOURNEGAUCHE” avec la valeur spécifiée.
-:param valeur: L’angle en degrés pour tourner à gauche.</p>
+<dd><p>Génère la commande “TOURNEGAUCHE” avec la valeur spécifiée.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Paramètres:</th><td class="field-body"><strong>valeur</strong> – L’angle en degrés pour tourner à gauche.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
