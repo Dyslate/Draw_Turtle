@@ -3,6 +3,7 @@ from tkinter import filedialog
 import subprocess
 import threading
 import time
+import queue
 
 class EditeurDeTexte:
     """
@@ -26,6 +27,12 @@ class EditeurDeTexte:
         self.selectedLabel = None
         self.label_list = []
         self.sleep_time = 1.0
+
+        #Gestion de la queue et du thread unique
+        self.commands_queue = queue.Queue()
+        self.executor_thread = threading.Thread(target=self.execute_commands)
+        self.executor_thread.daemon = True
+        self.executor_thread.start()
 
     def right_click(self, event):
         """
@@ -701,20 +708,24 @@ class EditeurDeTexte:
         process.stdin.flush()
 
     # Les fonctions internes `execute_commands` et `extract_nested_commands` sont utilisées dans la méthode send pour faciliter la gestion des commandes imbriquées.
+
     def send(self):
         """
         Exécute les commandes présentes dans la liste des labels.
         """
-
         print("Lancement de jouer")
+        liste_commandes = [label.cget("text") for label in self.label_list]
+        self.commands_queue.put((liste_commandes, self.label_list))
+
+    def execute_commands(self):
+        while True:
+            commandes, labels = self.commands_queue.get()
+            self.process_commands(commandes, labels)
+            self.commands_queue.task_done()
+
+    def process_commands(self, commandes, labels):
+
         def execute_commands(commandes, labels):
-            """
-            Exécute les commandes en séquence à partir des commandes et des labels fournis.
-
-            :param commandes: Une liste de commandes à exécuter.
-            :param labels: Une liste de labels correspondant aux commandes.
-            """
-
             index = 0
             while index < len(commandes):
                 commande = commandes[index]
@@ -734,15 +745,6 @@ class EditeurDeTexte:
                 label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
 
         def extract_nested_commands(commandes, labels, start_index):
-            """
-            Extrait les commandes imbriquées à partir d'une liste de commandes et de labels à partir d'un indice de départ.
-
-            :param commandes: Une liste de commandes.
-            :param labels: Une liste de labels correspondant aux commandes.
-            :param start_index: L'indice de départ pour l'extraction des commandes imbriquées.
-            :return: Un tuple contenant les commandes imbriquées, les labels imbriqués et l'indice de fin.
-            """
-
             nested_commands = []
             nested_labels = []
             brace_count = 0
@@ -763,9 +765,7 @@ class EditeurDeTexte:
                 index += 1
             return nested_commands, nested_labels, index
 
-        liste_commandes = [label.cget("text") for label in self.label_list]
-        thread = threading.Thread(target=lambda: execute_commands(liste_commandes, self.label_list))
-        thread.start()
+        execute_commands(commandes, labels)
 
 
 ###################################################
