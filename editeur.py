@@ -435,7 +435,6 @@ class EditeurDeTexte:
             widget.grid_forget()
         for ndex, i in enumerate(self.label_list):
             i.grid(row=ndex)
-            print(str(i))
 
     def diminuer_espace(self):
         """
@@ -546,9 +545,11 @@ class EditeurDeTexte:
             label_espace = tk.Label(cadre, text=" ", bg="white", borderwidth=1, relief="solid", width=20)
             label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
             label_espace.bind("<Button-1>", self.highlight)
+            label_espace.bind("<Button-3>", self.right_click)
             self.label_list.insert(row, label_espace)
             self.refresh()
             self.tailleCadre += 1
+
 
     def augmenter_espaceRow(self, row):
         """
@@ -561,7 +562,6 @@ class EditeurDeTexte:
         label_espace.grid(row=self.tailleCadre, column=0, sticky="nsew")
         label_espace.bind("<Button-1>", self.highlight)
         label_espace.bind("<Button-3>", self.right_click)
-
         self.label_list.insert(row, label_espace)
         self.refresh()
         self.tailleCadre += 1
@@ -640,14 +640,11 @@ class EditeurDeTexte:
                 self.label_list.append(label_fin)
 
                 # Ajout des bindings pour delete un label
-                #label_debut.bind("<Button-1>", self.highlight)
                 label_repeat.bind("<Button-1>", self.highlight)
                 label_debut.bind("<Button-3>", self.right_click)
                 label_repeat.bind("<Button-3>", self.right_click)
                 label_fin.bind("<Button-3>", self.right_click)
                 label_espace.bind("<Button-3>", self.right_click)
-
-                #label_fin.bind("<Button-1>", self.highlight)
                 label_espace.bind("<Button-1>", self.highlight)
 
     def fccCommande(self, valeur1, valeur2, valeur3):
@@ -735,7 +732,6 @@ class EditeurDeTexte:
                     time.sleep(0.1)
                     index += 1
                 label.config(bg="White")  # Restaurer la couleur d'arrière-plan d'origine
-               # history_frame.update()  # Mettre à jour l'affichage pour montrer le changement de couleur
 
         def extract_nested_commands(commandes, labels, start_index):
             """
@@ -768,8 +764,6 @@ class EditeurDeTexte:
             return nested_commands, nested_labels, index
 
         liste_commandes = [label.cget("text") for label in self.label_list]
-      #  del liste_commandes[0]
-      #  del liste_commandes[0]
         thread = threading.Thread(target=lambda: execute_commands(liste_commandes, self.label_list))
         thread.start()
 

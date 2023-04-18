@@ -467,8 +467,7 @@
         <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">cadre</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">grid_forget</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">ndex</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">):</span>
-            <span class="n">i</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">ndex</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span></div>
+            <span class="n">i</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">ndex</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EditeurDeTexte.diminuer_espace"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.diminuer_espace">[docs]</a>    <span class="k">def</span> <span class="nf">diminuer_espace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -579,9 +578,11 @@
             <span class="n">label_espace</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">cadre</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
             <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
             <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
+            <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">label_espace</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 
 <div class="viewcode-block" id="EditeurDeTexte.augmenter_espaceRow"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.augmenter_espaceRow">[docs]</a>    <span class="k">def</span> <span class="nf">augmenter_espaceRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -594,7 +595,6 @@
         <span class="n">label_espace</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
         <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
         <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">label_espace</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tailleCadre</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -673,14 +673,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_fin</span><span class="p">)</span>
 
                 <span class="c1"># Ajout des bindings pour delete un label</span>
-                <span class="c1">#label_debut.bind(&quot;&lt;Button-1&gt;&quot;, self.highlight)</span>
                 <span class="n">label_repeat</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span>
                 <span class="n">label_debut</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
                 <span class="n">label_repeat</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
                 <span class="n">label_fin</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
                 <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-3&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_click</span><span class="p">)</span>
-
-                <span class="c1">#label_fin.bind(&quot;&lt;Button-1&gt;&quot;, self.highlight)</span>
                 <span class="n">label_espace</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highlight</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EditeurDeTexte.fccCommande"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.fccCommande">[docs]</a>    <span class="k">def</span> <span class="nf">fccCommande</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valeur1</span><span class="p">,</span> <span class="n">valeur2</span><span class="p">,</span> <span class="n">valeur3</span><span class="p">):</span>
@@ -768,7 +765,6 @@
                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                     <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;White&quot;</span><span class="p">)</span>  <span class="c1"># Restaurer la couleur d&#39;arrière-plan d&#39;origine</span>
-               <span class="c1"># history_frame.update()  # Mettre à jour l&#39;affichage pour montrer le changement de couleur</span>
 
         <span class="k">def</span> <span class="nf">extract_nested_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">start_index</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
@@ -801,8 +797,6 @@
             <span class="k">return</span> <span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">,</span> <span class="n">index</span>
 
         <span class="n">liste_commandes</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">]</span>
-      <span class="c1">#  del liste_commandes[0]</span>
-      <span class="c1">#  del liste_commandes[0]</span>
         <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">execute_commands</span><span class="p">(</span><span class="n">liste_commandes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">))</span>
         <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
 

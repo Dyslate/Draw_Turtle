@@ -272,16 +272,14 @@ class Tortue:
                 coords = text.split("[")[1].split("]")[0].split()
                 x, y = coords[0], coords[1]
                 res += "<position x='{}' y='{}'/>\n".format(x, y)
+                #Les repètes ne sont plus gérés pas le visualiseur, mais je laisse le code au cas où cela ne coûte rien.
             elif text.startswith("REPETE"):
                 n = int(text.split(" ")[1])
-                print("ici nombre de fois: " + str(n))
                 i += 1  # Passer à la ligne suivante
-                print("ici commande[i] vaut" + commandes[i])
                 if commandes[i].startswith("{"):
-                    i += 1  # Passer à la ligne suivante
+                    i += 1  # Passer à la ligne suivanprintte
                     inner_commands = []
                     bracket_count = 1
-                    print("bracker_count vaut " + str(bracket_count) + "\n")
                     while bracket_count > 0:
                         if commandes[i].startswith("{"):
                             bracket_count += 1
@@ -289,7 +287,6 @@ class Tortue:
                             bracket_count -= 1
                         if bracket_count > 0:
                             inner_commands.append(commandes[i])
-                            print("inner commands ici: " + str(inner_commands) + "\n")
                             i += 1
                     res += "<répéter fois='" + str(n) + "'>\n"
                     res += self.exporterCommande(inner_commands)
@@ -926,11 +923,18 @@ class Tortue:
                         y = get_attr_value(buffer, "y")
                         commands.append(f"FPOS [{x} {y}]")
                     elif "<répéter" in buffer:
-                        repeat_times = get_attr_value(buffer, "fois")
-                        commands.append(f"REPETE {repeat_times}")
-                        commands.append("{")
+                      #  tk.messagebox.showerror("Error", "Un Repete est présent (Pas possible dans le visualiseur)!")
+                        #commands.clear()
+                        return "Erreur"
+                    #    repeat_times = get_attr_value(buffer, "fois")
+                    #    commands.append(f"REPETE {repeat_times}")
+                    #    commands.append("{")
                     elif "/répéter" in buffer:
-                        commands.append("}")
+                     #   tk.messagebox.showerror("Error", "Un Repete est présent (Pas possible dans le visualiseur)!")
+                     #commands.clear()
+                        return "Erreur"
+
+                      #  commands.append("}")
                 else:
                     i += 1
 
@@ -944,7 +948,7 @@ class Tortue:
 
     def importer(self):
         """
-        Importe un fichier XML, extrait les commandes à partir des données XML et les ajoute à l'historique.
+        Importe un fichier XML, extrait les commandes à partir des données XML et les ajoute à l'historique. Si le fichier contient un REPETE: message d'erreur. Le visualiseur ne doit pas être capable de gèrer les REPETE
         """
 
         xml = ""
@@ -954,24 +958,27 @@ class Tortue:
             # Ouvrir le fichier et lire son contenu
             with open(file_path, 'r', encoding="utf-8") as f:
                 xml_str = f.read()
-            # print(xml_str)
             xml = xml_str
         else:
             print('Aucun fichier sélectionné.')
 
-        print(xml)
         commands = self.importerCommande(xml)
-        self.clear()
-        for i in commands:
-            label = tk.Label(history_frame, text=i, bg="white", borderwidth=1, relief="solid", width=20)
-            self.nombreCommande += 1
-            label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
-            label.bind("<Button-3>", self.show_context_menu)
 
-            self.liste_historique.append(label)
-            # Mettre à jour la zone de défilement
-            history_frame.update_idletasks()
-            history_canvas.config(scrollregion=history_canvas.bbox("all"))
+        if(commands.__contains__("Erreur")):
+            tk.messagebox.showerror("Error", "Un Repete est présent (Pas possible dans le visualiseur)!")
+            commands = []
+        else:
+            self.clear()
+            for i in commands:
+                label = tk.Label(history_frame, text=i, bg="white", borderwidth=1, relief="solid", width=20)
+                self.nombreCommande += 1
+                label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
+                label.bind("<Button-3>", self.show_context_menu)
+
+                self.liste_historique.append(label)
+                # Mettre à jour la zone de défilement
+                history_frame.update_idletasks()
+                history_canvas.config(scrollregion=history_canvas.bbox("all"))
 
     def sauver(self):
         """
