@@ -476,6 +476,7 @@ class Tortue:
         :param ajouterCommande: booléen, si True, ajoute la commande à la liste des commandes : car recule = -AVANCE
         :param ajouterHistorique: booléen, si True, ajoute la commande à la liste des commandes
         """
+
         value = int(value)
 
         # Série de tailor pour ne pas utiliser la bibliothèque math et calculer cos et sinus
@@ -518,8 +519,10 @@ class Tortue:
         print("x1 : ", self.x, "y1 : ", self.y)
         print("x2 : ", x2, "y2 : ", y2)
         print("longueur " + str(longueur))
+
+        if self.penActivated:
         # Création de la ligne
-        canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur, tags='all')
+            canvas2.create_line(self.x, self.y, x2, y2, fill=self.couleur, tags='all')
 
         print("couleur " + self.couleur)
         self.x = x2
