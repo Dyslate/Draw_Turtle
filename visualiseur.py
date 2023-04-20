@@ -684,11 +684,13 @@ class Tortue:
         self.angle = 90
         self.penActivated = True
         self.color = 0
+        canvas2.delete("all")
+
 
         self.commands.append("RESTAURER")
         if ajouterHistorique:
             self.nombreCommande += 1
-            label = tk.Label(history_frame, text="RESTAURER", bg="white", borderwidth=1, relief="solid", width=20)
+            label = tk.Label(history_frame, text="RESTAURE", bg="white", borderwidth=1, relief="solid", width=20)
             label.grid(row=self.nombreCommande + 1, column=1, sticky="nsew")
             label.bind("<Button-3>", self.show_context_menu)
             self.liste_historique.append(label)
