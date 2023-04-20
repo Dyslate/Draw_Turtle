@@ -12,6 +12,7 @@ Welcome to Draw_Turtle's documentation!
 
    visualiseur
    editeur
+   editeursimple
 
 
 Indices and tables

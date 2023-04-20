@@ -36,6 +36,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span>
 
 <div class="viewcode-block" id="EditeurDeTexte"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte">[docs]</a><span class="k">class</span> <span class="nc">EditeurDeTexte</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -59,6 +60,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">selectedLabel</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sleep_time</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="c1">#Gestion de la queue et du thread unique</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 <div class="viewcode-block" id="EditeurDeTexte.right_click"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.right_click">[docs]</a>    <span class="k">def</span> <span class="nf">right_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -734,20 +741,24 @@
         <span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
     <span class="c1"># Les fonctions internes `execute_commands` et `extract_nested_commands` sont utilisées dans la méthode send pour faciliter la gestion des commandes imbriquées.</span>
+
 <div class="viewcode-block" id="EditeurDeTexte.send"><a class="viewcode-back" href="../editeur.html#editeur.EditeurDeTexte.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exécute les commandes présentes dans la liste des labels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Lancement de jouer&quot;</span><span class="p">)</span>
+        <span class="n">liste_commandes</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">liste_commandes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">execute_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands_queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">process_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+
         <span class="k">def</span> <span class="nf">execute_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Exécute les commandes en séquence à partir des commandes et des labels fournis.</span>
-
-<span class="sd">            :param commandes: Une liste de commandes à exécuter.</span>
-<span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-
             <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">commandes</span><span class="p">):</span>
                 <span class="n">commande</span> <span class="o">=</span> <span class="n">commandes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
@@ -767,15 +778,6 @@
                 <span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">bg</span><span class="o">=</span><span class="s2">&quot;White&quot;</span><span class="p">)</span>  <span class="c1"># Restaurer la couleur d&#39;arrière-plan d&#39;origine</span>
 
         <span class="k">def</span> <span class="nf">extract_nested_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">start_index</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Extrait les commandes imbriquées à partir d&#39;une liste de commandes et de labels à partir d&#39;un indice de départ.</span>
-
-<span class="sd">            :param commandes: Une liste de commandes.</span>
-<span class="sd">            :param labels: Une liste de labels correspondant aux commandes.</span>
-<span class="sd">            :param start_index: L&#39;indice de départ pour l&#39;extraction des commandes imbriquées.</span>
-<span class="sd">            :return: Un tuple contenant les commandes imbriquées, les labels imbriqués et l&#39;indice de fin.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-
             <span class="n">nested_commands</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">nested_labels</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">brace_count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -796,9 +798,7 @@
                 <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="n">nested_commands</span><span class="p">,</span> <span class="n">nested_labels</span><span class="p">,</span> <span class="n">index</span>
 
-        <span class="n">liste_commandes</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">cget</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">]</span>
-        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">execute_commands</span><span class="p">(</span><span class="n">liste_commandes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_list</span><span class="p">))</span>
-        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
+        <span class="n">execute_commands</span><span class="p">(</span><span class="n">commandes</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
 
 
 <span class="c1">###################################################</span>
@@ -1040,6 +1040,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../visualiseur.html">Visualiseur</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../editeur.html">Editeur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../editeursimple.html">EditeurSimple</a></li>
 </ul>
 
 <div class="relations">

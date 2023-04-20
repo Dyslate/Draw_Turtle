@@ -11,6 +11,9 @@ commands_queue = queue.Queue()
 
 
 def command_sender():
+    '''
+    Les commandes sont envoyées au processus en boucle dans une queue pour optimiser le thread
+    '''
     while True:
         command = commands_queue.get()
         process.stdin.write(command + '\n')
@@ -19,12 +22,20 @@ def command_sender():
 
 
 def run_command():
+    '''
+    Fonction qui récupère la commande et l'envoie au processus
+    '''
     command = command_text.get()
     commands_queue.put(command)
     command_text.config(state=tk.NORMAL)
 
 
 def on_enter_key(event):
+    """
+    Fonction qui est appelée quand on appuie sur la touche entrée: appelle run_command
+
+    :param event: evenement de la touche entrée
+    """
     command_text.config(state=tk.DISABLED)
     print("Envoyer : "+str(command_text.get()))
     run_command()
